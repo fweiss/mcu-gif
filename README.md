@@ -34,6 +34,10 @@ Really easy and comprehensive guide to decoding GIFs:
  
 https://commandlinefanatic.com/cgi-bin/showarticle.cgi?article=art011
 
+More detailed description bit-by-bit
+
+http://www.matthewflickinger.com/lab/whatsinagif/bits_and_bytes.asp
+
 https://www.geeksforgeeks.org/sdl-library-in-c-c-with-examples/
 
 https://lazyfoo.net/tutorials/SDL/01_hello_SDL/mac/index.php

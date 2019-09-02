@@ -35,7 +35,7 @@ $(OBJDIR)/%.o: $(TESTDIR)/%.cpp
 
 # compile the source
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
-	$(CXX) -c $(CFLAGS) $(CPPFLAGS) $(C_INCLUDE_PATH) -o $@ $<
+	$(CXX) -c $(CFLAGS) $(CPPFLAGS) $(C_INCLUDE_PATH) -I. -o $@ $<
 
 .PHONY: clean
 clean:
