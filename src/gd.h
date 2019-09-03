@@ -5,9 +5,11 @@
 typedef long (*read_func_t)(int fd, char *buf, long count);
 
 typedef struct {
-    int status;
-    int width;
-    int height;
+    int status;        // current decoder status
+    int width;         // image height
+    int height;        // image height
+    bool gct;          // global color table present
+    uint8_t gctb;      // global color table bits
 } gd_info_t;
 
 typedef struct {
@@ -15,7 +17,7 @@ typedef struct {
     int status;
     uint16_t width;
     uint16_t height;
-    uint32_t *pixels;
+    uint32_t *pixels;  // row-major array of pixel color table indices
 } gd_frame_t;
 
 typedef enum {

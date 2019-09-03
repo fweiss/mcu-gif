@@ -116,3 +116,12 @@ TEST_F(Header, width) {
 TEST_F(Header, height) {
     ASSERT_EQ(info.height, 4);
 }
+
+TEST_F(Header, global_color_table) {
+    ASSERT_EQ(info.gct, true);
+}
+
+TEST_F(Header, global_color_table_bits) {
+    ASSERT_EQ(info.gctb, 3);
+}
+

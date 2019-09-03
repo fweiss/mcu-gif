@@ -18,6 +18,8 @@ static struct {
     int status;
     int width;
     int height;
+    bool gct;
+    uint8_t gctb;
 } gd_state;
 
 /* api functions */
@@ -39,12 +41,17 @@ void gd_begin(int fd) {
     }
     gd_state.width = LE(header[6], header[7]);
     gd_state.height = LE(header[8], header[9]);
+
+    gd_state.gct = header[10] & 0x80;
+    gd_state.gctb = (header[10] & 0x03) + 1;
 }
 
 void gd_info_get(gd_info_t *info) {
     info->status = gd_state.status;
     info->width = gd_state.width;
     info->height = gd_state.height;
+    info->gct = gd_state.gct;
+    info->gctb = gd_state.gctb;
 }
 
 void gd_render_frame(gd_frame_t *frame) {
