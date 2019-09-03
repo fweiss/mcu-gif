@@ -1,7 +1,6 @@
 #include "gd.h"
 
 #include "gtest/gtest.h"
-
 #include "fff.h"
 
 DEFINE_FFF_GLOBALS;
@@ -64,17 +63,35 @@ TEST(begin, info) {
     ASSERT_EQ(info.width, 17);
 }
 
-TEST(begin, bad_signature) {
-    uint8_t bad_signature[13] = { 'c' };
-    USE_FILE_DATA(bad_signature);
-    f_read_fake.return_val = 1;
-    f_read_fake.custom_fake = my_read;
+//TEST(begin, bad_signature) {
+//    uint8_t bad_signature[13] = { 'c' };
+//    USE_FILE_DATA(bad_signature);
+//    f_read_fake.return_val = 1;
+//    f_read_fake.custom_fake = my_read;
+//
+//    gd_init(f_read);
+//    int fd = 1;
+//    gd_begin(fd);
+//    gd_info_t info;
+//    gd_info_get(&info);
+//
+//    ASSERT_EQ(info.status, 1);
+//}
 
-    gd_init(f_read);
+class BadSignature : public ::testing::Test {
+protected:
+    void SetUp() override {
+        USE_FILE_DATA(bad_signature);
+        gd_init(f_read);
+        gd_begin(fd);
+    }
+    uint8_t bad_signature[13] = { 'c' };
     int fd = 1;
-    gd_begin(fd);
+};
+
+TEST_F(BadSignature, status) {
     gd_info_t info;
     gd_info_get(&info);
 
-    ASSERT_EQ(info.status, 1);
+    ASSERT_EQ(info.status, GD_BAD_SIGNATURE);
 }
