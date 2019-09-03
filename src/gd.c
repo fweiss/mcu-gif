@@ -1,6 +1,6 @@
 #include "gd.h"
 
-#include "file.h"
+#include <string.h>
 
 #define LE(a, b) ((a) | (b << 8))
 
@@ -15,21 +15,32 @@ struct {
 /* decoder state */
 
 static struct {
+    int status;
     int width;
 } gd_state;
+
+/* api functions */
 
 void gd_init(read_func_t read) {
     gd_config.read = read;
 }
 
 void gd_begin(int fd) {
+    gd_state.status = GD_OK;
+
     char header[13];
     long count = READ(fd, header, sizeof(header));
+    // todo check count
+    bool is_not_sig87a = strncmp(header, "GIF87a", 6);
+    bool is_not_sig89a = strncmp(header, "GIF89a", 6);
+    if (is_not_sig87a && is_not_sig89a) {
+        gd_state.status = GD_BAD_SIGNATURE;
+    }
     gd_state.width = LE(header[6], header[7]);
 }
 
 void gd_info_get(gd_info_t *info) {
-    info->status = 0;
+    info->status = gd_state.status;
     info->width = gd_state.width;
 }
 

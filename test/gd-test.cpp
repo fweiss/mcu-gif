@@ -11,14 +11,22 @@ static const unsigned char sample1[] = {
         0x47, 0x49, 0x46, 0x38, 0x39, 0x61, 0x0A, 0x00, 0x0A, 0x00, 0x91, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0x21, 0xF9, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x2C, 0x00, 0x00, 0x00, 0x00, 0x0A, 0x00, 0x0A, 0x00, 0x00, 0x02, 0x16, 0x8C, 0x2D, 0x99, 0x87, 0x2A, 0x1C, 0xDC, 0x33, 0xA0, 0x02, 0x75, 0xEC, 0x95, 0xFA, 0xA8, 0xDE, 0x60, 0x8C, 0x04, 0x91, 0x4C, 0x01, 0x00, 0x3B
 };
 
+static const uint8_t header1[13] = { 'G', 'I', 'F', '8', '9', 'a', 0x11, 0x00, 0x4, 0x00, 0xee, 0xff, 0x88 };
+
+static const uint8_t *f_read_data = header1;
+static long f_read_data_length = sizeof(header1);
+
+#define USE_FILE_DATA(d) (f_read_data = d, f_read_data_length = sizeof(d))
+
 long my_read(int fd, char *buf, long count) {
     // width and height little endian
-    unsigned char header[13] = { 'G', 'I', 'F', '8', '9', 'a', 0x11, 0x00, 0x4, 0x00, 0xee, 0xff, 0x88 };
-    memcpy(buf, header, count);
+//    uint8_t header[13] = { 'G', 'I', 'F', '8', '9', 'a', 0x11, 0x00, 0x4, 0x00, 0xee, 0xff, 0x88 };
+//    memcpy(buf, header, count);
+    memcpy(buf,  f_read_data, count);
     return 13;
 }
 
-TEST(basic, basic) {
+TEST(render_frame, basic) {
     uint32_t pixels[1][1];
 
     gd_frame_t frame;
@@ -39,7 +47,9 @@ TEST(basic, basic) {
 
 FAKE_VALUE_FUNC(long, f_read, int, char*, long);
 
-TEST(basic, info) {
+TEST(begin, info) {
+    USE_FILE_DATA(header1);
+        f_read_data = header1;
     f_read_fake.return_val = 1;
     f_read_fake.custom_fake = my_read;
 
@@ -52,4 +62,19 @@ TEST(basic, info) {
 
     ASSERT_EQ(info.status, 0);
     ASSERT_EQ(info.width, 17);
+}
+
+TEST(begin, bad_signature) {
+    uint8_t bad_signature[13] = { 'c' };
+    USE_FILE_DATA(bad_signature);
+    f_read_fake.return_val = 1;
+    f_read_fake.custom_fake = my_read;
+
+    gd_init(f_read);
+    int fd = 1;
+    gd_begin(fd);
+    gd_info_t info;
+    gd_info_get(&info);
+
+    ASSERT_EQ(info.status, 1);
 }

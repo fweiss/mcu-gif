@@ -17,6 +17,11 @@ typedef struct {
     uint32_t *pixels;
 } gd_frame_t;
 
+typedef enum {
+    GD_OK,
+    GD_BAD_SIGNATURE,
+} gd_status_t;
+
 void gd_init(read_func_t read);
 
 void gd_begin(int fd);
