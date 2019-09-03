@@ -7,6 +7,7 @@ typedef long (*read_func_t)(int fd, char *buf, long count);
 typedef struct {
     int status;
     int width;
+    int height;
 } gd_info_t;
 
 typedef struct {

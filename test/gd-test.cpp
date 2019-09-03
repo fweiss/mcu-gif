@@ -95,3 +95,24 @@ TEST_F(BadSignature, status) {
 
     ASSERT_EQ(info.status, GD_BAD_SIGNATURE);
 }
+
+class Header : public ::testing::Test {
+protected:
+    void SetUp() override {
+        USE_FILE_DATA(header1);
+        gd_init(f_read);
+        gd_begin(fd);
+        gd_info_get(&info);
+    }
+    const uint8_t header1[13] = { 'G', 'I', 'F', '8', '9', 'a', 0x11, 0x00, 0x4, 0x00, 0xee, 0xff, 0x88 };
+    int fd = 1;
+    gd_info_t info;
+};
+
+TEST_F(Header, width) {
+    ASSERT_EQ(info.width, 17);
+}
+
+TEST_F(Header, height) {
+    ASSERT_EQ(info.height, 4);
+}
