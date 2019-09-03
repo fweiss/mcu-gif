@@ -125,3 +125,29 @@ TEST_F(Header, global_color_table_bits) {
     ASSERT_EQ(info.gctb, 3);
 }
 
+class RenderSquaresImage : public ::testing::Test {
+protected:
+    void SetUp() override {
+        USE_FILE_DATA(sample1);
+        gd_init(f_read);
+        gd_begin(fd);
+        frame.pixels = pixels;
+        gd_render_frame(&frame);
+    }
+    int fd = 1;
+    gd_frame_t frame;
+    uint32_t pixels[10*10];
+};
+
+TEST_F(RenderSquaresImage, size) {
+    gd_info_t info;
+    gd_info_get(&info);
+    ASSERT_EQ(info.width, 10);
+    ASSERT_EQ(info.height, 10);
+}
+TEST_F(RenderSquaresImage, color_table_indices) {
+    ASSERT_EQ(pixels[0], 0x11223344);
+}
+
+
+
