@@ -38,6 +38,10 @@ More detailed description bit-by-bit
 
 http://www.matthewflickinger.com/lab/whatsinagif/bits_and_bytes.asp
 
+Best LZW for GIF description with examples
+
+https://www.eecis.udel.edu/~amer/CISC651/lzw.and.gif.explained.html
+
 https://www.geeksforgeeks.org/sdl-library-in-c-c-with-examples/
 
 https://lazyfoo.net/tutorials/SDL/01_hello_SDL/mac/index.php

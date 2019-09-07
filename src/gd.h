@@ -2,7 +2,13 @@
 
 #include <stdint.h>
 
-typedef long (*read_func_t)(int fd, char *buf, long count);
+typedef long (*read_func_t)(int fd, uint8_t *buf, long count);
+
+typedef struct {
+    uint8_t r;
+    uint8_t g;
+    uint8_t b;
+} color_t;
 
 typedef struct {
     uint8_t status;        // current decoder status
@@ -20,6 +26,11 @@ typedef struct {
     uint32_t *pixels;  // row-major array of pixel color table indices
 } gd_frame_t;
 
+typedef struct {
+    uint16_t size;
+    color_t *colors;
+} gd_colortab_t;
+
 typedef enum {
     GD_OK,
     GD_BAD_SIGNATURE,
@@ -32,3 +43,8 @@ void gd_begin(int fd);
 void gd_info_get(gd_info_t *info);
 
 void gd_render_frame(gd_frame_t *frame);
+
+void gd_decode_lzw(uint16_t size, const uint8_t *encoded, uint8_t *decoded);
+
+void gd_global_colortab_get(gd_colortab_t *colortab);
+
