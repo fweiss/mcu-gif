@@ -109,7 +109,16 @@ void gd_read_image_data(gd_frame_t *frame) {
 
     gd_decode_data_sub_block(frame, sub_block, data_sub_block_size);
 
+    count = READ(fd, &data_sub_block_size, sizeof(data_sub_block_size));
+
     free(sub_block);
+}
+
+uint8_t gd_read_block_type() {
+    uint8_t block_type;
+    long count = READ(fd, &block_type, sizeof(block_type));
+    printf("block type %x\n", block_type);
+    return block_type;
 }
 
 void gd_render_frame(gd_frame_t *frame) {
@@ -124,6 +133,8 @@ void gd_render_frame(gd_frame_t *frame) {
     gd_read_image_descriptor(frame);
 
     gd_read_image_data(frame);
+
+    block_type = gd_read_block_type();
 
 //    frame->pixels[0] = 0x11223344;
     frame->status = 0;
