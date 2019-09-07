@@ -169,7 +169,8 @@ TEST_F(RenderSquaresImage, image_descriptor) {
     ASSERT_FALSE(frame.has_local_color_table);
 }
 TEST_F(RenderSquaresImage, color_table_indices) {
-    ASSERT_EQ(pixels[0], 0x11223344);
+    uint32_t rgb = gd_lookup_rgb(pixels[0]);
+    ASSERT_EQ(rgb, 0x00ff0000);
 }
 
 class DecodeLzw : public ::testing::Test {
@@ -181,14 +182,14 @@ protected:
     }
 };
 
-TEST_F(DecodeLzw, simple) {
-    const uint8_t encoded[] = { 0x02, 0x16, 0x8C, 0x2D, 0x99, 0x87, 0x2A, 0x1C, 0xDC, 0x33, 0xA0, 0x02, 0x75, 0xEC, 0x95, 0xFA, 0xA8, 0xDE, 0x60, 0x8C, 0x04, 0x91, 0x4C, 0x01, 0x00 };
-    uint8_t decoded[1024] = { 0 };
-    const int cc = 12;
-    gd_decode_lzw(cc, encoded, decoded);
-
-    ASSERT_EQ(decoded[0], 0);
-}
+//TEST_F(DecodeLzw, simple) {
+//    const uint8_t encoded[] = { 0x02, 0x16, 0x8C, 0x2D, 0x99, 0x87, 0x2A, 0x1C, 0xDC, 0x33, 0xA0, 0x02, 0x75, 0xEC, 0x95, 0xFA, 0xA8, 0xDE, 0x60, 0x8C, 0x04, 0x91, 0x4C, 0x01, 0x00 };
+//    uint8_t decoded[1024] = { 0 };
+//    const int cc = 12;
+//    gd_decode_lzw(cc, encoded, decoded);
+//
+//    ASSERT_EQ(decoded[0], 0);
+//}
 
 
 

@@ -92,13 +92,22 @@ void gd_read_image_descriptor(gd_frame_t *frame) {
     frame->has_local_color_table = BIT(7, block[8]);
 }
 
+void gd_decode_data_sub_block(gd_frame_t *frame, uint8_t *sub_block, uint8_t sub_block_size) {
+    uint16_t first_code = sub_block[0] & 0x07;
+    uint16_t second_code = (sub_block[0] >> 3) & 0x07;
+    frame->pixels[0] = second_code;
+}
+
 void gd_read_image_data(gd_frame_t *frame) {
     uint8_t minimum_code_size;
     long count = READ(fd, &minimum_code_size, sizeof(minimum_code_size));
+    printf("minumum code size %d\n", minimum_code_size);
     uint8_t data_sub_block_size;
     count = READ(fd, &data_sub_block_size, sizeof(data_sub_block_size));
     uint8_t *sub_block = (uint8_t*)malloc(data_sub_block_size);
     count = READ(fd, sub_block, data_sub_block_size);
+
+    gd_decode_data_sub_block(frame, sub_block, data_sub_block_size);
 
     free(sub_block);
 }
@@ -116,7 +125,7 @@ void gd_render_frame(gd_frame_t *frame) {
 
     gd_read_image_data(frame);
 
-    frame->pixels[0] = 0x11223344;
+//    frame->pixels[0] = 0x11223344;
     frame->status = 0;
 }
 
@@ -127,5 +136,10 @@ void gd_decode_lzw(uint16_t size, const uint8_t *encoded, uint8_t *decoded) {
 void gd_global_colortab_get(gd_colortab_t *colortab) {
     colortab->size = 1 << (gd_state.gctb + 0); // parser added 1
     colortab->colors = gd_state.gctf;
+}
+
+uint32_t gd_lookup_rgb(uint16_t index) {
+    color_t color = gd_state.gctf[index];
+    return color.r << 16 | color.g << 8 | color.b;
 }
 

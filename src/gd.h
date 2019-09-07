@@ -51,3 +51,5 @@ void gd_decode_lzw(uint16_t size, const uint8_t *encoded, uint8_t *decoded);
 
 void gd_global_colortab_get(gd_colortab_t *colortab);
 
+uint32_t gd_lookup_rgb(uint16_t index);
+
