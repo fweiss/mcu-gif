@@ -57,6 +57,12 @@ void gd_begin(int fd) {
     }
 }
 
+void gd_end() {
+    if (gd_state.gctf) {
+        free(gd_state.gctf);
+    }
+}
+
 void gd_info_get(gd_info_t *info) {
     info->status = gd_state.status;
     info->width = gd_state.width;

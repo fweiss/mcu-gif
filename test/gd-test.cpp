@@ -85,6 +85,9 @@ protected:
     }
     uint8_t bad_signature[13] = { 'c' };
     int fd = 1;
+    void TearDown() override {
+        gd_end();
+    }
 };
 
 TEST_F(BadSignature, status) {
@@ -101,6 +104,9 @@ protected:
         gd_init(f_read);
         gd_begin(fd);
         gd_info_get(&info);
+    }
+    void TearDown() override {
+        gd_end();
     }
     const uint8_t header1[13] = { 'G', 'I', 'F', '8', '9', 'a', 0x11, 0x00, 0x4, 0x00, 0xee, 0xff, 0x88 };
     int fd = 1;
@@ -132,6 +138,9 @@ protected:
         frame.pixels = pixels;
         gd_render_frame(&frame);
     }
+    void TearDown() override {
+        gd_end();
+    }
     int fd = 1;
     gd_frame_t frame;
     uint32_t pixels[10*10];
@@ -161,6 +170,8 @@ class DecodeLzw : public ::testing::Test {
 protected:
     void SetUp() override {
 
+    }
+    void TearDown() override {
     }
 };
 

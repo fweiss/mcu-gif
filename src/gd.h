@@ -40,6 +40,8 @@ void gd_init(read_func_t read);
 
 void gd_begin(int fd);
 
+void gd_end();
+
 void gd_info_get(gd_info_t *info);
 
 void gd_render_frame(gd_frame_t *frame);
