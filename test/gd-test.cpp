@@ -17,25 +17,26 @@ static long f_read_data_length = sizeof(header1);
 
 static long f_read_pos;
 long my_read(int fd, uint8_t *buf, long count) {
+//    printf("read %d %p %ld: %lx\n", fd, buf, count, f_read_pos);
     memcpy(buf,  &f_read_data[f_read_pos], count);
     f_read_pos += count;
     return 13;
 }
 #define USE_FILE_DATA(d) (f_read_data = d, f_read_data_length = sizeof(d), f_read_pos = 0)
 
-TEST(render_frame, basic) {
-    uint32_t pixels[1][1];
-
-    gd_frame_t frame;
-    frame.request = 0;
-    frame.width = 1;
-    frame.height = 1;
-    frame.pixels = (uint32_t *)pixels;
-    gd_render_frame(&frame);
-
-    ASSERT_EQ(frame.status, 0);
-    ASSERT_EQ(pixels[0][0], 0x11223344);
-}
+//TEST(render_frame, basic) {
+//    uint32_t pixels[1][1];
+//
+//    gd_frame_t frame;
+//    frame.request = 0;
+//    frame.width = 1;
+//    frame.height = 1;
+//    frame.pixels = (uint32_t *)pixels;
+//    gd_render_frame(&frame);
+//
+//    ASSERT_EQ(frame.status, 0);
+//    ASSERT_EQ(pixels[0][0], 0x11223344);
+//}
 
 // fragmental reads
 // error reads
@@ -161,6 +162,11 @@ TEST_F(RenderSquaresImage, global_color_table) {
     gd_global_colortab_get(&colortab);
     ASSERT_EQ(colortab.size, 4);
     ASSERT_EQ(colortab.colors[0].r, 0xff);
+}
+TEST_F(RenderSquaresImage, image_descriptor) {
+    ASSERT_EQ(frame.width, 10);
+    ASSERT_EQ(frame.height, 10);
+    ASSERT_FALSE(frame.has_local_color_table);
 }
 TEST_F(RenderSquaresImage, color_table_indices) {
     ASSERT_EQ(pixels[0], 0x11223344);

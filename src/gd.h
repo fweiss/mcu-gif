@@ -23,6 +23,7 @@ typedef struct {
     uint8_t status;
     uint16_t width;
     uint16_t height;
+    bool has_local_color_table;
     uint32_t *pixels;  // row-major array of pixel color table indices
 } gd_frame_t;
 

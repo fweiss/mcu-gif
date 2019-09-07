@@ -3,7 +3,13 @@
 #include <string.h>
 #include <stdlib.h>
 
+#define DEBUG 1
+#if DEBUG
+#include <stdio.h>
+#endif
+
 #define LE(a, b) ((a) | (b << 8))
+#define BIT(bit, byte) ((1 << bit) & byte)
 
 /* file system abstractions */
 
@@ -12,6 +18,8 @@ struct {
 } gd_config;
 
 #define READ(f, b, c) (gd_config.read(f, b, c))
+
+static uint8_t fd = 1;
 
 /* decoder state */
 
@@ -48,7 +56,7 @@ void gd_begin(int fd) {
     gd_state.gctb = (header[10] & 0x03) + 1;
     if (gd_state.gct) {
         const uint16_t count = (1 << gd_state.gctb);
-        const uint16_t size = count * sizeof(uint32_t);
+        const uint16_t size = count * sizeof(color_t);
         gd_state.gctf = (color_t*)malloc(size);
         long read = READ(fd, (uint8_t*)gd_state.gctf, size);
         if (read == 0) {
@@ -71,7 +79,43 @@ void gd_info_get(gd_info_t *info) {
     info->gctb = gd_state.gctb;
 }
 
+void gd_read_extension_block() {
+    uint8_t block[7];
+    long count = READ(fd, block, sizeof(block));
+}
+
+void gd_read_image_descriptor(gd_frame_t *frame) {
+    uint8_t block[10 -1];
+    long count = READ(fd, block, sizeof(block));
+    frame->width = LE(block[4], block[5]);
+    frame->height = LE(block[6], block[7]);
+    frame->has_local_color_table = BIT(7, block[8]);
+}
+
+void gd_read_image_data(gd_frame_t *frame) {
+    uint8_t minimum_code_size;
+    long count = READ(fd, &minimum_code_size, sizeof(minimum_code_size));
+    uint8_t data_sub_block_size;
+    count = READ(fd, &data_sub_block_size, sizeof(data_sub_block_size));
+    uint8_t *sub_block = (uint8_t*)malloc(data_sub_block_size);
+    count = READ(fd, sub_block, data_sub_block_size);
+
+    free(sub_block);
+}
+
 void gd_render_frame(gd_frame_t *frame) {
+    uint8_t block_type;
+
+    long count = READ(fd, &block_type, sizeof(block_type));
+    printf("block type %x\n", block_type);
+    gd_read_extension_block();
+
+    count = READ(fd, &block_type, sizeof(block_type));
+    printf("block type %x\n", block_type);
+    gd_read_image_descriptor(frame);
+
+    gd_read_image_data(frame);
+
     frame->pixels[0] = 0x11223344;
     frame->status = 0;
 }
