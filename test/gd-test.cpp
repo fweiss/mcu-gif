@@ -170,7 +170,7 @@ TEST_F(RenderSquaresImage, image_descriptor) {
 }
 TEST_F(RenderSquaresImage, color_table_indices) {
     uint32_t rgb = gd_lookup_rgb(pixels[0]);
-    ASSERT_EQ(rgb, 0x00ff0000);
+    EXPECT_EQ(rgb, 0x00ff0000);
 }
 
 class DecodeLzw : public ::testing::Test {
@@ -184,6 +184,7 @@ protected:
 
 TEST_F(DecodeLzw, simple) {
     uint8_t sub_block[] = { 0x8C, 0x2D, 0x99, 0x87, 0x2A, 0x1C, 0xDC, 0x33, 0xA0, 0x02, 0x75, 0xEC, 0x95, 0xFA, 0xA8, 0xDE, 0x60, 0x8C, 0x04, 0x91, 0x4C, 0x01 };
+
     uint8_t codes[1024] = { 0 };
     uint16_t code_count;
     gd_sub_block_decode_t decode;
@@ -194,7 +195,9 @@ TEST_F(DecodeLzw, simple) {
     decode.code_count = &code_count;
     gd_sub_block_decode(&decode);
 
-    EXPECT_EQ(codes[0], 4);
+    EXPECT_EQ(codes[0], 1);
+    EXPECT_EQ(codes[1], 1);
+    EXPECT_EQ(codes[5], 2);
 }
 
 

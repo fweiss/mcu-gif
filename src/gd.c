@@ -32,6 +32,11 @@ static struct {
     color_t *gctf;
 } gd_state;
 
+typedef struct {
+    uint8_t size;
+    uint16_t *characters;
+} gd_code_string_t;
+
 /* api functions */
 
 void gd_init(read_func_t read) {
@@ -140,20 +145,32 @@ void gd_render_frame(gd_frame_t *frame) {
     frame->status = 0;
 }
 
+void gd_code_table_init(gd_code_string_t *table, uint8_t code_size) {
+    for (int i=0; i<code_size; i++) {
+        gd_code_string_t *string = &table[i];
+        string->characters = (uint16_t*)malloc(sizeof(uint16_t));
+        string->characters[0] = i;
+        string->size = 1;
+    }
+}
+
 void gd_sub_block_decode(gd_sub_block_decode_t *decode) {
-    uint8_t current_code_size = decode->minimum_code_size;
+    uint8_t current_code_size = 1 << decode->minimum_code_size;
+    uint16_t clear_code = 4;
+
+    gd_code_string_t code_table[100];
+    uint8_t code_table_size = 6;
 
     uint16_t extract_mask = 0x0007;
     uint8_t extract_bits = 3;
     uint16_t extract;
-    uint8_t ondeck_bits = 8; // or 16? greedy or lazy
-    uint8_t advance_bits = 8;
     uint16_t ondeck;
     uint16_t advance;
 
-    ondeck_bits = 0;
-    advance_bits = 0;
+    uint8_t ondeck_bits = 0;
+    uint8_t advance_bits = 0;
     ondeck = 0;
+    uint16_t previous_code = 0;
     for (int i=0; i<10; i++) {
         if (advance_bits == 0) {
             advance = *decode->sub_block++;
@@ -164,10 +181,33 @@ void gd_sub_block_decode(gd_sub_block_decode_t *decode) {
             advance_bits = 0;
             ondeck_bits += 8;
         }
-        *decode->codes++ = extract = ondeck & extract_mask;
+        extract = ondeck & extract_mask;
         ondeck >>= extract_bits;
         ondeck_bits -= extract_bits;
         printf("extracted %0x\n", extract);
+
+        if (extract == clear_code) {
+            gd_code_table_init(code_table, current_code_size);
+            code_table_size = 6;
+        } else {
+            if (extract < code_table_size) {
+                printf("code table %d\n", extract);
+                gd_code_string_t *string = &code_table[extract];
+                for (i=0; i<string->size; i++) {
+                    *decode->codes++ = string->characters[i];
+                }
+            } else {
+                const uint16_t next_code = code_table_size++;
+                printf("next code %d\n", next_code);
+                gd_code_string_t *string = &code_table[next_code];
+                string->size = 2;
+                string->characters = (uint16_t*)malloc(string->size * sizeof(uint16_t));
+                string->characters[0] = 1;
+                string->characters[1] = 1;
+                *decode->codes++ = previous_code;
+            }
+            previous_code = extract;
+        }
     }
 }
 
