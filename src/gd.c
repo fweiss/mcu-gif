@@ -140,8 +140,35 @@ void gd_render_frame(gd_frame_t *frame) {
     frame->status = 0;
 }
 
-void gd_decode_lzw(uint16_t size, const uint8_t *encoded, uint8_t *decoded) {
-    decoded[0] = 0x99;
+void gd_sub_block_decode(gd_sub_block_decode_t *decode) {
+    uint8_t current_code_size = decode->minimum_code_size;
+
+    uint16_t extract_mask = 0x0007;
+    uint8_t extract_bits = 3;
+    uint16_t extract;
+    uint8_t ondeck_bits = 8; // or 16? greedy or lazy
+    uint8_t advance_bits = 8;
+    uint16_t ondeck;
+    uint16_t advance;
+
+    ondeck_bits = 0;
+    advance_bits = 0;
+    ondeck = 0;
+    for (int i=0; i<10; i++) {
+        if (advance_bits == 0) {
+            advance = *decode->sub_block++;
+            advance_bits = 8;
+        }
+        if (ondeck_bits < extract_bits) {
+            ondeck |= advance << ondeck_bits;
+            advance_bits = 0;
+            ondeck_bits += 8;
+        }
+        *decode->codes++ = extract = ondeck & extract_mask;
+        ondeck >>= extract_bits;
+        ondeck_bits -= extract_bits;
+        printf("extracted %0x\n", extract);
+    }
 }
 
 void gd_global_colortab_get(gd_colortab_t *colortab) {

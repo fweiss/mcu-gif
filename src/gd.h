@@ -37,6 +37,14 @@ typedef enum {
     GD_BAD_SIGNATURE,
 } gd_status_t;
 
+typedef struct {
+    uint8_t minimum_code_size;
+    uint8_t sub_block_size;
+    uint8_t *sub_block;
+    uint8_t *codes;
+    uint16_t *code_count;
+} gd_sub_block_decode_t;
+
 void gd_init(read_func_t read);
 
 void gd_begin(int fd);
@@ -47,7 +55,7 @@ void gd_info_get(gd_info_t *info);
 
 void gd_render_frame(gd_frame_t *frame);
 
-void gd_decode_lzw(uint16_t size, const uint8_t *encoded, uint8_t *decoded);
+void gd_sub_block_decode(gd_sub_block_decode_t *decode);
 
 void gd_global_colortab_get(gd_colortab_t *colortab);
 
