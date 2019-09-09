@@ -197,6 +197,9 @@ TEST_F(DecodeLzw, simple) {
 
     EXPECT_EQ(codes[0], 1);
     EXPECT_EQ(codes[1], 1);
+    EXPECT_EQ(codes[2], 1);
+    EXPECT_EQ(codes[3], 1);
+    EXPECT_EQ(codes[4], 1);
     EXPECT_EQ(codes[5], 2);
 }
 

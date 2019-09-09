@@ -171,6 +171,7 @@ void gd_sub_block_decode(gd_sub_block_decode_t *decode) {
     uint8_t advance_bits = 0;
     ondeck = 0;
     uint16_t previous_code = 0;
+    gd_code_string_t *previous_string = NULL;
     for (int i=0; i<10; i++) {
         if (advance_bits == 0) {
             advance = *decode->sub_block++;
@@ -190,23 +191,45 @@ void gd_sub_block_decode(gd_sub_block_decode_t *decode) {
             gd_code_table_init(code_table, current_code_size);
             code_table_size = 6;
         } else {
-            if (extract < code_table_size) {
-                printf("code table %d\n", extract);
-                gd_code_string_t *string = &code_table[extract];
-                for (i=0; i<string->size; i++) {
-                    *decode->codes++ = string->characters[i];
-                }
+            const bool found = extract < code_table_size;
+            const bool first_code = previous_string == NULL;
+            gd_code_string_t *string;
+            uint16_t k_code;
+
+            if (first_code) { // first string always found
+                string = &code_table[extract];
             } else {
+                // get prefix from prior string
+                k_code = (found ? string : previous_string)->characters[0];
+
+                // add to string table
                 const uint16_t next_code = code_table_size++;
                 printf("next code %d\n", next_code);
-                gd_code_string_t *string = &code_table[next_code];
-                string->size = 2;
+
+                string = &code_table[next_code];
+                const uint16_t previous_string_size = previous_string->size;
+                string->size = previous_string_size + 1;
                 string->characters = (uint16_t*)malloc(string->size * sizeof(uint16_t));
-                string->characters[0] = 1;
-                string->characters[1] = 1;
-                *decode->codes++ = previous_code;
+                for (int k=0; k<previous_string_size; k++) {
+                    string->characters[k] = previous_string->characters[k];
+                }
+                string->characters[previous_string_size] = k_code;
+            }
+
+            // output the string
+            for (int j=0; j<previous_string->size; j++) {
+                *decode->codes++ = previous_string->characters[j];
+            }
+            if (found && !first_code) {
+                *decode->codes++ = k_code;
             }
             previous_code = extract;
+            previous_string = string;
+
+            if (code_table_size == 7) {
+                extract_bits = 4;
+                extract_mask = (1 << extract_bits) - 1;
+            }
         }
     }
 }
