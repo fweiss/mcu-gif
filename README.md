@@ -12,6 +12,8 @@ The goals of this project are:
 
 It would be nice to try additional languages. For MCUs, C is the most common.
 
+> The test framework, gtest, is C++
+
 ## Visual testing
 The visually verify the decoder, a small GUI is included. It can be run on the development host.
 
@@ -27,6 +29,24 @@ Several portable GUI frameworks were investigated:
 ### SDL2 setup for Mac
 Download the dmg
 Copy the framework to the project root directory
+
+## Running the unit tests
+In the test directory, run ``make test``.
+
+### Setting up the unit tests
+Download the following:
+
+- gtest
+- fff test
+
+You can put them anywhere on your file system.
+
+Create a file ``local.mk`` in the test directory. This file will be included from the Makefile.
+It must define the following variables:
+
+- GTEST_HOME
+- FFF_HOME
+
 
 ## Links and references
 

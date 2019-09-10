@@ -141,7 +141,6 @@ void gd_render_frame(gd_frame_t *frame) {
 
     block_type = gd_read_block_type();
 
-//    frame->pixels[0] = 0x11223344;
     frame->status = 0;
 }
 
@@ -170,7 +169,6 @@ void gd_sub_block_decode(gd_sub_block_decode_t *decode) {
     uint8_t ondeck_bits = 0;
     uint8_t advance_bits = 0;
     ondeck = 0;
-    uint16_t previous_code = 0;
     gd_code_string_t *previous_string = NULL;
     for (int i=0; i<10; i++) {
         if (advance_bits == 0) {
@@ -178,6 +176,7 @@ void gd_sub_block_decode(gd_sub_block_decode_t *decode) {
             advance_bits = 8;
         }
         if (ondeck_bits < extract_bits) {
+            // todo handle larger symbols to 12 bits
             ondeck |= advance << ondeck_bits;
             advance_bits = 0;
             ondeck_bits += 8;
@@ -188,6 +187,7 @@ void gd_sub_block_decode(gd_sub_block_decode_t *decode) {
         printf("extracted %0x\n", extract);
 
         if (extract == clear_code) {
+            // todo reset current_code_size?
             gd_code_table_init(code_table, current_code_size);
             code_table_size = 6;
         } else {
@@ -223,7 +223,6 @@ void gd_sub_block_decode(gd_sub_block_decode_t *decode) {
             if (found && !first_code) {
                 *decode->codes++ = k_code;
             }
-            previous_code = extract;
             previous_string = string;
 
             if (code_table_size == 7) {
