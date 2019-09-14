@@ -190,42 +190,40 @@ void gd_sub_block_decode(gd_sub_block_decode_t *decode) {
             // todo reset current_code_size?
             gd_code_table_init(code_table, current_code_size);
             code_table_size = 6;
+        } else if (previous_string == NULL) {
+            *decode->codes++ = extract;
+            previous_string = &code_table[extract];
         } else {
+            // get prefix from prior string
             const bool found = extract < code_table_size;
-            const bool first_code = previous_string == NULL;
-            gd_code_string_t *string;
-            uint16_t k_code;
+            const gd_code_string_t *output_string = found ? &code_table[extract] : previous_string;
+            const uint16_t k_code = output_string->characters[0];
 
-            if (first_code) { // first string always found
-                string = &code_table[extract];
-            } else {
-                // get prefix from prior string
-                k_code = (found ? string : previous_string)->characters[0];
+            // add to string table
+            const uint16_t next_code = code_table_size++;
+            printf("next code %d\n", next_code);
 
-                // add to string table
-                const uint16_t next_code = code_table_size++;
-                printf("next code %d\n", next_code);
-
-                string = &code_table[next_code];
-                const uint16_t previous_string_size = previous_string->size;
-                string->size = previous_string_size + 1;
-                string->characters = (uint16_t*)malloc(string->size * sizeof(uint16_t));
-                for (int k=0; k<previous_string_size; k++) {
-                    string->characters[k] = previous_string->characters[k];
-                }
-                string->characters[previous_string_size] = k_code;
+            gd_code_string_t *string = &code_table[next_code];
+            const uint16_t previous_string_size = previous_string->size;
+            string->size = previous_string_size + 1;
+            string->characters = (uint16_t*)malloc(string->size * sizeof(uint16_t));
+            for (int k=0; k<previous_string_size; k++) {
+                string->characters[k] = previous_string->characters[k];
             }
+            string->characters[previous_string_size] = k_code;
 
             // output the string
-            for (int j=0; j<previous_string->size; j++) {
-                *decode->codes++ = previous_string->characters[j];
+            for (int j=0; j<output_string->size; j++) {
+                *decode->codes++ = output_string->characters[j];
             }
-            if (found && !first_code) {
+            if (!found) {
                 *decode->codes++ = k_code;
             }
+
             previous_string = string;
 
-            if (code_table_size == 7) {
+            // increase code size
+            if (code_table_size == 8) {
                 extract_bits = 4;
                 extract_mask = (1 << extract_bits) - 1;
             }
