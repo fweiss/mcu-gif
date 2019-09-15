@@ -33,8 +33,9 @@ typedef struct {
 } gd_colortab_t;
 
 typedef enum {
-    GD_OK,
-    GD_BAD_SIGNATURE,
+    GD_OK,                      // successful operation
+    GD_BAD_SIGNATURE,           // bad GIF file signature
+    GD_SUB_BLOCK_SIZE,          // attempted to decode beyond sub block size
 } gd_status_t;
 
 typedef struct {
@@ -43,6 +44,7 @@ typedef struct {
     uint8_t *sub_block;
     uint8_t *codes;
     uint16_t *code_count;
+    gd_status_t status;
 } gd_sub_block_decode_t;
 
 void gd_init(read_func_t read);

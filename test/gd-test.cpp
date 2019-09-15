@@ -182,6 +182,23 @@ protected:
     }
 };
 
+TEST_F(DecodeLzw, sub_block_size) {
+    uint8_t sub_block[] = { 0x8C, 0x2D, 0x99, 0x87, 0x2A };
+
+    uint8_t codes[1024] = { 0 };
+    uint16_t code_count;
+    gd_sub_block_decode_t decode;
+    decode.minimum_code_size = 2;
+    decode.sub_block_size = 2;
+    decode.sub_block = sub_block;
+    decode.codes = codes;
+    decode.code_count = &code_count;
+    gd_sub_block_decode(&decode);
+
+    ASSERT_EQ(decode.status, GD_SUB_BLOCK_SIZE);
+
+}
+
 TEST_F(DecodeLzw, simple) {
     uint8_t sub_block[] = { 0x8C, 0x2D, 0x99, 0x87, 0x2A, 0x1C, 0xDC, 0x33, 0xA0, 0x02, 0x75, 0xEC, 0x95, 0xFA, 0xA8, 0xDE, 0x60, 0x8C, 0x04, 0x91, 0x4C, 0x01 };
 
@@ -194,6 +211,8 @@ TEST_F(DecodeLzw, simple) {
     decode.codes = codes;
     decode.code_count = &code_count;
     gd_sub_block_decode(&decode);
+
+    ASSERT_EQ(decode.status, GD_OK);
 
     EXPECT_EQ(codes[0], 1);
     EXPECT_EQ(codes[1], 1);
@@ -209,6 +228,3 @@ TEST_F(DecodeLzw, simple) {
 
 
 }
-
-
-

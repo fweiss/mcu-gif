@@ -155,7 +155,8 @@ void gd_code_table_init(gd_code_string_t *table, uint8_t code_size) {
 
 void gd_sub_block_decode(gd_sub_block_decode_t *decode) {
     uint8_t current_code_size = 1 << decode->minimum_code_size;
-    uint16_t clear_code = 4;
+    const uint16_t clear_code = 4;
+    const uint16_t end_of_information_code = 5;
 
     gd_code_string_t code_table[100];
     uint8_t code_table_size = 6;
@@ -170,8 +171,12 @@ void gd_sub_block_decode(gd_sub_block_decode_t *decode) {
     uint8_t advance_bits = 0;
     ondeck = 0;
     gd_code_string_t *previous_string = NULL;
-    for (int i=0; i<10; i++) {
+    for (int i=0; i<100; i++) {
         if (advance_bits == 0) {
+            if (decode->sub_block_size-- == 0) {
+                decode->status = GD_SUB_BLOCK_SIZE;
+                break;
+            }
             advance = *decode->sub_block++;
             advance_bits = 8;
         }
@@ -190,6 +195,9 @@ void gd_sub_block_decode(gd_sub_block_decode_t *decode) {
             // todo reset current_code_size?
             gd_code_table_init(code_table, current_code_size);
             code_table_size = 6;
+        } else if (extract == end_of_information_code) {
+            decode->status = GD_OK;
+            break;
         } else if (previous_string == NULL) {
             *decode->codes++ = extract;
             previous_string = &code_table[extract];
@@ -225,6 +233,10 @@ void gd_sub_block_decode(gd_sub_block_decode_t *decode) {
             // increase code size
             if (code_table_size == 8) {
                 extract_bits = 4;
+                extract_mask = (1 << extract_bits) - 1;
+            }
+            if (code_table_size == 32) {
+                extract_bits = 5;
                 extract_mask = (1 << extract_bits) - 1;
             }
         }
