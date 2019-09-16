@@ -2,40 +2,7 @@
 //#include <SDL_image.h>
 #include <SDL_timer.h>
 
-int main(int argc, char *argv[])
-{
-    printf("getting\n");
-    // retutns zero on success else non-zero
-    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-        printf("error initializing SDL: %s\n", SDL_GetError());
-        return 2;
-    }
-    printf("sdl init\n");
-
-    SDL_Window *win = NULL;
-    SDL_Texture *tex = NULL;
-    SDL_Renderer *ren = NULL;
-
-//    SDL_Window* win = SDL_CreateWindow("GAME",
-//                                       SDL_WINDOWPOS_CENTERED,
-//                                       SDL_WINDOWPOS_CENTERED,
-//                                       1000, 1000, 0);
-    win = SDL_CreateWindow("Hello World!", 100, 100, 640, 480, SDL_WINDOW_SHOWN);
-    if (win == 0){
-        printf("SDL_CreateWindow Error: %s\n", SDL_GetError());
-        SDL_Quit();
-        return 1;
-    }
-
-    printf("window created\n");
-    ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-    if (ren == 0){
-        SDL_DestroyWindow(win);
-        printf("SDL_CreateRenderer Error: %s\n", SDL_GetError());
-        SDL_Quit();
-        return 1;
-    }
-
+void drawMemory(SDL_Renderer *ren) {
     static uint16_t pix[] = {
         1, 1, 1, 1, 1, 2, 2, 2, 2, 2,
         1, 1, 1, 1, 1, 2, 2, 2, 2, 2,
@@ -70,7 +37,43 @@ int main(int argc, char *argv[])
             SDL_RenderFillRect(ren, &rect);
         }
     }
+}
+int main(int argc, char *argv[])
+{
+    printf("getting\n");
+    // retutns zero on success else non-zero
+    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+        printf("error initializing SDL: %s\n", SDL_GetError());
+        return 2;
+    }
+    printf("sdl init\n");
 
+    SDL_Window *win = NULL;
+    SDL_Texture *tex = NULL;
+    SDL_Renderer *ren = NULL;
+
+//    SDL_Window* win = SDL_CreateWindow("GAME",
+//                                       SDL_WINDOWPOS_CENTERED,
+//                                       SDL_WINDOWPOS_CENTERED,
+//                                       1000, 1000, 0);
+    win = SDL_CreateWindow("Hello World!", 100, 100, 640, 480, SDL_WINDOW_SHOWN);
+    if (win == 0){
+        printf("SDL_CreateWindow Error: %s\n", SDL_GetError());
+        SDL_Quit();
+        return 1;
+    }
+
+    printf("window created\n");
+    ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    if (ren == 0){
+        SDL_DestroyWindow(win);
+        printf("SDL_CreateRenderer Error: %s\n", SDL_GetError());
+        SDL_Quit();
+        return 1;
+    }
+
+
+    drawMemory(ren);
 
 //    SDL_Surface* sur = NULL;
 //    sur = SDL_GetWindowSurface(win);
