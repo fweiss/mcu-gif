@@ -18,9 +18,10 @@ static long f_read_data_length = sizeof(header1);
 static long f_read_pos;
 long my_read(int fd, uint8_t *buf, long count) {
 //    printf("read %d %p %ld: %lx\n", fd, buf, count, f_read_pos);
-    memcpy(buf,  &f_read_data[f_read_pos], count);
-    f_read_pos += count;
-    return 13;
+    long available = std::min(count, f_read_data_length - f_read_pos);
+    memcpy(buf,  &f_read_data[f_read_pos], available);
+    f_read_pos += available;
+    return available;
 }
 #define USE_FILE_DATA(d) (f_read_data = d, f_read_data_length = sizeof(d), f_read_pos = 0)
 
@@ -58,7 +59,7 @@ TEST(begin, info) {
 
     gd_info_get(&info);
 
-    ASSERT_EQ(info.status, 0);
+    ASSERT_EQ(info.status, GD_OK);
     ASSERT_EQ(info.width, 17);
 }
 
@@ -127,7 +128,7 @@ TEST_F(Header, global_color_table) {
 }
 
 TEST_F(Header, global_color_table_bits) {
-    ASSERT_EQ(info.gctb, 3);
+    ASSERT_EQ(info.gctb, 7);
 }
 
 class RenderSquaresImage : public ::testing::Test {
@@ -227,4 +228,26 @@ TEST_F(DecodeLzw, simple) {
 //    EXPECT_EQ(codes[95], 1);
 
 
+}
+
+class FileRead : public ::testing::Test {
+protected:
+    void SetUp() override {
+
+    }
+    void TearDown() override {
+    }
+    int fd = 1;
+};
+
+TEST_F(FileRead, eof_in_header) {
+    const uint8_t shortheader[12] = { 'G', 'I', 'F', '8', '9', 'a', 0x11, 0x00, 0x4, 0x00, 0xee, 0xff };
+    USE_FILE_DATA(shortheader);
+    gd_init(f_read);
+    gd_begin(fd);
+    gd_info_t info;
+    gd_info_get(&info);
+
+
+    EXPECT_EQ(info.status, GD_READ_END);
 }

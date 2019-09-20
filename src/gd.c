@@ -48,17 +48,24 @@ void gd_begin(int fd) {
 
     uint8_t header[13];
     long count = READ(fd, header, sizeof(header));
+    printf("read %d\n", count);
+    if (count != 13) {
+        gd_state.status = GD_READ_END;
+        return;
+    }
     // todo check count
     bool is_not_sig87a = strncmp((char*)header, "GIF87a", 6);
     bool is_not_sig89a = strncmp((char*)header, "GIF89a", 6);
     if (is_not_sig87a && is_not_sig89a) {
         gd_state.status = GD_BAD_SIGNATURE;
+        return;
     }
     gd_state.width = LE(header[6], header[7]);
     gd_state.height = LE(header[8], header[9]);
 
     gd_state.gct = header[10] & 0x80;
-    gd_state.gctb = (header[10] & 0x03) + 1;
+    gd_state.gctb = (header[10] & 0x07) + 1;
+    printf("header[10] %d\n", header[10]);
     if (gd_state.gct) {
         const uint16_t count = (1 << gd_state.gctb);
         const uint16_t size = count * sizeof(color_t);
@@ -68,6 +75,7 @@ void gd_begin(int fd) {
             gd_state.status = 22;
         }
     }
+    gd_state.status = GD_OK;
 }
 
 void gd_end() {
@@ -77,6 +85,7 @@ void gd_end() {
 }
 
 void gd_info_get(gd_info_t *info) {
+    info->status = gd_state.status;
     info->status = gd_state.status;
     info->width = gd_state.width;
     info->height = gd_state.height;
@@ -244,6 +253,7 @@ void gd_sub_block_decode(gd_sub_block_decode_t *decode) {
 }
 
 void gd_global_colortab_get(gd_colortab_t *colortab) {
+    printf("cgtb %d\n", gd_state.gctb);
     colortab->size = 1 << (gd_state.gctb + 0); // parser added 1
     colortab->colors = gd_state.gctf;
 }

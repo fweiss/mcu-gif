@@ -2,6 +2,8 @@
 //#include <SDL_image.h>
 #include <SDL_timer.h>
 
+extern void reader();
+
 void drawMemory(SDL_Renderer *ren) {
     static uint16_t pix[] = {
         1, 1, 1, 1, 1, 2, 2, 2, 2, 2,
@@ -72,7 +74,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-
+    reader();
     drawMemory(ren);
 
 //    SDL_Surface* sur = NULL;

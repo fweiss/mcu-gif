@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <stdbool.h>
 
 typedef long (*read_func_t)(int fd, uint8_t *buf, long count);
 
@@ -36,6 +37,7 @@ typedef enum {
     GD_OK,                      // successful operation
     GD_BAD_SIGNATURE,           // bad GIF file signature
     GD_SUB_BLOCK_SIZE,          // attempted to decode beyond sub block size
+    GD_READ_END,                // end of stream reached before expected
 } gd_status_t;
 
 typedef struct {

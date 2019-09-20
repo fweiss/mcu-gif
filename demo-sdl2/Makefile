@@ -4,12 +4,14 @@ SDL2_DIR = ./SDL2.framework
 
 CC := clang
 
-CFLAGS :=  -ggdb3 -O0 --std=c99 -Wall -L. -lm -I$(SDL2_DIR)/Headers $(SDL2_DIR)/SDL2
+CFLAGS :=  -ggdb3 -O0 --std=c99 -Wall -L. -lm -I$(SDL2_DIR)/Headers $(SDL2_DIR)/SDL2 -I../src
 
 HDRS := 
 
 # add source files here
-SRCS := main.c
+SRCS := main.c reader.c ../src/gd.c
+
+INCLUDES = 
 
 # generate names of object files
 OBJS := $(SRCS:.c=.o)
