@@ -30,7 +30,10 @@ void reader() {
     printf("color tab size %d\n", colortab.size);
 
 
+    uint16_t ipixels[1024];
     gd_frame_t frame;
+    frame.pixels = ipixels;
     gd_render_frame(&frame);
-    printf("render frame: status: %d\n", frame.status);
+    printf("render frame: istatus: %d\n", frame.status);
+    printf("pixels 0. 9, 49: %d %d %d", ipixels[0], ipixels[4], ipixels[49]);
 }

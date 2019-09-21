@@ -40,7 +40,8 @@ typedef enum {
     GD_BAD_SIGNATURE,           // bad GIF file signature
     GD_SUB_BLOCK_SIZE,          // attempted to decode beyond sub block size
     GD_READ_END,                // end of stream reached before expected
-    GD_BLOCK_NOT_FOUND          // specific block type missing e.g. 0x2C
+    GD_BLOCK_NOT_FOUND,         // specific block type missing e.g. 0x2C
+    GD_NULL_POINTER,            // required data pointer is null
 } gd_status_t;
 
 typedef struct {

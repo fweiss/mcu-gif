@@ -86,7 +86,6 @@ void gd_end() {
 
 void gd_info_get(gd_info_t *info) {
     info->status = gd_state.status;
-    info->status = gd_state.status;
     info->width = gd_state.width;
     info->height = gd_state.height;
     info->gct = gd_state.gct;
@@ -158,6 +157,10 @@ void gd_find_block_image_descriptor() {
 }
 
 void gd_render_frame(gd_frame_t *frame) {
+    if (frame->pixels == NULL) {
+        frame->status = GD_NULL_POINTER;
+        return;
+    }
     gd_find_block_image_descriptor();
     if (gd_state.status != GD_OK) {
         return;

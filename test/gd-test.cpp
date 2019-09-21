@@ -126,6 +126,18 @@ TEST_F(Header, global_color_table_bits) {
     ASSERT_EQ(info.gctb, 7);
 }
 
+class RenderFrame : public ::testing::Test {
+protected:
+};
+
+TEST_F(RenderFrame, null_ipixels) {
+    gd_frame_t frame;
+    frame.pixels = 0;
+    gd_render_frame(&frame);
+
+    EXPECT_EQ(frame.status, GD_NULL_POINTER);
+}
+
 class RenderSquaresImage : public ::testing::Test {
 protected:
     void SetUp() override {
@@ -174,8 +186,14 @@ TEST_F(RenderSquaresImage, image_descriptor) {
     ASSERT_EQ(frame.height, 10);
     ASSERT_FALSE(frame.has_local_color_table);
 }
-TEST_F(RenderSquaresImage, color_table_indices) {
-    uint32_t rgb = gd_lookup_rgb(pixels[0]);
+TEST_F(RenderSquaresImage, ipixels) {
+    EXPECT_EQ(pixels[0], 1);
+    EXPECT_EQ(pixels[1], 1);
+    EXPECT_EQ(pixels[5], 2);
+    EXPECT_EQ(pixels[99], 1);
+}
+TEST_F(RenderSquaresImage, color_table_lookup) {
+    uint32_t rgb = gd_lookup_rgb(1);
     EXPECT_EQ(rgb, 0x00ff0000);
 }
 
