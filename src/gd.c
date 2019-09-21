@@ -48,7 +48,6 @@ void gd_begin(int fd) {
 
     uint8_t header[13];
     long count = READ(fd, header, sizeof(header));
-    printf("read %d\n", count);
     if (count != 13) {
         gd_state.status = GD_READ_END;
         return;
@@ -65,7 +64,6 @@ void gd_begin(int fd) {
 
     gd_state.gct = header[10] & 0x80;
     gd_state.gctb = (header[10] & 0x07) + 1;
-    printf("header[10] %d\n", header[10]);
     if (gd_state.gct) {
         const uint16_t count = (1 << gd_state.gctb);
         const uint16_t size = count * sizeof(color_t);
@@ -115,7 +113,6 @@ void gd_decode_data_sub_block(gd_frame_t *frame, uint8_t *sub_block, uint8_t sub
 void gd_read_image_data(gd_frame_t *frame) {
     uint8_t minimum_code_size;
     long count = READ(fd, &minimum_code_size, sizeof(minimum_code_size));
-    printf("minumum code size %d\n", minimum_code_size);
     uint8_t data_sub_block_size;
     count = READ(fd, &data_sub_block_size, sizeof(data_sub_block_size));
     uint8_t *sub_block = (uint8_t*)malloc(data_sub_block_size);
@@ -131,18 +128,16 @@ void gd_read_image_data(gd_frame_t *frame) {
 uint8_t gd_read_block_type() {
     uint8_t block_type;
     long count = READ(fd, &block_type, sizeof(block_type));
-    printf("block type %x\n", block_type);
     return block_type;
 }
 
 void gd_render_frame(gd_frame_t *frame) {
     uint8_t block_type;
-
-    long count = READ(fd, &block_type, sizeof(block_type));
+    block_type = gd_read_block_type();  // 0x21
     printf("block type %x\n", block_type);
     gd_read_extension_block();
 
-    count = READ(fd, &block_type, sizeof(block_type));
+    block_type = gd_read_block_type(); // 0x2C
     printf("block type %x\n", block_type);
     gd_read_image_descriptor(frame);
 
@@ -198,7 +193,6 @@ void gd_sub_block_decode(gd_sub_block_decode_t *decode) {
         extract = ondeck & extract_mask;
         ondeck >>= extract_bits;
         ondeck_bits -= extract_bits;
-        printf("extracted %0x\n", extract);
 
         if (extract == clear_code) {
             // todo reset current_code_size?
@@ -218,7 +212,6 @@ void gd_sub_block_decode(gd_sub_block_decode_t *decode) {
 
             // add to string table
             const uint16_t next_code = code_table_size++;
-            printf("next code %d\n", next_code);
 
             gd_code_string_t *string = &code_table[next_code];
             const uint16_t previous_string_size = previous_string->size;
@@ -253,7 +246,6 @@ void gd_sub_block_decode(gd_sub_block_decode_t *decode) {
 }
 
 void gd_global_colortab_get(gd_colortab_t *colortab) {
-    printf("cgtb %d\n", gd_state.gctb);
     colortab->size = 1 << (gd_state.gctb + 0); // parser added 1
     colortab->colors = gd_state.gctf;
 }
