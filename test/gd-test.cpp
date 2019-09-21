@@ -137,6 +137,7 @@ protected:
                 0x2C, 0x00, 0x00, 0x00, 0x00, 0x0A, 0x00, 0x0A, 0x00, 0x00, 0x02, 0x16, 0x8C, 0x2D, 0x99, 0x87, 0x2A, 0x1C, 0xDC, 0x33, 0xA0, 0x02, 0x75, 0xEC, 0x95, 0xFA, 0xA8, 0xDE, 0x60, 0x8C, 0x04, 0x91, 0x4C, 0x01, 0x00, 0x3B
         };
         USE_FILE_DATA(sample1);
+
         gd_init(f_read);
         gd_begin(fd);
         frame.pixels = pixels;
@@ -147,7 +148,7 @@ protected:
     }
     int fd = 1;
     gd_frame_t frame;
-    uint32_t pixels[10*10];
+    uint16_t pixels[10*10]; // actually color table indices
 };
 
 TEST_F(RenderSquaresImage, size) {
@@ -190,7 +191,7 @@ protected:
 TEST_F(DecodeLzw, sub_block_size) {
     uint8_t sub_block[] = { 0x8C, 0x2D, 0x99, 0x87, 0x2A };
 
-    uint8_t codes[1024] = { 0 };
+    uint16_t codes[1024] = { 0 };
     uint16_t code_count;
     gd_sub_block_decode_t decode;
     decode.minimum_code_size = 2;
@@ -207,7 +208,7 @@ TEST_F(DecodeLzw, sub_block_size) {
 TEST_F(DecodeLzw, simple) {
     uint8_t sub_block[] = { 0x8C, 0x2D, 0x99, 0x87, 0x2A, 0x1C, 0xDC, 0x33, 0xA0, 0x02, 0x75, 0xEC, 0x95, 0xFA, 0xA8, 0xDE, 0x60, 0x8C, 0x04, 0x91, 0x4C, 0x01 };
 
-    uint8_t codes[1024] = { 0 };
+    uint16_t codes[1024] = { 0 };
     uint16_t code_count;
     gd_sub_block_decode_t decode;
     decode.minimum_code_size = 2;
@@ -254,4 +255,23 @@ TEST_F(FileRead, eof_in_header) {
 
 
     EXPECT_EQ(info.status, GD_READ_END);
+}
+
+class BlockType : public ::testing::Test {
+protected:
+    int fd = 1;
+};
+
+TEST_F(BlockType, image_descriptor) {
+    const uint8_t data[14] = { 'G', 'I', 'F', '8', '9', 'a', 0x11, 0x00, 0x4, 0x00, 0xee, 0xff, 0x00, 0x00 };
+    USE_FILE_DATA(data);
+    gd_init(f_read);
+    gd_begin(fd);
+    gd_frame_t frame;
+    gd_render_frame(&frame);
+    gd_info_t info;
+    gd_info_get(&info);
+
+    EXPECT_EQ(info.status, GD_BLOCK_NOT_FOUND);
+
 }

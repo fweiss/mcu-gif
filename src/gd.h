@@ -3,6 +3,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+// todo allow configure either 8 bit or 16 bit color table indices
+
 typedef long (*read_func_t)(int fd, uint8_t *buf, long count);
 
 typedef struct {
@@ -25,7 +27,7 @@ typedef struct {
     uint16_t width;
     uint16_t height;
     bool has_local_color_table;
-    uint32_t *pixels;  // row-major array of pixel color table indices
+    uint16_t *pixels;  // row-major array of pixel color table indices
 } gd_frame_t;
 
 typedef struct {
@@ -38,13 +40,14 @@ typedef enum {
     GD_BAD_SIGNATURE,           // bad GIF file signature
     GD_SUB_BLOCK_SIZE,          // attempted to decode beyond sub block size
     GD_READ_END,                // end of stream reached before expected
+    GD_BLOCK_NOT_FOUND          // specific block type missing e.g. 0x2C
 } gd_status_t;
 
 typedef struct {
     uint8_t minimum_code_size;
     uint8_t sub_block_size;
     uint8_t *sub_block;
-    uint8_t *codes;
+    uint16_t *codes;
     uint16_t *code_count;
     gd_status_t status;
 } gd_sub_block_decode_t;

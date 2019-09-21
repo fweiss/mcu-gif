@@ -30,7 +30,7 @@ void reader() {
     printf("color tab size %d\n", colortab.size);
 
 
-//    gd_frame_t frame;
-//    gd_render_frame(&frame);
-//    printf("render frame: status: %d\n", frame.status);
+    gd_frame_t frame;
+    gd_render_frame(&frame);
+    printf("render frame: status: %d\n", frame.status);
 }

@@ -19,12 +19,13 @@ struct {
 
 #define READ(f, b, c) (gd_config.read(f, b, c))
 
-static uint8_t fd = 1;
+//static uint8_t fd = 1;
 
 /* decoder state */
 
 static struct {
     int status;
+    int fd;
     int width;
     int height;
     bool gct;
@@ -45,6 +46,7 @@ void gd_init(read_func_t read) {
 
 void gd_begin(int fd) {
     gd_state.status = GD_OK;
+    gd_state.fd = fd;
 
     uint8_t header[13];
     long count = READ(fd, header, sizeof(header));
@@ -93,57 +95,78 @@ void gd_info_get(gd_info_t *info) {
 
 void gd_read_extension_block() {
     uint8_t block[7];
-    long count = READ(fd, block, sizeof(block));
+    long count = READ(gd_state.fd, block, sizeof(block));
 }
 
 void gd_read_image_descriptor(gd_frame_t *frame) {
-    uint8_t block[10 -1];
-    long count = READ(fd, block, sizeof(block));
+    const uint8_t block_type_size = 1;
+    uint8_t block[10 - block_type_size];
+    long count = READ(gd_state.fd, block, sizeof(block));
+    // fixme check count
+    // skip left
+    // skip top
     frame->width = LE(block[4], block[5]);
     frame->height = LE(block[6], block[7]);
     frame->has_local_color_table = BIT(7, block[8]);
-}
-
-void gd_decode_data_sub_block(gd_frame_t *frame, uint8_t *sub_block, uint8_t sub_block_size) {
-    uint16_t first_code = sub_block[0] & 0x07;
-    uint16_t second_code = (sub_block[0] >> 3) & 0x07;
-    frame->pixels[0] = second_code;
+    // skip local color table size
 }
 
 void gd_read_image_data(gd_frame_t *frame) {
+    // todo read directly into gd_sub_clock_decode_t
     uint8_t minimum_code_size;
-    long count = READ(fd, &minimum_code_size, sizeof(minimum_code_size));
+    long count = READ(gd_state.fd, &minimum_code_size, sizeof(minimum_code_size));
+
     uint8_t data_sub_block_size;
-    count = READ(fd, &data_sub_block_size, sizeof(data_sub_block_size));
+    count = READ(gd_state.fd, &data_sub_block_size, sizeof(data_sub_block_size));
+
     uint8_t *sub_block = (uint8_t*)malloc(data_sub_block_size);
-    count = READ(fd, sub_block, data_sub_block_size);
+    count = READ(gd_state.fd, sub_block, data_sub_block_size);
 
-    gd_decode_data_sub_block(frame, sub_block, data_sub_block_size);
+//    gd_decode_data_sub_block(frame, sub_block, data_sub_block_size);
+    uint8_t codes[1024] = { 0 };
+    uint16_t code_count;
 
-    count = READ(fd, &data_sub_block_size, sizeof(data_sub_block_size));
+    gd_sub_block_decode_t decode;
+    decode.minimum_code_size = 2;
+    decode.sub_block_size = 2;
+    decode.sub_block = sub_block;
+    decode.codes = frame->pixels;
+    // todo check size, null
+    decode.code_count = &code_count;
+    gd_sub_block_decode(&decode);
+
+//    count = READ(gd_state.fd, &data_sub_block_size, sizeof(data_sub_block_size));
 
     free(sub_block);
 }
 
 uint8_t gd_read_block_type() {
     uint8_t block_type;
-    long count = READ(fd, &block_type, sizeof(block_type));
+    long count = READ(gd_state.fd, &block_type, sizeof(block_type));
     return block_type;
 }
 
-void gd_render_frame(gd_frame_t *frame) {
+void gd_find_block_image_descriptor() {
     uint8_t block_type;
     block_type = gd_read_block_type();  // 0x21
-    printf("block type %x\n", block_type);
     gd_read_extension_block();
 
     block_type = gd_read_block_type(); // 0x2C
-    printf("block type %x\n", block_type);
+    if (block_type != 0x2C) {
+        gd_state.status = GD_BLOCK_NOT_FOUND;
+    }
+}
+
+void gd_render_frame(gd_frame_t *frame) {
+    gd_find_block_image_descriptor();
+    if (gd_state.status != GD_OK) {
+        return;
+    }
     gd_read_image_descriptor(frame);
 
     gd_read_image_data(frame);
 
-    block_type = gd_read_block_type();
+//    block_type = gd_read_block_type();
 
     frame->status = 0;
 }
