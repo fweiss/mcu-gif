@@ -1,4 +1,5 @@
 #include "gd.h"
+#include "gd_internal.h"
 
 #include "gtest/gtest.h"
 #include "fff.h"
@@ -197,7 +198,7 @@ TEST_F(RenderSquaresImage, color_table_lookup) {
     EXPECT_EQ(rgb, 0x00ff0000);
 }
 
-class DecodeLzw : public ::testing::Test {
+class DecodeSubBlock : public ::testing::Test {
 protected:
     void SetUp() override {
 
@@ -206,7 +207,7 @@ protected:
     }
 };
 
-TEST_F(DecodeLzw, sub_block_size) {
+TEST_F(DecodeSubBlock, sub_block_size) {
     uint8_t sub_block[] = { 0x8C, 0x2D, 0x99, 0x87, 0x2A };
 
     uint16_t codes[1024] = { 0 };
@@ -223,7 +224,7 @@ TEST_F(DecodeLzw, sub_block_size) {
 
 }
 
-TEST_F(DecodeLzw, simple) {
+TEST_F(DecodeSubBlock, simple) {
     uint8_t sub_block[] = { 0x8C, 0x2D, 0x99, 0x87, 0x2A, 0x1C, 0xDC, 0x33, 0xA0, 0x02, 0x75, 0xEC, 0x95, 0xFA, 0xA8, 0xDE, 0x60, 0x8C, 0x04, 0x91, 0x4C, 0x01 };
 
     uint16_t codes[1024] = { 0 };
@@ -251,6 +252,23 @@ TEST_F(DecodeLzw, simple) {
     EXPECT_EQ(codes[95], 1);
 
 
+}
+
+class DecodeLzw : public ::testing::Test {
+protected:
+    void SetUp() {
+
+    }
+};
+
+TEST_F(DecodeLzw, initalize_code_table) {
+    gd_code_string_t code_table[2];
+    gd_lzw_t lzw;
+    lzw.code_table = code_table;
+    lzw.code_table_size = 2;
+    gd_lzw_decode_next(0x04, &lzw);
+
+    EXPECT_EQ(code_table[1].size, 1);
 }
 
 class FileRead : public ::testing::Test {

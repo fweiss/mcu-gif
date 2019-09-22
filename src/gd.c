@@ -1,4 +1,5 @@
 #include "gd.h"
+#include "gd_internal.h"
 
 #include <string.h>
 #include <stdlib.h>
@@ -32,11 +33,6 @@ static struct {
     uint8_t gctb;
     color_t *gctf;
 } gd_state;
-
-typedef struct {
-    uint8_t size;
-    uint16_t *characters;
-} gd_code_string_t;
 
 static void debug_code_table(gd_code_string_t *code_strings, uint16_t code_strings_size) {
     for (int i=0; i<code_strings_size; i++) {
@@ -195,14 +191,61 @@ void gd_code_table_init(gd_code_string_t *table, uint8_t code_size) {
         string->characters[0] = i;
         string->size = 1;
     }
+    // optional for debugging
+    table[code_size].size = 0;
+    table[code_size + 1].size = 0;
+}
+
+void gd_lzw_decode_next(uint16_t extract, gd_lzw_t *lzw) {
+    // fixme these are relative to code size
+    const uint16_t clear_code = 4;
+    const uint16_t end_of_information_code = 5;
+
+    if (extract == clear_code) {
+        // todo reset current_code_size?
+        gd_code_table_init(lzw->code_table, lzw->current_code_size);
+        lzw->code_table_size = 6;
+    } else if (extract == end_of_information_code) {
+        lzw->status = GD_OK;
+        return;
+    } else if (lzw->previous_string == NULL) {
+        *lzw->codes++ = extract;
+        lzw->previous_string = &lzw->code_table[extract];
+    } else {
+        // get prefix from prior string
+        const bool found = extract < lzw->code_table_size;
+        const gd_code_string_t *output_string = found ? &lzw->code_table[extract] : lzw->previous_string;
+        const uint16_t k_code = output_string->characters[0];
+
+        // add to string table
+        const uint16_t next_code = lzw->code_table_size++;
+        gd_code_string_t *string = &lzw->code_table[next_code];
+
+        const uint16_t previous_string_size = lzw->previous_string->size;
+        string->size = previous_string_size + 1;
+        string->characters = (uint16_t*)malloc(string->size * sizeof(uint16_t));
+        for (int k=0; k<previous_string_size; k++) {
+            string->characters[k] = lzw->previous_string->characters[k];
+        }
+        string->characters[previous_string_size] = k_code;
+
+        // output the string
+        for (int j=0; j<output_string->size; j++) {
+            *lzw->codes++ = output_string->characters[j];
+        }
+        if (!found) {
+            *lzw->codes++ = k_code;
+        }
+
+        lzw->previous_string = string;
+    }
+
 }
 
 void gd_sub_block_decode(gd_sub_block_decode_t *decode) {
     uint16_t *start = decode->codes;
 
     uint8_t current_code_size = 1 << decode->minimum_code_size;
-    const uint16_t clear_code = 4;
-    const uint16_t end_of_information_code = 5;
 
     gd_code_string_t code_table[100];
     uint8_t code_table_size = 6;
@@ -217,6 +260,14 @@ void gd_sub_block_decode(gd_sub_block_decode_t *decode) {
     uint8_t advance_bits = 0;
     ondeck = 0;
     gd_code_string_t *previous_string = NULL;
+
+    // some of these are reinitialized
+    gd_lzw_t lzw;
+    lzw.code_table = code_table;
+    lzw.current_code_size = current_code_size;
+    lzw.previous_string = NULL;
+    lzw.codes = decode->codes;
+
     for (int i=0; i<100; i++) {
         if (advance_bits == 0) {
             if (decode->sub_block_size-- == 0) {
@@ -238,56 +289,19 @@ void gd_sub_block_decode(gd_sub_block_decode_t *decode) {
 
         printf("extract: %0x\n", extract);
 
-        if (extract == clear_code) {
-            // todo reset current_code_size?
-            gd_code_table_init(code_table, current_code_size);
-            code_table_size = 6;
-        } else if (extract == end_of_information_code) {
-            decode->status = GD_OK;
-            break;
-        } else if (previous_string == NULL) {
-            *decode->codes++ = extract;
-            previous_string = &code_table[extract];
-        } else {
-            // get prefix from prior string
-            const bool found = extract < code_table_size;
-            const gd_code_string_t *output_string = found ? &code_table[extract] : previous_string;
-            const uint16_t k_code = output_string->characters[0];
+        gd_lzw_decode_next(extract, &lzw);
 
-            // add to string table
-            const uint16_t next_code = code_table_size++;
-
-            gd_code_string_t *string = &code_table[next_code];
-            const uint16_t previous_string_size = previous_string->size;
-            string->size = previous_string_size + 1;
-            string->characters = (uint16_t*)malloc(string->size * sizeof(uint16_t));
-            for (int k=0; k<previous_string_size; k++) {
-                string->characters[k] = previous_string->characters[k];
-            }
-            string->characters[previous_string_size] = k_code;
-
-            // output the string
-            for (int j=0; j<output_string->size; j++) {
-                *decode->codes++ = output_string->characters[j];
-            }
-            if (!found) {
-                *decode->codes++ = k_code;
-            }
-
-            previous_string = string;
-
-            // increase code size
-            if (code_table_size == 8) {
-                extract_bits = 4;
-                extract_mask = (1 << extract_bits) - 1;
-            }
-            if (code_table_size == 32) {
-                extract_bits = 5;
-                extract_mask = (1 << extract_bits) - 1;
-            }
+        // increase code size
+        if (lzw.code_table_size == 8) {
+            extract_bits = 4;
+            extract_mask = (1 << extract_bits) - 1;
+        }
+        if (lzw.code_table_size == 32) {
+            extract_bits = 5;
+            extract_mask = (1 << extract_bits) - 1;
         }
     }
-    printf("output count %d\n", decode->codes - start);
+    printf("output count %ld\n", decode->codes - start);
     for (int i=0; i<decode->codes - start; i++)
         printf("code[%d] %d\n", i, start[i]);
     debug_code_table(code_table, code_table_size);
