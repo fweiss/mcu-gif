@@ -38,6 +38,19 @@ typedef struct {
     uint16_t *characters;
 } gd_code_string_t;
 
+static void debug_code_table(gd_code_string_t *code_strings, uint16_t code_strings_size) {
+    for (int i=0; i<code_strings_size; i++) {
+        const gd_code_string_t *code_string = &code_strings[i];
+        printf("string[%d] ", i);
+        if (code_string->size && code_string->characters) {
+            for (int j=0; j<code_string->size; j++) {
+                printf("0x%0x, ", code_string->characters[j]);
+            }
+        }
+        printf("\n");
+    }
+}
+
 /* api functions */
 
 void gd_init(read_func_t read) {
@@ -125,9 +138,10 @@ void gd_read_image_data(gd_frame_t *frame) {
     uint8_t codes[1024] = { 0 };
     uint16_t code_count;
 
+    printf("input count %d\n", data_sub_block_size);
     gd_sub_block_decode_t decode;
     decode.minimum_code_size = 2;
-    decode.sub_block_size = 2;
+    decode.sub_block_size = data_sub_block_size;
     decode.sub_block = sub_block;
     decode.codes = frame->pixels;
     // todo check size, null
@@ -184,6 +198,8 @@ void gd_code_table_init(gd_code_string_t *table, uint8_t code_size) {
 }
 
 void gd_sub_block_decode(gd_sub_block_decode_t *decode) {
+    uint16_t *start = decode->codes;
+
     uint8_t current_code_size = 1 << decode->minimum_code_size;
     const uint16_t clear_code = 4;
     const uint16_t end_of_information_code = 5;
@@ -219,6 +235,8 @@ void gd_sub_block_decode(gd_sub_block_decode_t *decode) {
         extract = ondeck & extract_mask;
         ondeck >>= extract_bits;
         ondeck_bits -= extract_bits;
+
+        printf("extract: %0x\n", extract);
 
         if (extract == clear_code) {
             // todo reset current_code_size?
@@ -269,6 +287,10 @@ void gd_sub_block_decode(gd_sub_block_decode_t *decode) {
             }
         }
     }
+    printf("output count %d\n", decode->codes - start);
+    for (int i=0; i<decode->codes - start; i++)
+        printf("code[%d] %d\n", i, start[i]);
+    debug_code_table(code_table, code_table_size);
 }
 
 void gd_global_colortab_get(gd_colortab_t *colortab) {

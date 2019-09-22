@@ -5,6 +5,8 @@ SRCDIR = ../src
 TESTDIR = .
 OBJDIR = build
 
+GTEST_FLAGS = --gtest_filter=DecodeLzw.simple
+
 include local.mk
 include gtest.mk
 
@@ -23,7 +25,7 @@ debug:
 
 # run the test
 test: $(OBJDIR)/$(TEST)
-	$<
+	$<  $(GTEST_FLAGS)
 
 # link the test
 $(OBJDIR)/$(TEST): $(OBJDIR)/$(TEST).o $(LDLIBS) $(OBJDIR)/gtest_main.o $(OBJDIR)/$(UNIT).o $(OBJDIR)/$(UNIT).o
