@@ -5,7 +5,7 @@ SRCDIR = ../src
 TESTDIR = .
 OBJDIR = build
 
-GTEST_FLAGS = --gtest_filter=DecodeLzw.initalize_code_table
+GTEST_FLAGS = --gtest_filter=DecodeLzw.*
 
 include local.mk
 include gtest.mk

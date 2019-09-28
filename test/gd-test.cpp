@@ -259,16 +259,31 @@ protected:
     void SetUp() {
 
     }
+    gd_lzw_t lzw;
+    gd_string_t string_table[1024];
+    void createCodeTable(uint16_t code_size) {
+        lzw.code_size = code_size;
+        lzw.string_table_size_max = sizeof(string_table);
+        lzw.string_table = string_table;
+    }
 };
 
-TEST_F(DecodeLzw, initalize_code_table) {
-    gd_code_string_t code_table[2];
-    gd_lzw_t lzw;
-    lzw.code_table = code_table;
-    lzw.code_table_size = 2;
-    gd_lzw_decode_next(0x04, &lzw);
+// todo code_size < 2 error
 
-    EXPECT_EQ(code_table[1].size, 1);
+TEST_F(DecodeLzw, initalize_minimal_code_table) {
+    const uint8_t code_size = 2;
+    createCodeTable(code_size);
+    gd_lzw_decode_next(&lzw, 0x04);
+
+    EXPECT_EQ(lzw.string_table_size, 6); // include clear code and end of ionof code
+    ASSERT_EQ(lzw.string_table[0].size, 1);
+    ASSERT_EQ(lzw.string_table[1].size, 1);
+    ASSERT_EQ(lzw.string_table[2].size, 1);
+    EXPECT_EQ(lzw.string_table[3].characters[0], 3);
+}
+
+TEST_F(DecodeLzw, initialize_sample_code_table) {
+    const uint8_t code_size = 2;
 }
 
 class FileRead : public ::testing::Test {

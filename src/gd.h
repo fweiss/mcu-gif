@@ -48,7 +48,7 @@ typedef struct {
     uint8_t minimum_code_size;
     uint8_t sub_block_size;
     uint8_t *sub_block;
-    uint16_t *codes;
+    uint16_t *codes; // fixme s/b index stream
     uint16_t *code_count;
     gd_status_t status;
 } gd_sub_block_decode_t;
