@@ -257,22 +257,19 @@ TEST_F(DecodeSubBlock, simple) {
 class DecodeLzw : public ::testing::Test {
 protected:
     void SetUp() {
-
+        lzw.code_size = 2;
+        lzw.string_table_size_max = sizeof(string_table);
+        lzw.string_table = string_table;
+        lzw.characters = characters;
     }
     gd_lzw_t lzw;
     gd_string_t string_table[1024];
-    void createCodeTable(uint16_t code_size) {
-        lzw.code_size = code_size;
-        lzw.string_table_size_max = sizeof(string_table);
-        lzw.string_table = string_table;
-    }
+    uint16_t characters[1024];
 };
 
 // todo code_size < 2 error
 
 TEST_F(DecodeLzw, initalize_minimal_code_table) {
-    const uint8_t code_size = 2;
-    createCodeTable(code_size);
     gd_lzw_decode_next(&lzw, 0x04);
 
     EXPECT_EQ(lzw.string_table_size, 6); // include clear code and end of ionof code
@@ -283,7 +280,18 @@ TEST_F(DecodeLzw, initalize_minimal_code_table) {
 }
 
 TEST_F(DecodeLzw, initialize_sample_code_table) {
-    const uint8_t code_size = 2;
+    gd_lzw_decode_next(&lzw, 0x04);
+    gd_lzw_decode_next(&lzw, 0x01);
+
+    EXPECT_EQ(lzw.string_table_size, 6);
+}
+
+TEST_F(DecodeLzw, add_string_table) {
+    gd_lzw_decode_next(&lzw, 0x04);
+    gd_lzw_decode_next(&lzw, 0x03);
+    gd_lzw_decode_next(&lzw, 0x06);
+
+    EXPECT_EQ(lzw.string_table_size, 7);
 }
 
 class FileRead : public ::testing::Test {

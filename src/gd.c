@@ -206,39 +206,43 @@ void gd_lzw_decode_next(gd_lzw_t *lzw, uint16_t code) {
         const uint16_t string_table_size = 1 << lzw->code_size;
         gd_string_table_init(lzw->string_table, string_table_size);
         lzw->string_table_size = string_table_size + 2;
+        lzw->previous_string = NULL;
     } else if (code == end_of_information_code) {
         lzw->status = GD_OK;
         return;
-    } else if (lzw->previous_string == NULL) {
-        lzw->previous_string = &lzw->string_table[code];
-        // optimized string_table[code]->characters[0]
-        *lzw->characters++ = code;
     } else {
-        // get prefix from prior string
-        const bool found = code < lzw->string_table_size;
-        const gd_string_t *output_string = found ? &lzw->string_table[code] : lzw->previous_string;
-        const uint16_t k_character = output_string->characters[0];
+        if (lzw->previous_string == NULL) {
+            lzw->previous_string = &lzw->string_table[code];
+            // optimized string_table[code]->characters[0]
+            *lzw->characters++ = code;
+            return;
+        } else {
+            // get prefix from prior string
+            const bool found = code < lzw->string_table_size;
+            const gd_string_t *output_string = found ? &lzw->string_table[code] : lzw->previous_string;
+            const uint16_t k_character = output_string->characters[0];
 
-        // add to string table
-        const uint16_t next_code = lzw->string_table_size++;
-        gd_string_t *string = &lzw->string_table[next_code];
-        const uint16_t previous_string_size = lzw->previous_string->size;
-        string->size = previous_string_size + 1;
-        string->characters = (uint16_t*)malloc(string->size * sizeof(uint16_t));
-        for (int k=0; k<previous_string_size; k++) {
-            string->characters[k] = lzw->previous_string->characters[k];
-        }
-        string->characters[previous_string_size] = k_character;
+            // add to string table
+            const uint16_t next_code = lzw->string_table_size++;
+            gd_string_t *string = &lzw->string_table[next_code];
+            const uint16_t previous_string_size = lzw->previous_string->size;
+            string->size = previous_string_size + 1;
+            string->characters = (uint16_t*)malloc(string->size * sizeof(uint16_t));
+            for (int k=0; k<previous_string_size; k++) {
+                string->characters[k] = lzw->previous_string->characters[k];
+            }
+            string->characters[previous_string_size] = k_character;
 
-        // output the string
-        for (int j=0; j<output_string->size; j++) {
-            *lzw->characters++ = output_string->characters[j];
-        }
-        if (!found) {
-            *lzw->characters++ = k_character;
-        }
+            // output the string
+            for (int j=0; j<output_string->size; j++) {
+                *lzw->characters++ = output_string->characters[j];
+            }
+            if (!found) {
+                *lzw->characters++ = k_character;
+            }
 
-        lzw->previous_string = string;
+            lzw->previous_string = string;
+        }
     }
 
 }
