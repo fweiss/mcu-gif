@@ -261,10 +261,12 @@ protected:
         lzw.string_table_size_max = sizeof(string_table);
         lzw.string_table = string_table;
         lzw.characters = characters;
+        lzw.characters_size = 0;
     }
     gd_lzw_t lzw;
     gd_string_t string_table[1024];
     uint16_t characters[1024];
+    const uint8_t codes_1[36] = { 4, 1, 6, 6, 2, 9, 9, 7, 8, 10, 2, 12, 1, 14, 15, 6, 0, 21, 0, 10, 7, 22, 23, 18, 26, 7, 10, 29, 13, 24, 12, 18, 16, 36, 12, 5 };
 };
 
 // todo code_size < 2 error
@@ -272,7 +274,7 @@ protected:
 TEST_F(DecodeLzw, initalize_minimal_code_table) {
     gd_lzw_decode_next(&lzw, 0x04);
 
-    EXPECT_EQ(lzw.string_table_size, 6); // include clear code and end of ionof code
+    EXPECT_EQ(lzw.string_table_size, 6); // include clear code and end code
     ASSERT_EQ(lzw.string_table[0].size, 1);
     ASSERT_EQ(lzw.string_table[1].size, 1);
     ASSERT_EQ(lzw.string_table[2].size, 1);
@@ -292,6 +294,16 @@ TEST_F(DecodeLzw, add_string_table) {
     gd_lzw_decode_next(&lzw, 0x06);
 
     EXPECT_EQ(lzw.string_table_size, 7);
+}
+
+TEST_F(DecodeLzw, code_size) {
+    for (int i=0; i<6; i++) {
+        gd_lzw_decode_next(&lzw, codes_1[i]);
+    }
+
+    EXPECT_EQ(lzw.string_table_size, 4+2+6-2);
+    EXPECT_EQ(lzw.characters_size, 10);
+    EXPECT_EQ(lzw.characters[9], 1);
 }
 
 class FileRead : public ::testing::Test {

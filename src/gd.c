@@ -235,10 +235,10 @@ void gd_lzw_decode_next(gd_lzw_t *lzw, uint16_t code) {
 
             // output the string
             for (int j=0; j<output_string->size; j++) {
-                *lzw->characters++ = output_string->characters[j];
+                lzw->characters[lzw->characters_size++] = output_string->characters[j];
             }
             if (!found) {
-                *lzw->characters++ = k_character;
+                lzw->characters[lzw->characters_size++] = k_character;
             }
 
             lzw->previous_string = string;
