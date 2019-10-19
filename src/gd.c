@@ -212,19 +212,19 @@ void gd_lzw_decode_next(gd_lzw_t *lzw, uint16_t code) {
         return;
     } else {
         if (lzw->previous_string == NULL) {
-            lzw->previous_string = &lzw->string_table[code];
             // optimized string_table[code]->characters[0]
             *lzw->characters++ = code;
+            lzw->previous_string = &lzw->string_table[code];
             return;
         } else {
             // get prefix from prior string
             const bool found = code < lzw->string_table_size;
-            const gd_string_t *output_string = found ? &lzw->string_table[code] : lzw->previous_string;
+            gd_string_t *output_string = found ? &lzw->string_table[code] : lzw->previous_string;
             const uint16_t k_character = output_string->characters[0];
 
             // add to string table
-            const uint16_t next_code = lzw->string_table_size++;
-            gd_string_t *string = &lzw->string_table[next_code];
+            const uint16_t next_string_index = lzw->string_table_size++;
+            gd_string_t *string = &lzw->string_table[next_string_index];
             const uint16_t previous_string_size = lzw->previous_string->size;
             string->size = previous_string_size + 1;
             string->characters = (uint16_t*)malloc(string->size * sizeof(uint16_t));
@@ -241,7 +241,7 @@ void gd_lzw_decode_next(gd_lzw_t *lzw, uint16_t code) {
                 lzw->characters[lzw->characters_size++] = k_character;
             }
 
-            lzw->previous_string = string;
+            lzw->previous_string = found ? output_string : string;
         }
     }
 
