@@ -6,7 +6,7 @@ TESTDIR = .
 OBJDIR = build
 
 # can use wildcards, default is all, others class.*, etc
-GTEST_FLAGS = --gtest_filter=BadSignature.*:DecodeLzw.*:FileRead.*:Header.*:RenderFrame.*:-DecodeSubBlock.*:-RenderSquaresImage.ipixels
+GTEST_FLAGS = --gtest_filter=Broom.*:BadSignature.*:DecodeLzw.*:FileRead.*:Header.*:RenderFrame.*:-DecodeSubBlock.*:-RenderSquaresImage.ipixels
 #GTEST_FLAGS = --gtest_filter=RenderSquaresImage.ipixels
 
 include local.mk
@@ -20,6 +20,9 @@ LDLIBS = $(OBJDIR)/libgtest.a $(OBJDIR)/libgmock.a
 UNIT = gd
 TEST = $(UNIT)-test
 
+# all the test .o files that need to be linked
+TEST_OBJS = $(patsubst %.cpp,$(OBJDIR)/%.o,$(wildcard *-test.cpp))
+
 all: $(OBJDIR)/$(TEST).o $(LDLIBS) $(OBJDIR)/gtest_main.o $(OBJDIR)/$(UNIT).o
 
 debug:
@@ -30,7 +33,8 @@ test: $(OBJDIR)/$(TEST)
 	$<  $(GTEST_FLAGS)
 
 # link the test
-$(OBJDIR)/$(TEST): $(OBJDIR)/$(TEST).o $(LDLIBS) $(OBJDIR)/gtest_main.o $(OBJDIR)/$(UNIT).o $(OBJDIR)/$(UNIT).o
+# $(OBJDIR)/gtest_main.o 
+$(OBJDIR)/$(TEST): $(LDLIBS) $(OBJDIR)/$(UNIT).o $(OBJDIR)/$(UNIT).o $(OBJDIR)/gtest_main.o $(TEST_OBJS)
 	$(CXX) -o $@ $^
 
 # compile the tests
