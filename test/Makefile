@@ -6,7 +6,7 @@ TESTDIR = .
 OBJDIR = build
 
 # can use wildcards, default is all, others class.*, etc
-GTEST_FLAGS = --gtest_filter=Broom.*:BadSignature.*:DecodeLzw.*:FileRead.*:Header.*:RenderFrame.*:-DecodeSubBlock.*:-RenderSquaresImage.ipixels
+GTEST_FLAGS = --gtest_filter=BadSignature.*:DecodeLzw.*:FileRead.*:Header.*:RenderFrame.*:-DecodeSubBlock.*:-RenderSquaresImage.ipixels
 #GTEST_FLAGS = --gtest_filter=RenderSquaresImage.ipixels
 
 include local.mk
