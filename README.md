@@ -67,4 +67,8 @@ https://www.geeksforgeeks.org/sdl-library-in-c-c-with-examples/
 https://lazyfoo.net/tutorials/SDL/01_hello_SDL/mac/index.php
 
 https://www.willusher.io/sdl2%20tutorials/2013/08/17/lesson-1-hello-world
+
+Some good insights into TDD applied to GIF decoding:
+
+http://debuggable.com/posts/test-driven-development-in-real-world-apps:480f4dd5-514c-45f2-b3dc-4a16cbdd56cb
  
