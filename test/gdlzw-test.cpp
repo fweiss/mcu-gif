@@ -2,7 +2,7 @@
 #include "gd_internal.h"
 
 #include "gtest/gtest.h"
-#include "fff.h"
+//#include "fff.h"
 
 class DecodeLzw : public ::testing::Test {
 protected:
@@ -17,11 +17,13 @@ protected:
     gd_string_t string_table[1024];
     uint16_t characters[1024];
     const uint8_t codes_1[36] = { 4, 1, 6, 6, 2, 9, 9, 7, 8, 10, 2, 12, 1, 14, 15, 6, 0, 21, 0, 10, 7, 22, 23, 18, 26, 7, 10, 29, 13, 24, 12, 18, 16, 36, 12, 5 };
+
+    void test_initalize_minimal_code_table();
 };
 
 // todo code_size < 2 error
 
-TEST_F(DecodeLzw, initalize_minimal_code_table) {
+TEST_F(DecodeLzw, test_initalize_minimal_code_table) {
     gd_lzw_decode_next(&lzw, 0x04);
 
     EXPECT_EQ(lzw.string_table_size, 6); // include clear code and end code
@@ -96,4 +98,17 @@ TEST_F(DecodeLzw, string_table_21) {
     ASSERT_EQ(lzw.string_table_size, 6+21);
     gd_string_t *string = &lzw.string_table[6+21-1];
 //    EXPECT_EQ(string->size, 2);
+}
+
+TEST_F(DecodeLzw, four_one) {
+    gd_lzw_decode_next(&lzw, 4); // init
+    gd_lzw_decode_next(&lzw, 1); // freebee
+    gd_lzw_decode_next(&lzw, 1); // 6 = [ 1 ]
+    gd_lzw_decode_next(&lzw, 1); // 7 = [ 1, 1 ]
+
+    EXPECT_EQ(lzw.string_table_size, 8);
+    gd_string_t *string = &lzw.string_table[7];
+    ASSERT_EQ(string->size, 2);
+    EXPECT_EQ(string->characters[0], 1);
+    EXPECT_EQ(string->characters[1], 1);
 }

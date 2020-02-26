@@ -9,7 +9,11 @@ OBJDIR = build
 GTEST_FLAGS = --gtest_filter=BadSignature.*:DecodeLzw.*:FileRead.*:Header.*:RenderFrame.*:-DecodeSubBlock.*:-RenderSquaresImage.ipixels
 #GTEST_FLAGS = --gtest_filter=RenderSquaresImage.ipixels
 
-include local.mk
+#include local.mk
+
+GTEST_HOME = ../remote/googletest
+FFF_HOME = ../remote/fff
+
 include gtest.mk
 
 CPLUS_INCLUDE_PATH = -I$(SRCDIR) -I$(GTEST_HOME)/googletest/include -I$(FFF_HOME)
