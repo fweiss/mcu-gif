@@ -39,7 +39,7 @@ test: $(OBJDIR)/$(TEST)
 # link the test
 # $(OBJDIR)/gtest_main.o 
 $(OBJDIR)/$(TEST): $(OBJDIR)/$(UNIT).o $(OBJDIR)/$(UNIT).o $(OBJDIR)/gtest_main.o $(TEST_OBJS) $(LDLIBS)
-	$(CXX) -o $@ $^
+	$(CXX) -o $@ $^ -lpthread
 
 # compile the tests
 $(OBJDIR)/%.o: $(TESTDIR)/%.cpp $(SRCDIR)/$(UNIT).h
