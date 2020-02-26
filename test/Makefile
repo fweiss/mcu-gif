@@ -49,6 +49,7 @@ $(OBJDIR)/%.o: $(TESTDIR)/%.cpp $(SRCDIR)/$(UNIT).h
 $(OBJDIR)/%.o: $(SRCDIR)/%.c $(SRCDIR)/$(UNIT).h
 	$(CXX) -c $(CFLAGS) $(CPPFLAGS) $(C_INCLUDE_PATH) -I. -o $@ $<
 
+# but don't clean hiddn files like .gitignore
 .PHONY: clean
 clean:
 	rm $(OBJDIR)/*
