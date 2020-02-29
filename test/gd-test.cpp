@@ -83,21 +83,21 @@ TEST(begin, info) {
 
 //}
 
-class BadSignature : public ::testing::Test {
+class InvalidHeader : public ::testing::Test {
 protected:
+    uint8_t bad_signature[13] = { 'c' };
+    int fd = 1;
     void SetUp() override {
         USE_FAKE_FILE(bad_signature);
         gd_init(f_read);
         gd_begin(fd);
     }
-    uint8_t bad_signature[13] = { 'c' };
-    int fd = 1;
     void TearDown() override {
         gd_end();
     }
 };
 
-TEST_F(BadSignature, status) {
+TEST_F(InvalidHeader, status) {
     gd_info_t info;
     gd_info_get(&info);
 

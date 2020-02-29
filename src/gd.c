@@ -53,6 +53,9 @@ void gd_init(read_func_t read) {
     gd_config.read = read;
 }
 
+/*
+ * Begin the stream by parsing the header and logical screen descriptor.
+ */
 void gd_begin(int fd) {
     gd_state.status = GD_OK;
     gd_state.fd = fd;
