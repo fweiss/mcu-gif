@@ -67,22 +67,6 @@ TEST(begin, info) {
     ASSERT_EQ(info.width, 17);
 }
 
-//TEST(begin, bad_signature) {
-//    uint8_t bad_signature[13] = { 'c' };
-//    USE_FILE_DATA(bad_signature);
-//    f_read_fake.return_val = 1;
-//    f_read_fake.custom_fake = my_read;
-//
-//    gd_init(f_read);
-//    int fd = 1;
-//    gd_begin(fd);
-//    gd_info_t info;
-//    gd_info_get(&info);
-//
-//    ASSERT_EQ(info.status, 1);
-
-//}
-
 class InvalidHeader : public ::testing::Test {
 protected:
     uint8_t bad_signature[13] = { 'c' };
@@ -104,11 +88,12 @@ TEST_F(InvalidHeader, status) {
     ASSERT_EQ(info.status, GD_BAD_SIGNATURE);
 }
 
-class Header : public ::testing::Test {
+class ScreenDescriptor : public ::testing::Test {
 protected:
+    const uint8_t header1[13] = { 'G', 'I', 'F', '8', '9', 'a', 0x11, 0x00, 0x4, 0x00, 0xee, 0xff, 0x88 };
+    int fd = 1;
+    gd_info_t info;
     void SetUp() override {
-//        USE_FILE_DATA(header1);
-//        f_read_fake.custom_fake = my_read;
         USE_FAKE_FILE(header1);
         gd_init(f_read);
         gd_begin(fd);
@@ -117,24 +102,21 @@ protected:
     void TearDown() override {
         gd_end();
     }
-    const uint8_t header1[13] = { 'G', 'I', 'F', '8', '9', 'a', 0x11, 0x00, 0x4, 0x00, 0xee, 0xff, 0x88 };
-    int fd = 1;
-    gd_info_t info;
 };
 
-TEST_F(Header, width) {
+TEST_F(ScreenDescriptor, width) {
     ASSERT_EQ(info.width, 17);
 }
 
-TEST_F(Header, height) {
+TEST_F( ScreenDescriptor, height) {
     ASSERT_EQ(info.height, 4);
 }
 
-TEST_F(Header, global_color_table) {
+TEST_F(ScreenDescriptor, global_color_table) {
     ASSERT_EQ(info.gct, true);
 }
 
-TEST_F(Header, global_color_table_bits) {
+TEST_F(ScreenDescriptor, global_color_table_bits) {
     ASSERT_EQ(info.gctb, 7);
 }
 
