@@ -9,8 +9,7 @@ OBJDIR = build
 GTEST_FLAGS = --gtest_filter=BadSignature.*:DecodeLzw.*:FileRead.*:Header.*:RenderFrame.*:-DecodeSubBlock.*:-RenderSquaresImage.ipixels
 #GTEST_FLAGS = --gtest_filter=RenderSquaresImage.ipixels
 
-#include local.mk
-
+# submodules
 GTEST_HOME = ../remote/googletest
 FFF_HOME = ../remote/fff
 
