@@ -1,3 +1,6 @@
+#include "common-test.h"
+
+/*
 #include "gd.h"
 #include "gd_internal.h"
 
@@ -50,6 +53,7 @@ long my_read(int fd, uint8_t *buf, long count) {
 // f_read fake function declaration (see fff)
 FAKE_VALUE_FUNC(long, f_read, int, uint8_t*, long);
 
+
 TEST(begin, info) {
     USE_FILE_DATA(header1);
 //    f_read_data = header1;
@@ -66,6 +70,7 @@ TEST(begin, info) {
     ASSERT_EQ(info.status, GD_OK);
     ASSERT_EQ(info.width, 17);
 }
+*/
 
 class InvalidHeader : public ::testing::Test {
 protected:
@@ -74,14 +79,16 @@ protected:
     void SetUp() override {
         USE_FAKE_FILE(bad_signature);
         gd_init(f_read);
-        gd_begin(fd);
+//        gd_begin(fd);
     }
     void TearDown() override {
         gd_end();
     }
 };
 
+
 TEST_F(InvalidHeader, status) {
+    gd_begin(fd);
     gd_info_t info;
     gd_info_get(&info);
 
