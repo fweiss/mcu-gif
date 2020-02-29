@@ -33,21 +33,6 @@ Copy the framework to the project root directory
 ## Running the unit tests
 In the test directory, run ``make test``.
 
-### Setting up the unit tests
-Download the following:
-
-- gtest
-- fff test
-
-You can put them anywhere on your file system.
-
-Create a file ``local.mk`` in the test directory. This file will be included from the Makefile.
-It must define the following variables:
-
-- GTEST_HOME
-- FFF_HOME
-
-
 ## Links and references
 
 Really easy and comprehensive guide to decoding GIFs:
@@ -71,4 +56,6 @@ https://www.willusher.io/sdl2%20tutorials/2013/08/17/lesson-1-hello-world
 Some good insights into TDD applied to GIF decoding:
 
 http://debuggable.com/posts/test-driven-development-in-real-world-apps:480f4dd5-514c-45f2-b3dc-4a16cbdd56cb
+
+[The official W3C GIF89a specification](https://www.w3.org/Graphics/GIF/spec-gif89a.txt)
  
