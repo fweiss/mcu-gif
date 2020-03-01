@@ -81,13 +81,13 @@ void gd_begin(int fd) {
     if (gd_state.gct) {
         const uint16_t count = (1 << gd_state.gctb);
         const uint16_t size = count * sizeof(color_t);
+        // free in gd_end()
         gd_state.gctf = (color_t*)malloc(size);
         long read = READ(fd, (uint8_t*)gd_state.gctf, size);
-        if (read == 0) {
-            gd_state.status = 22;
+        if (read < size) {
+            gd_state.status = GD_READ_END;
         }
     }
-    gd_state.status = 44; //GD_OK;
 }
 
 void gd_end() {
