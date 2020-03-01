@@ -44,11 +44,11 @@ $(OBJDIR)/$(TEST): $(OBJDIR)/$(UNIT).o $(OBJDIR)/$(UNIT).o $(OBJDIR)/gtest_main.
 
 # compile the tests
 $(OBJDIR)/%.o: $(TESTDIR)/%.cpp $(SRCDIR)/$(UNIT).h
-	$(CXX) -c $(CFLAGS) $(CXXFLAGS) $(CPPFLAGS) $(CPLUS_INCLUDE_PATH) -o $@ $<
+	$(CXX) -c -o $@ $< $(CFLAGS) $(CXXFLAGS) $(CPPFLAGS) $(CPLUS_INCLUDE_PATH)
 
 # compile the source
 $(OBJDIR)/%.o: $(SRCDIR)/%.c $(SRCDIR)/$(UNIT).h
-	$(CXX) -c $(CFLAGS) $(CPPFLAGS) $(C_INCLUDE_PATH) -I. -o $@ $<
+	$(CXX) -c -o $@ $< $(CFLAGS) $(CPPFLAGS) $(C_INCLUDE_PATH) -I.
 
 # but don't clean hiddn files like .gitignore
 .PHONY: clean
