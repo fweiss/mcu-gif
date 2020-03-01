@@ -1,15 +1,15 @@
 #include "common-test.h"
 
+#define GIF89a 'G', 'I', 'F', '8', '9', 'a'
+
 const uint8_t color_table_spec = 0x80;
 
 // minimal is 2 rgb values
 #define GCT_MINIMAL 0x11, 0x22, 0x33, 0x44, 0x55, 0x66
 
-static const uint8_t eof_in_block[]  = { 'G', 'I', 'F', '8', '9', 'a', 0x11, 0x00, 0x4, 0x00, color_table_spec, 0xff, 0x88, 0x00 };
+static const uint8_t eof_in_block[]  = { GIF89a, 0x11, 0x00, 0x4, 0x00, color_table_spec, 0xff, 0x88, 0x00 };
 
-static const uint8_t minimal[]  = { 'G', 'I', 'F', '8', '9', 'a', 0x11, 0x00, 0x4, 0x00, color_table_spec, 0xff, 0x88, GCT_MINIMAL };
-
-static const uint8_t small[]  = { 'G', 'I', 'F', '8', '9', 'a', 0x11, 0x00, 0x4, 0x00, color_table_spec, 0xff, 0x88, GCT_MINIMAL, GCT_MINIMAL };
+static const uint8_t minimal[]  = { GIF89a, 0x11, 0x00, 0x4, 0x00, color_table_spec, 0xff, 0x88, GCT_MINIMAL };
 
 class GlobalColorTable : public ::testing::Test {
 protected:
