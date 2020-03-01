@@ -6,9 +6,7 @@ TESTDIR = .
 OBJDIR = build
 
 # can use wildcards, default is all, others class.*, etc
-#GTEST_FLAGS = --gtest_filter=InvalidHeader.*:DecodeLzw.*:FileRead.*:ScreenDescriptor.*:RenderFrame.*:-DecodeSubBlock.*:-RenderSquaresImage.ipixels
 #GTEST_FLAGS = --gtest_filter=RenderSquaresImage.ipixels
-#GTEST_FLAGS = --gtest_filter=InvalidHeader.status
 GTEST_FLAGS = --gtest_filter=-RenderSquaresImage.*:DecodeSubBlock.*
 
 # submodules
