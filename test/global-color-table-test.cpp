@@ -9,6 +9,7 @@ static const uint8_t eof_in_block[]  = { 'G', 'I', 'F', '8', '9', 'a', 0x11, 0x0
 
 static const uint8_t minimal[]  = { 'G', 'I', 'F', '8', '9', 'a', 0x11, 0x00, 0x4, 0x00, color_table_spec, 0xff, 0x88, GCT_MINIMAL };
 
+static const uint8_t small[]  = { 'G', 'I', 'F', '8', '9', 'a', 0x11, 0x00, 0x4, 0x00, color_table_spec, 0xff, 0x88, GCT_MINIMAL, GCT_MINIMAL };
 
 class GlobalColorTable : public ::testing::Test {
 protected:
@@ -39,6 +40,7 @@ TEST_F(GlobalColorTable, minimal) {
     gd_colortab_t gct;
     gd_global_colortab_get(&gct);
     ASSERT_EQ(gct.size, 2);
+    ASSERT_EQ(gct.colors[1].r, 0x44);
 }
 
 
