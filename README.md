@@ -38,6 +38,7 @@ I think RSpec is a good model for writing tests. There has been some effort to p
 
 https://github.com/zhangsu/ccspec
 
+https://github.com/zhangsu/ccspec-example
 
 ## Links and references
 
