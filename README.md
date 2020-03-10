@@ -33,6 +33,12 @@ Copy the framework to the project root directory
 ## Running the unit tests
 In the test directory, run ``make test``.
 
+## CCSpec
+I think RSpec is a good model for writing tests. There has been some effort to provide this for C/C++.
+
+https://github.com/zhangsu/ccspec
+
+
 ## Links and references
 
 Really easy and comprehensive guide to decoding GIFs:
