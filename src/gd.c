@@ -12,6 +12,8 @@
 #define LE(a, b) ((a) | (b << 8))
 #define BIT(bit, byte) ((1 << bit) & byte)
 
+#define LOG(s)
+
 /* file system abstractions */
 
 struct {
@@ -272,9 +274,11 @@ void gd_sub_block_decode(gd_sub_block_decode_t *decode) {
     // some of these are reinitialized
     gd_lzw_t lzw;
     lzw.string_table = code_table;
+    lzw.string_table_size_max = sizeof(code_table);
     lzw.code_size = current_code_size;
     lzw.previous_string = NULL;
     lzw.characters = decode->codes;
+    lzw.characters_size = 0;
 
     for (int i=0; i<100; i++) {
         if (advance_bits == 0) {
@@ -295,7 +299,7 @@ void gd_sub_block_decode(gd_sub_block_decode_t *decode) {
         ondeck >>= extract_bits;
         ondeck_bits -= extract_bits;
 
-        printf("extract: %0x\n", extract);
+        LOG(printf("extract: %0x\n", extract));
 
         gd_lzw_decode_next(&lzw, extract);
 
@@ -309,10 +313,10 @@ void gd_sub_block_decode(gd_sub_block_decode_t *decode) {
             extract_mask = (1 << extract_bits) - 1;
         }
     }
-    printf("output count %ld\n", decode->codes - start);
+    LOG(printf("output count %ld\n", decode->codes - start));
     for (int i=0; i<decode->codes - start; i++)
-        printf("code[%d] %d\n", i, start[i]);
-    debug_string_table(code_table, code_table_size);
+        LOG(printf("code[%d] %d\n", i, start[i]));
+    LOG(debug_string_table(code_table, code_table_size));
 }
 
 void gd_global_colortab_get(gd_colortab_t *colortab) {

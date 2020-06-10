@@ -6,8 +6,8 @@ TESTDIR = .
 OBJDIR = build
 
 # can use wildcards, default is all, others class.*, etc
-#GTEST_FLAGS = --gtest_filter=RenderSquaresImage.ipixels
-GTEST_FLAGS = --gtest_filter=-RenderSquaresImage.*:DecodeSubBlock.*
+# currently these are not working:
+GTEST_FLAGS = --gtest_filter=-RenderSquaresImage.ipixels:DecodeSubBlock.simple
 
 # submodules
 GTEST_HOME = ../remote/googletest
@@ -15,9 +15,11 @@ FFF_HOME = ../remote/fff
 
 include gtest.mk
 
+#DEBUG := -g -O0
+
 CPLUS_INCLUDE_PATH = -I$(SRCDIR) -I$(GTEST_HOME)/googletest/include -I$(FFF_HOME)
 C_INCLUDE_PATH = -I$(SRCDIR) -I$(GTEST_HOME)/googletest/include -I$(FFF_HOME)
-CXXFLAGS += -std=c++11 -DGTEST_USE_OWN_TR1_TUPLE=1
+CXXFLAGS += -std=c++11 -DGTEST_USE_OWN_TR1_TUPLE=1 $(DEBUG)
 LDLIBS = $(OBJDIR)/libgtest.a $(OBJDIR)/libgmock.a
 
 UNIT = gd
@@ -46,7 +48,7 @@ $(OBJDIR)/%.o: $(TESTDIR)/%.cpp $(SRCDIR)/$(UNIT).h
 
 # compile the source
 $(OBJDIR)/%.o: $(SRCDIR)/%.c $(SRCDIR)/$(UNIT).h
-	$(CXX) -c -o $@ $< $(CFLAGS) $(CPPFLAGS) $(C_INCLUDE_PATH) -I.
+	$(CXX) -c -o $@ $< $(CFLAGS) $(CPPFLAGS) $(C_INCLUDE_PATH) -I. $(DEBUG)
 
 # but don't clean hiddn files like .gitignore
 .PHONY: clean

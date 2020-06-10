@@ -26,6 +26,19 @@ Several portable GUI frameworks were investigated:
 - graphics.h - too old
 - openGL - may be poorly supported on OS X
 
+## Debugging
+Example on MacOS using lldb
+
+In CXXFLAGS, add ``-g -O0``
+
+Start the lldb debugger: ``lldb build/gd-test``
+
+Launch a process to debug: ``process launch --environment GTEST_FILTER=DecodeSubBlock.simple``
+
+Set a breakpoint: ``br set -f gd-test.cpp -l 148``
+
+Run to breakpoint: ``r``
+
 ### SDL2 setup for Mac
 Download the dmg
 Copy the framework to the project root directory
