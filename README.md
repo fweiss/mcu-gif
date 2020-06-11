@@ -26,6 +26,13 @@ Several portable GUI frameworks were investigated:
 - graphics.h - too old
 - openGL - may be poorly supported on OS X
 
+### SDL2 setup for Mac
+Download the dmg
+Copy the framework to the project root directory
+
+## Running the unit tests
+In the test directory, run ``make test``.
+
 ## Debugging
 Example on MacOS using lldb
 
@@ -39,12 +46,6 @@ Set a breakpoint: ``br set -f gd-test.cpp -l 148``
 
 Run to breakpoint: ``r``
 
-### SDL2 setup for Mac
-Download the dmg
-Copy the framework to the project root directory
-
-## Running the unit tests
-In the test directory, run ``make test``.
 
 ## CCSpec
 I think RSpec is a good model for writing tests. There has been some effort to provide this for C/C++.
