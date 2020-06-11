@@ -4,42 +4,13 @@
 
 extern void reader();
 
-void drawMemory(SDL_Renderer *renderer) {
-    static uint16_t pix[] = {
-        1, 1, 1, 1, 1, 2, 2, 2, 2, 2,
-        1, 1, 1, 1, 1, 2, 2, 2, 2, 2,
-        1, 1, 1, 1, 1, 2, 2, 2, 2, 2,
-        1, 1, 1, 0, 0, 0, 0, 2, 2, 2,
-        1, 1, 1, 0, 0, 0, 0, 2, 2, 2,
-        2, 2, 2, 0, 0, 0, 0, 1, 1, 1,
-        2, 2, 2, 0, 0, 0, 0, 1, 1, 1,
-        2, 2, 2, 2, 2, 1, 1, 1, 1, 1,
-        2, 2, 2, 2, 2, 1, 1, 1, 1, 1,
-        2, 2, 2, 2, 2, 1, 1, 1, 1, 1,
-    };
-    static uint32_t pct[4] = { 0xffffffff, 0xff000000, 0x0000ffff, 0x000000ff };
-    SDL_Rect rect;
-    rect.x = 50;
-    rect.y = 50;
-    rect.w = 10;
-    rect.h = 10;
+void drawMemory(SDL_Renderer *renderer);
 
-    SDL_RenderClear(renderer);
-    for (uint8_t y=0; y<10; y++) {
-        for (uint8_t x=0; x<10; x++) {
-            rect.x = x * 10 + 100;
-            rect.y = y * 10 + 100;
-            uint16_t i = y * 10 + x;
-            uint32_t c = pct[pix[i]];
-            uint8_t r = (c >> 24) & 0xff;;
-            uint8_t g = (c >> 16) & 0xff;
-            uint8_t b = (c >> 8) & 0xff;
-            uint8_t a = c & 0xff;
-            SDL_SetRenderDrawColor(renderer, r, g, b, a);
-            SDL_RenderFillRect(renderer, &rect);
-        }
-    }
+void draw(SDL_Renderer *renderer) {
+//    reader();
+	drawMemory(renderer);
 }
+
 int main(int argc, char *argv[])
 {
     printf("getting\n");
@@ -74,8 +45,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-//    reader();
-    drawMemory(renderer);
+    draw(renderer);
 
 //    SDL_Surface* sur = NULL;
 //    sur = SDL_GetWindowSurface(win);
@@ -157,3 +127,41 @@ int main(int argc, char *argv[])
     SDL_Quit();
     return 0;
 }
+
+void drawMemory(SDL_Renderer *renderer) {
+    static uint16_t pix[] = {
+        1, 1, 1, 1, 1, 2, 2, 2, 2, 2,
+        1, 1, 1, 1, 1, 2, 2, 2, 2, 2,
+        1, 1, 1, 1, 1, 2, 2, 2, 2, 2,
+        1, 1, 1, 0, 0, 0, 0, 2, 2, 2,
+        1, 1, 1, 0, 0, 0, 0, 2, 2, 2,
+        2, 2, 2, 0, 0, 0, 0, 1, 1, 1,
+        2, 2, 2, 0, 0, 0, 0, 1, 1, 1,
+        2, 2, 2, 2, 2, 1, 1, 1, 1, 1,
+        2, 2, 2, 2, 2, 1, 1, 1, 1, 1,
+        2, 2, 2, 2, 2, 1, 1, 1, 1, 1,
+    };
+    static uint32_t pct[4] = { 0xffffffff, 0xff000000, 0x0000ffff, 0x000000ff };
+    SDL_Rect rect;
+    rect.x = 50;
+    rect.y = 50;
+    rect.w = 10;
+    rect.h = 10;
+
+    SDL_RenderClear(renderer);
+    for (uint8_t y=0; y<10; y++) {
+        for (uint8_t x=0; x<10; x++) {
+            rect.x = x * 10 + 100;
+            rect.y = y * 10 + 100;
+            uint16_t i = y * 10 + x;
+            uint32_t c = pct[pix[i]];
+            uint8_t r = (c >> 24) & 0xff;;
+            uint8_t g = (c >> 16) & 0xff;
+            uint8_t b = (c >> 8) & 0xff;
+            uint8_t a = c & 0xff;
+            SDL_SetRenderDrawColor(renderer, r, g, b, a);
+            SDL_RenderFillRect(renderer, &rect);
+        }
+    }
+}
+
