@@ -5,10 +5,12 @@
 extern void reader();
 
 void drawMemory(SDL_Renderer *renderer);
+void drawFile(SDL_Renderer *renderer);
 
 void draw(SDL_Renderer *renderer) {
 //    reader();
 	drawMemory(renderer);
+//	drawFile(renderer);
 }
 
 int main(int argc, char *argv[])
@@ -46,63 +48,6 @@ int main(int argc, char *argv[])
     }
 
     draw(renderer);
-
-//    SDL_Surface* sur = NULL;
-//    sur = SDL_GetWindowSurface(win);
-//    SDL_FillRect(sur, NULL, SDL_MapRGB(sur->format, 255, 0, 0));
-
-
-#if 0
-//    std::string imagePath = getResourcePath("Lesson1") + "hello.bmp";
-    SDL_Surface *bmp = SDL_LoadBMP("./sample.bmp");
-    if (bmp == 0){
-        SDL_DestroyRenderer(ren);
-        SDL_DestroyWindow(win);
-        printf("SDL_LoadBMP Error: %s\n", SDL_GetError());
-        SDL_Quit();
-        return 1;
-    }
-    printf("binmap loaded\n");
-    SDL_Texture *tex = SDL_CreateTextureFromSurface(ren, bmp);
-    SDL_FreeSurface(bmp);
-    if (tex == 0){
-        SDL_DestroyRenderer(ren);
-        SDL_DestroyWindow(win);
-        printf("SDL_CreateTextureFromSurface Error: %s\n", SDL_GetError());
-        SDL_Quit();
-        return 1;
-    }
-
-    SDL_Texture *man = SDL_CreateTexture(ren, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STREAMING, 640, 480);
-    if (man == 0){
-        SDL_DestroyRenderer(ren);
-        SDL_DestroyWindow(win);
-        printf("SDL_CreateTextureFromSurface Error: %s\n", SDL_GetError());
-        SDL_Quit();
-        return 1;
-    }
-    void *pixels;
-    int pitch;
-    int st = SDL_LockTexture(man, NULL, &pixels, &pitch);
-    if (st != 0){
-        SDL_DestroyRenderer(ren);
-        SDL_DestroyWindow(win);
-        printf("SDL_LockTextture Error: %s\n", SDL_GetError());
-        SDL_Quit();
-        return 1;
-    }
-    uint32_t *a = pixels;
-    printf("size of %lu\n", sizeof(a[0]));
-    for (int i=0; i<4000; i++) {
-        a[i] = 0x20ff80ff;
-    }
-    SDL_UnlockTexture(man);
-
-
-    SDL_RenderClear(ren);
-//    SDL_RenderCopy(ren, man, NULL, NULL);
-    printf("update screen\n");
-#endif
 
     SDL_RenderPresent(renderer);
 
@@ -165,3 +110,56 @@ void drawMemory(SDL_Renderer *renderer) {
     }
 }
 
+void drawFile(SDL_Renderer *renderer) {
+//    std::string imagePath = getResourcePath("Lesson1") + "hello.bmp";
+    SDL_Surface *bmp = SDL_LoadBMP("./sample.bmp");
+    if (bmp == 0){
+//        SDL_DestroyRenderer(ren);
+//        SDL_DestroyWindow(win);
+        printf("SDL_LoadBMP Error: %s\n", SDL_GetError());
+//        SDL_Quit();
+        return;
+    }
+    printf("binmap loaded\n");
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, bmp);
+    SDL_FreeSurface(bmp);
+    if (texture == 0){
+//        SDL_DestroyRenderer(ren);
+//        SDL_DestroyWindow(win);
+        printf("SDL_CreateTextureFromSurface Error: %s\n", SDL_GetError());
+//        SDL_Quit();
+        return;
+    }
+
+    SDL_Texture *man = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STREAMING, 640, 480);
+    if (man == 0){
+//        SDL_DestroyRenderer(ren);
+//        SDL_DestroyWindow(win);
+        printf("SDL_CreateTextureFromSurface Error: %s\n", SDL_GetError());
+//        SDL_Quit();
+        return;
+    }
+
+#ifdef DIRECT_DRAW
+    void *pixels;
+    int pitch;
+    int st = SDL_LockTexture(man, NULL, &pixels, &pitch);
+    if (st != 0){
+//        SDL_DestroyRenderer(ren);
+//        SDL_DestroyWindow(win);
+        printf("SDL_LockTextture Error: %s\n", SDL_GetError());
+//        SDL_Quit();
+        return;
+    }
+    uint32_t *a = pixels;
+    printf("size of %lu\n", sizeof(a[0]));
+    for (int i=0; i<4000; i++) {
+        a[i] = 0x20ff80ff;
+    }
+    SDL_UnlockTexture(man);
+#endif
+
+    SDL_RenderClear(renderer);
+    SDL_RenderCopy(renderer, texture, NULL, NULL);
+    printf("update screen\n");
+}
