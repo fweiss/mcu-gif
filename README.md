@@ -14,6 +14,25 @@ It would be nice to try additional languages. For MCUs, C is the most common.
 
 > The test framework, gtest, is C++
 
+## Unit testing
+The main point of this project is to develop a GIF decoder using TDD.
+
+### Running the unit tests
+In the test directory, run ``make test``.
+
+### Debugging
+Example on MacOS using lldb
+
+In CXXFLAGS, add ``-g -O0``
+
+Start the lldb debugger: ``lldb build/gd-test``
+
+Launch a process to debug: ``process launch --environment GTEST_FILTER=DecodeSubBlock.simple``
+
+Set a breakpoint: ``br set -f gd-test.cpp -l 148``
+
+Run to breakpoint: ``r``
+
 ## Visual testing
 The visually verify the decoder, a small GUI is included. It can be run on the development host.
 
@@ -29,23 +48,6 @@ Several portable GUI frameworks were investigated:
 ### SDL2 setup for Mac
 Download the dmg
 Copy the framework to the project root directory
-
-## Running the unit tests
-In the test directory, run ``make test``.
-
-## Debugging
-Example on MacOS using lldb
-
-In CXXFLAGS, add ``-g -O0``
-
-Start the lldb debugger: ``lldb build/gd-test``
-
-Launch a process to debug: ``process launch --environment GTEST_FILTER=DecodeSubBlock.simple``
-
-Set a breakpoint: ``br set -f gd-test.cpp -l 148``
-
-Run to breakpoint: ``r``
-
 
 ## CCSpec
 I think RSpec is a good model for writing tests. There has been some effort to provide this for C/C++.
