@@ -8,6 +8,7 @@ using ccspec::core::before;
 using ccspec::core::it;
 using ccspec::expect;
 using ccspec::matchers::eq;
+using ccspec::matchers::be_truthy;
 
 // fake file
 static uint8_t *f_read_data = 0;
@@ -33,9 +34,9 @@ static uint8_t header_logical_screen_descriptor[13] =
 	'G', 'I', 'F', '8', '9', 'a',
 	0x09, 0x00, // width
 	0x09, 0x00, // height
-	0x00, // color map info
+	0x81, // color map info
 	0x00, // background color index
-	0x00 // aspect ration
+	0x00 // aspect ratio
 };
 
 #define FFILE(init) (f_open_memory(init, sizeof(init)))
@@ -64,6 +65,14 @@ describe("for 9x9 red-blue-white", [] {
 
 		it("height", [&info] {
 			expect(info.height).to(eq(9));
+		});
+
+		it("global color table flag", [&info] {
+			expect(info.globalColorTableFlag).to(be_truthy);
+		});
+
+		it("global color table size", [&] {
+			expect(info.globalColorTableSize).to(eq(4));
 		});
 	});
 

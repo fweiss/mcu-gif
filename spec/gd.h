@@ -4,6 +4,8 @@ typedef struct {
 	long (*read)(int, uint8_t*, long);
 	uint16_t width;
 	uint16_t height;
+	uint8_t globalColorTableFlag;
+	uint8_t globalColorTableSize;
 } gd_info_t;
 
 typedef struct {
