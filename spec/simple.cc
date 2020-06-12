@@ -11,8 +11,14 @@ using ccspec::matchers::eq;
 
 //extern int mul(int, int);
 
-void gd_decode() {
+typedef struct {
+	uint32_t *colorTable;
+	uint8_t pixels[9][9];;
+} gd_decode_t;
 
+void gd_decode(gd_decode_t *decode) {
+	decode->colorTable[0] = 0xff0000ff;
+	decode->pixels[0][0] = 0;
 }
 
 namespace simple {
@@ -21,16 +27,14 @@ auto addition_spec =
 describe("for 9x9 red-blue-white test file", [] {
 
 	describe("decodes indexed rgba", [] {
-		uint8_t pixels[9][9];
-		uint32_t colorTable[4];
+		gd_decode_t d;
 
-		before("each", [&colorTable, &pixels] {
-			colorTable[0] = 0xff0000ff;
-			pixels[0][0] = 0;
+		before("each", [&d] {
+			gd_decode(&d);
 		});
 
-		it("pixel[0][0] red", [&pixels, &colorTable] {
-			expect(colorTable[pixels[0][0]]).to(eq(0xff0000ff));
+		it("pixel[0][0] red", [&d] {
+			expect(d.colorTable[d.pixels[0][0]]).to(eq(0xff0000ff));
 		});
 
 	});
