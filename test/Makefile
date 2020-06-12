@@ -10,8 +10,8 @@ OBJDIR = build
 GTEST_FLAGS = --gtest_filter=-RenderSquaresImage.ipixels:DecodeSubBlock.simple
 
 # submodules
-GTEST_HOME = ../remote/googletest
-FFF_HOME = ../remote/fff
+GTEST_HOME = ../submodules/googletest
+FFF_HOME = ../submodules/fff
 
 include gtest.mk
 
