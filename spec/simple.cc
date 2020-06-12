@@ -16,6 +16,18 @@ namespace simple {
 auto addition_spec =
 describe("for 9x9 red-blue-white test file", [] {
 
+	describe("info", [] {
+		gd_info_t info;
+
+		before("each", [&info] {
+			gd_open(&info);
+		});
+
+		it("width", [&info] {
+			expect(info.width).to(eq(9));
+		});
+	});
+
 	describe("decodes indexed rgba", [] {
 		gd_decode_t d;
 
