@@ -13,20 +13,14 @@ using ccspec::matchers::eq;
 namespace simple {
 
 auto addition_spec =
-describe("Addition", [] {
-	it("1 + 1 = 2", [] {
-		expect(1 + 1).to(eq(2));
-	});
+describe("for 9x9 red-blue-white test file", [] {
 
-//	it("2 * 3 = 6", [] {
-//		expect(mul(2, 3)).to(eq(6));
-//	});
-//
-//	describe("mul", [] {
-//		it("3 * -4 = -12", [] {
-//			expect(mul(3, -4)).to(eq(-12));
-//		});
-//	});
+	describe("decodes indexed rgba", [] {
+		it("pixel[0]", [] {
+			expect("p0").to(eq("p0"));
+		});
+
+	});
 });
 
 } // namespace simple
