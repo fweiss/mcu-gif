@@ -1,6 +1,6 @@
 [submodule "remote/fff"]
-	path = remote/fff
+	path = submodules/fff
 	url = https://github.com/meekrosoft/fff.git
 [submodule "remote/googletest"]
-	path = remote/googletest
+	path = submodules/googletest
 	url = https://github.com/google/googletest.git
