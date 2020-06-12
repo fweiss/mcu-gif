@@ -1,1 +1,5 @@
 /SDL2.framework/
+build/*
+main
+main.dSYM/
+*.o
