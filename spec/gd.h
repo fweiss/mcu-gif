@@ -1,6 +1,7 @@
 #include <stdint.h>
 
 typedef struct {
+	long (*read)(int, uint8_t*, long);
 	uint16_t width;
 } gd_info_t;
 
