@@ -23,28 +23,47 @@ static long f_read(int fd, uint8_t *buf, long count) {
 static void f_open_memory(uint8_t *data, long size) {
 	f_read_data = data;
 	f_read_data_length = size;
+	f_read_pos = 0;
 }
 
 static uint8_t min_header[] = { 9, 9 };
+
+static uint8_t header_logical_screen_descriptor[13] =
+{
+	'G', 'I', 'F', '8', '9', 'a',
+	0x09, 0x00, // width
+	0x09, 0x00, // height
+	0x00, // color map info
+	0x00, // background color index
+	0x00 // aspect ration
+};
+
+#define FFILE(init) (f_open_memory(init, sizeof(init)))
 
 #include "gd.h"
 
 namespace simple {
 
 auto addition_spec =
-describe("for 9x9 red-blue-white test file", [] {
+describe("for 9x9 red-blue-white", [] {
+	// seems like this should be inside next describes
+	// but then it segfaults because before each isn't invoked for second it
+	gd_info_t info;
 
-	describe("info", [] {
-		gd_info_t info;
+	describe("info", [&info] {
 
 		before("each", [&info] {
-			f_open_memory(min_header, sizeof(min_header));
+			FFILE(header_logical_screen_descriptor);
 			info.read = f_read;
 			gd_open(&info);
 		});
 
 		it("width", [&info] {
 			expect(info.width).to(eq(9));
+		});
+
+		it("height", [&info] {
+			expect(info.height).to(eq(9));
 		});
 	});
 
