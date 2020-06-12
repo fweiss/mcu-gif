@@ -9,17 +9,7 @@ using ccspec::core::it;
 using ccspec::expect;
 using ccspec::matchers::eq;
 
-//extern int mul(int, int);
-
-typedef struct {
-	uint32_t *colorTable;
-	uint8_t pixels[9][9];;
-} gd_decode_t;
-
-void gd_decode(gd_decode_t *decode) {
-	decode->colorTable[0] = 0xff0000ff;
-	decode->pixels[0][0] = 0;
-}
+#include "gd.h"
 
 namespace simple {
 
