@@ -1,3 +1,5 @@
+.SUFFIXES:
+
 OBJDIR = build
 #SRCDIR = man/src
 
@@ -33,12 +35,12 @@ $(OBJDIR)/start: $(TESTOBJS) $(MAINOBJS) $(LDLIBS)
 	$(CXX) -o $@ $^
 
 # compile the tests
-$(TESTOBJ)/%.o: $(TESTSRC)/%.cc $(TESTOBJ)
-	$(CXX) -c -o $@ $< $(CXXFLAGS) $(CPLUS_INCLUDE_PATH)
+$(TESTOBJ)/%.o: $(TESTSRC)/%.cc
+	$(CXX) -c -o $@ $^ $(CXXFLAGS) $(CPLUS_INCLUDE_PATH)
 	
 # compile the sources
-$(MAINOBJ)/%.o: $(MAINSRC)/%.cc $(MAINOBJ)
-	$(CXX) -c -o $@ $< $(CXXFLAGS) $(CPLUS_INCLUDE_PATH)
+$(MAINOBJ)/%.o: $(MAINSRC)/%.cc
+	$(CXX) -c -o $@ $^ $(CXXFLAGS) $(CPLUS_INCLUDE_PATH)
 
 .PHONY: clean
 clean:
