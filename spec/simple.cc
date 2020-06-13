@@ -17,8 +17,8 @@ using ccspec::matchers::be_truthy;
 static uint8_t header_logical_screen_descriptor[13] =
 {
     'G', 'I', 'F', '8', '9', 'a',
-    0x09, 0x00, // width
-    0x09, 0x00, // height
+    0x0A, 0x00, // width
+    0x0A, 0x00, // height
     0x81, // color map info
     0x00, // background color index
     0x00 // aspect ratio
@@ -27,7 +27,7 @@ static uint8_t header_logical_screen_descriptor[13] =
 namespace simple {
 
 auto addition_spec =
-describe("for 9x9 red-blue-white", [] {
+describe("for 10x10 red-blue-white", [] {
     // seems like this should be inside next describes
     // but then it segfaults because before each isn't invoked for second it
     gd_info_t info;
@@ -41,11 +41,11 @@ describe("for 9x9 red-blue-white", [] {
         });
 
         it("width", [&info] {
-            expect(info.width).to(eq(9));
+            expect(info.width).to(eq(10));
         });
 
         it("height", [&info] {
-            expect(info.height).to(eq(9));
+            expect(info.height).to(eq(10));
         });
 
         it("global color table flag", [&info] {
@@ -59,7 +59,7 @@ describe("for 9x9 red-blue-white", [] {
 
     describe("decodes indexed rgba", [] {
         gd_decode_t d;
-        uint8_t imageData[9 * 9];
+        uint8_t imageData[10 * 10];
         uint32_t colorTable[4];
 
         before("each", [&] {
