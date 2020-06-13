@@ -78,13 +78,17 @@ describe("for 9x9 red-blue-white", [] {
 
     describe("decodes indexed rgba", [] {
         gd_decode_t d;
+        uint8_t imageData[9 * 9];
+        uint32_t colorTable[4];
 
-        before("each", [&d] {
+        before("each", [&] {
+            d.imageData = imageData;
+            d.colorTable = colorTable;
             gd_decode(&d);
         });
 
-        it("pixel[0][0] red", [&d] {
-            expect(d.colorTable[d.pixels[0][0]]).to(eq(0xff0000ff));
+        it("pixel[0][0] red", [&] {
+            expect(colorTable[imageData[0]]).to(eq(0xff0000ff));
         });
 
     });

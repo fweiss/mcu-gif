@@ -10,7 +10,7 @@ typedef struct {
 
 typedef struct {
     uint32_t *colorTable;
-    uint8_t pixels[9][9];;
+    uint8_t *imageData;
 } gd_decode_t;
 
 void gd_open(gd_info_t *info);
