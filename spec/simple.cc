@@ -10,24 +10,9 @@ using ccspec::expect;
 using ccspec::matchers::eq;
 using ccspec::matchers::be_truthy;
 
-// fake file
-static uint8_t *f_read_data = 0;
-static long f_read_data_length = 0;
-static long f_read_pos = 0;
-static long f_read(int fd, uint8_t *buf, long count) {
-//    printf("read %d %p %ld: %lx\n", fd, buf, count, f_read_pos);
-    long available = std::min(count, f_read_data_length - f_read_pos);
-    memcpy(buf,  &f_read_data[f_read_pos], available);
-    f_read_pos += available;
-    return available;
-}
-static void f_open_memory(uint8_t *data, long size) {
-    f_read_data = data;
-    f_read_data_length = size;
-    f_read_pos = 0;
-}
+#include "fake_file.h"
 
-static uint8_t min_header[] = { 9, 9 };
+#include "gd.h"
 
 static uint8_t header_logical_screen_descriptor[13] =
 {
@@ -38,10 +23,6 @@ static uint8_t header_logical_screen_descriptor[13] =
     0x00, // background color index
     0x00 // aspect ratio
 };
-
-#define FFILE(init) (f_open_memory(init, sizeof(init)))
-
-#include "gd.h"
 
 namespace simple {
 
