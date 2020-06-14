@@ -14,13 +14,13 @@ using ccspec::core::Reporter;
 using ccspec::core::ExampleGroup;
 
 namespace simple {
-    extern ExampleGroup* addition_spec;
+    extern ExampleGroup* spec_10x10_red_blue_white;
     extern ExampleGroup* image_data_spec;
 }
 
 int main() {
     ExampleGroup* example_groups[] = {
-        simple::addition_spec,
+        simple::spec_10x10_red_blue_white,
         simple::image_data_spec,
     };
 

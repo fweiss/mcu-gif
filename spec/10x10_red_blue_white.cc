@@ -26,7 +26,7 @@ static uint8_t header_logical_screen_descriptor[13] =
 
 namespace simple {
 
-auto addition_spec =
+auto spec_10x10_red_blue_white =
 describe("for 10x10 red-blue-white", [] {
     // seems like this should be inside next describes
     // but then it segfaults because before each isn't invoked for second it
