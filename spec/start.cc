@@ -15,11 +15,13 @@ using ccspec::core::ExampleGroup;
 
 namespace simple {
     extern ExampleGroup* addition_spec;
+    extern ExampleGroup* image_data_spec;
 }
 
 int main() {
     ExampleGroup* example_groups[] = {
         simple::addition_spec,
+        simple::image_data_spec,
     };
 
     DocumentationFormatter formatter(cout);

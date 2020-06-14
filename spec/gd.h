@@ -15,3 +15,4 @@ typedef struct {
 
 void gd_open(gd_info_t *info);
 void gd_decode(gd_decode_t *decode);
+uint16_t gd_image_data_decode_block(uint8_t minumumCodeSize, uint8_t *output);

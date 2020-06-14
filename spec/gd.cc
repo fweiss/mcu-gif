@@ -20,3 +20,7 @@ void gd_decode(gd_decode_t *decode) {
     decode->colorTable[0] = 0xff0000ff;
     decode->imageData[0] = 0;
 }
+
+uint16_t gd_image_data_decode_block(uint8_t minumumCodeSize, uint8_t *output) {
+    return 2;
+}
