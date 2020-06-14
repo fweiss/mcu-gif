@@ -20,11 +20,13 @@ namespace simple {
 auto image_data_spec =
 describe("image data", [] {
     uint8_t minimumCodeSize = 2;
-    uint8_t input[8] = { 0x01, 0x02 };
+    // 1 byte of #4, $5, EOB
+    uint8_t input[8] = { 0x01, 0x2C, 0x00 };
     uint8_t output[1024]; // fixme max output length?
+    gd_image_data_block_decode_t blockDecode;
 
     describe("smallest block", [&] {
-        uint16_t outputLength = gd_image_data_decode_block(minimumCodeSize, output);
+        uint16_t outputLength = gd_image_data_block_decode(&blockDecode, output);
         it("outputLength", [outputLength] {
             expect(outputLength).to(be == 2);
         });
