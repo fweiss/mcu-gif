@@ -17,12 +17,14 @@ using ccspec::matchers::be_truthy;
 
 namespace simple {
 
-const size_t outputSize = 1024;  // fixme max output length?
-static uint16_t output[outputSize];
+const size_t outputSize = 1024;  // fixme max output size for a sub block?
 
 auto image_data_spec =
 describe("image data", [] {
 //    uint8_t minimumCodeSize = 2;
+
+    static uint16_t output[outputSize];
+
     static gd_image_data_block_decode_t blockDecode;
     blockDecode.read = f_read;
     static uint16_t outputLength;
