@@ -49,6 +49,8 @@ describe("image data", [] {
         });
         it("outputLength", [&] {
             expect(outputLength).to(be == 1);
+        });
+        it("output[0]", [&] {
             expect(output[0]).to(eq(1));
         });
     });
