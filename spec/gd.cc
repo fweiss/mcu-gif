@@ -22,12 +22,11 @@ void gd_decode(gd_decode_t *decode) {
 }
 
 uint16_t gd_image_data_block_decode(gd_image_data_block_decode_t *decode, uint16_t *output) {
-    int fd = -1;
+    const int fd = -1;
     uint8_t buf[8];
     long count = decode->read(fd, buf, 8);
-    long blockSize = buf[0];
+    const long blockSize = buf[0];
     uint16_t outputLength = 0;
-    return blockSize == 1 ? 0 : 1;
     if (blockSize == 2) {
         output[0] = 1;
         outputLength++;

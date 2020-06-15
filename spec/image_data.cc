@@ -23,11 +23,11 @@ static uint16_t output[outputSize];
 auto image_data_spec =
 describe("image data", [] {
 //    uint8_t minimumCodeSize = 2;
-    gd_image_data_block_decode_t blockDecode;
+    static gd_image_data_block_decode_t blockDecode;
     blockDecode.read = f_read;
 
     before("each", [] {
-        memset(output, 0, outputSize);
+        memset(output, 0, outputSize); // fixme 16 but
     });
 
     describe("zero block", [&] {
@@ -41,12 +41,12 @@ describe("image data", [] {
     });
 
     describe("one block", [&] {
-        uint8_t input[] = { 0x02, 0x4C, 0x01, 0x00 };
-        FFILE(input);
-        uint16_t outputLength = gd_image_data_block_decode(&blockDecode, output);
-        it("outputLength", [outputLength] {
+        it("outputLength", [&] {
+            static uint8_t input[] = { 0x02, 0x4C, 0x01, 0x00 };
+            FFILE(input);
+            uint16_t outputLength = gd_image_data_block_decode(&blockDecode, output);
             expect(outputLength).to(be == 1);
-//            expect(output[0]).to(eq(1));
+            expect(output[0]).to(eq(1));
         });
     });
 });
