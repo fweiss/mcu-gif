@@ -28,7 +28,8 @@ describe("image data", [] {
     static uint16_t outputLength;
 
     before("each", [] {
-        memset(output, 0, outputSize); // fixme 16 bit
+        // N.B. 'output' must be the array, not a pointer
+        memset(output, 0, sizeof(output));
     });
 
     describe("one sub block", [&] {
