@@ -18,7 +18,7 @@ using ccspec::matchers::be_truthy;
 namespace simple {
 
 const size_t outputSize = 1024;  // fixme max output length?
-static uint8_t output[outputSize];
+static uint16_t output[outputSize];
 
 auto image_data_spec =
 describe("image data", [] {
@@ -46,6 +46,7 @@ describe("image data", [] {
         uint16_t outputLength = gd_image_data_block_decode(&blockDecode, output);
         it("outputLength", [outputLength] {
             expect(outputLength).to(be == 1);
+//            expect(output[0]).to(eq(1));
         });
     });
 });
