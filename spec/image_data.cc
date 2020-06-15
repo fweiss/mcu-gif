@@ -41,10 +41,13 @@ describe("image data", [] {
     });
 
     describe("one block", [&] {
-        it("outputLength", [&] {
+        static uint16_t outputLength;
+        before("each", [&] {
             static uint8_t input[] = { 0x02, 0x4C, 0x01, 0x00 };
             FFILE(input);
-            uint16_t outputLength = gd_image_data_block_decode(&blockDecode, output);
+            outputLength = gd_image_data_block_decode(&blockDecode, output);
+        });
+        it("outputLength", [&] {
             expect(outputLength).to(be == 1);
             expect(output[0]).to(eq(1));
         });
