@@ -30,28 +30,30 @@ describe("image data", [] {
         memset(output, 0, outputSize); // fixme 16 but
     });
 
-    describe("zero block", [&] {
-        // 1 byte of #4, $5, 1 byte EOB
-        uint8_t input[8] = { 0x01, 0x2C, 0x00 };
-        FFILE(input);
-        uint16_t outputLength = gd_image_data_block_decode(&blockDecode, output);
-        it("outputLength", [outputLength] {
-            expect(outputLength).to(be == 0);
-        });
-    });
-
-    describe("one block", [&] {
-        static uint16_t outputLength;
-        before("each", [&] {
-            static uint8_t input[] = { 0x02, 0x4C, 0x01, 0x00 };
+    describe("one sub block", [&] {
+        describe("zero codes", [&] {
+            // 1 byte of #4, $5, 1 byte EOB
+            uint8_t input[8] = { 0x01, 0x2C, 0x00 };
             FFILE(input);
-            outputLength = gd_image_data_block_decode(&blockDecode, output);
+            uint16_t outputLength = gd_image_data_block_decode(&blockDecode, output);
+            it("output length", [outputLength] {
+                expect(outputLength).to(be == 0);
+            });
         });
-        it("outputLength", [&] {
-            expect(outputLength).to(be == 1);
-        });
-        it("output[0]", [&] {
-            expect(output[0]).to(eq(1));
+
+        describe("one code", [&] {
+            static uint16_t outputLength;
+            before("each", [&] {
+                static uint8_t input[] = { 0x02, 0x4C, 0x01, 0x00 };
+                FFILE(input);
+                outputLength = gd_image_data_block_decode(&blockDecode, output);
+            });
+            it("output length", [&] {
+                expect(outputLength).to(be == 1);
+            });
+            it("output[0]", [&] {
+                expect(output[0]).to(eq(1));
+            });
         });
     });
 });
