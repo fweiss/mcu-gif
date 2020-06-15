@@ -1,5 +1,7 @@
 .SUFFIXES:
 
+DEBUG := -g -O0
+
 OBJDIR = build
 #SRCDIR = man/src
 
@@ -14,14 +16,14 @@ CCSPEC_HOME = ../submodules/ccspec
 include ccspec.mk
 
 CPLUS_INCLUDE_PATH = -I$(CCSPEC_HOME)/include
-CXXFLAGS += -std=c++11
+CXXFLAGS += -std=c++11  $(DEBUG)
 LDLIBS = $(OBJDIR)/libccspec.a
 #MAIN = start
 
 TESTOBJS := $(patsubst $(TESTSRC)/%.cc, $(TESTOBJ)/%.o, $(wildcard $(TESTSRC)/*.cc))
 MAINOBJS := $(patsubst $(MAINSRC)/%.cc, $(MAINOBJ)/%.o, $(wildcard $(MAINSRC)/*.cc))
 
-#init: $(TESTOBJ) $(MAINOBJ)
+init: $(TESTOBJ) $(MAINOBJ)
 
 $(TESTOBJ) $(MAINOBJ):
 	mkdir -p $@	
