@@ -33,6 +33,5 @@ int main() {
         delete example_group;
     }
 
-
     return !succeeded;
 }

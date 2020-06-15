@@ -30,9 +30,9 @@ auto spec_10x10_red_blue_white =
 describe("for 10x10 red-blue-white", [] {
     // seems like this should be inside next describes
     // but then it segfaults because before each isn't invoked for second it
-    gd_info_t info;
 
-    describe("info", [&info] {
+    describe("info", [] {
+        gd_info_t info;
 
         before("each", [&info] {
             FFILE(header_logical_screen_descriptor);
@@ -58,14 +58,14 @@ describe("for 10x10 red-blue-white", [] {
     });
 
     describe("decodes indexed rgba", [] {
-        gd_decode_t d;
+        gd_decode_t decode;
         uint8_t imageData[10 * 10];
         uint32_t colorTable[4];
 
         before("each", [&] {
-            d.imageData = imageData;
-            d.colorTable = colorTable;
-            gd_decode(&d);
+            decode.imageData = imageData;
+            decode.colorTable = colorTable;
+            gd_decode(&decode);
         });
 
         it("pixel[0][0] red", [&] {
