@@ -17,21 +17,45 @@ namespace simple {
 auto helpers_spec =
 describe("helpers pack", [] {
     static Pack p;
-    static std::vector<uint8_t> unpacked;
+    static std::vector<uint8_t> packed;
 
     describe("4 + 5", [&] {
 
         before("each", [&] {
             p.reset();
-            unpacked = p + 4 + 5;
+            packed = p + 4 + 5;
         });
 
         it("size", [] {
-            expect(unpacked.size()).to(eq(1));
+            expect(packed.size()).to(eq(1));
         });
 
         it("[0]", [] {
-                expect((uint16_t)unpacked[0]).to(eq(0x2C));
+            expect((uint16_t)packed[0]).to(eq(0x2C));
+        });
+    });
+
+    describe("4 + 1 + 5", [] {
+
+        before("each", [] {
+            p.reset();
+            packed = p + 4 + 1 + 5;
+        });
+
+        it("size", [] {
+            expect(packed.size()).to(eq(2));
+        });
+
+        it("[1]", [] {
+            expect((uint16_t)packed[1]).to(eq(0x08));
+        });
+    });
+
+    // 8C 2D 99 87
+    describe("4, 1, 6, 6, 2, 9 (4 code bits)", [] {
+        before("each", [] {
+            p.reset();
+//            packed = p + 4 + 1 + 6 + Shift(4) + 2 + 9 + 5;
         });
     });
 
