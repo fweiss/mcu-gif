@@ -3,14 +3,12 @@
 #include <queue>
 #include <vector>
 
-class Unpack {
+class Pack {
 public:
-    Unpack();
-    Unpack &operator+(uint16_t packed);
+    Pack();
+    Pack &operator+(uint16_t packed);
     operator std::vector<uint8_t> () {
-//        return unpacked;
-//        return std::vector<uint8_t>(unpacked.begin(), unpacked.end());
-        return packed;
+    return packed;
     }
 private:
     std::vector<uint8_t> packed;

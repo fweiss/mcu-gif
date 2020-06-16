@@ -1,10 +1,10 @@
 #include "helpers.h"
 
-Unpack::Unpack() : packed() {
+Pack::Pack() : packed() {
 
 }
 
-Unpack& Unpack::operator+(uint16_t element) {
+Pack& Pack::operator+(uint16_t element) {
     if (packed.size() == 0) {
         packed.push_back(0x04);
     } else {

@@ -22,11 +22,8 @@ describe("helpers unpack", [] {
 
     it("does", [] {
         Pack p;
-//        p + 4 + 5;
         std::vector<uint8_t> unpacked = p + 4 + 5;
-        // expect 0x2C
         expect(unpacked.size()).to(eq(1));
-//        expect(unpacked.front()).to(eq(0x2C));
         expect((uint16_t)unpacked[0]).to(eq(0x2C));
     });
 });
