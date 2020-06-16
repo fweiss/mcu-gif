@@ -35,6 +35,7 @@ describe("image data", [] {
     });
 
     describe("one sub block", [&] {
+
         describe("zero codes", [&] {
             before("each", [&] {
                 // 1 byte of #4, $5, 1 byte EOB
