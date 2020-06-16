@@ -12,9 +12,6 @@ using ccspec::matchers::be_truthy;
 
 #include "helpers.h"
 
-#include <queue>
-
-
 namespace simple {
 
 auto helpers_spec =
