@@ -19,6 +19,7 @@ public:
     void reset() {
         packed.clear();
         bits = 3;
+        onDeckBits = 0;
     }
     // normal code values
     Pack &operator+(uint16_t packed);
@@ -27,4 +28,6 @@ public:
 private:
     std::vector<uint8_t> packed;
     uint8_t bits;
+
+    uint8_t onDeckBits;
 };
