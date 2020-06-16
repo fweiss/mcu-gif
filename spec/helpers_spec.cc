@@ -21,7 +21,7 @@ auto helpers_spec =
 describe("helpers unpack", [] {
 
     it("does", [] {
-        Unpack p;
+        Pack p;
 //        p + 4 + 5;
         std::vector<uint8_t> unpacked = p + 4 + 5;
         // expect 0x2C
