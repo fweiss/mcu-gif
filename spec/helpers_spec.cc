@@ -10,7 +10,7 @@ using ccspec::matchers::be;
 using ccspec::matchers::eq;
 using ccspec::matchers::be_truthy;
 
-#include "helpers.h"
+#include "helpers/helpers.h"
 
 #include <string>
 #include <cstdio>

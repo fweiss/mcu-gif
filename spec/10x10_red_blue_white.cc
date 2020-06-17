@@ -10,7 +10,7 @@ using ccspec::expect;
 using ccspec::matchers::eq;
 using ccspec::matchers::be_truthy;
 
-#include "fake_file.h"
+#include "helpers/fake_file.h"
 
 #include "gd.h"
 
