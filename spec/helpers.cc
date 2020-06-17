@@ -11,6 +11,7 @@ Pack::Pack() : packed() {
 void Pack::reset() {
     packed.clear();
     codeBits = 3;
+    codeMask = 0x07;
     onDeckBits = 0;
     onDeck = 0;
 }
@@ -21,8 +22,7 @@ Pack& Pack::operator+(uint16_t element) {
     uint8_t elementBits = codeBits;
     while (elementBits > 0) {
         uint8_t shiftBits = std::min(elementBits, (uint8_t)(8 - onDeckBits));
-        uint8_t shiftMask = 0x07;
-        onDeck |= (element & shiftMask) << onDeckBits;
+        onDeck |= (element & codeMask) << onDeckBits; // onDeck only takes 8 bits
         element >>= shiftBits;
         elementBits -= shiftBits;
         onDeckBits += shiftBits;
@@ -47,5 +47,6 @@ Pack::operator std::vector<uint8_t> () {
 Pack& Pack::operator+(Shift bits) {
     if (debug) printf("<< %d\n", bits.value);
     this->codeBits = bits.value;
+    this->codeMask = (1 << codeBits) - 1;
     return *this;
 }
