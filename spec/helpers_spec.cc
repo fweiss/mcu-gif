@@ -12,6 +12,21 @@ using ccspec::matchers::be_truthy;
 
 #include "helpers.h"
 
+#include <string>
+#include <cstdio>
+
+static std::string dump(std::vector<uint8_t> p) {
+    std::string o;
+    for (auto b : p) {
+        char buf[3];
+        sprintf(buf, "%02X", b);
+        o += buf;
+        o += ",";
+    }
+    return o.c_str();
+}
+
+
 namespace simple {
 
 auto helpers_spec =
@@ -69,6 +84,10 @@ describe("helpers pack", [] {
         it("[2]", [&] {
             expect((uint16_t)packed[1]).to(eq(0xB));
         });
+
+        it("all", [&] {
+            expect(dump(packed)).to(eq("8C,0B,"));
+        });
     });
 
     // 8C 2D 99 87
@@ -82,6 +101,10 @@ describe("helpers pack", [] {
 
         it("size", [&] {
             expect(packed.size()).to(eq(3));
+        });
+
+        it("all", [&] {
+            expect(dump(packed)).to(eq("8C,AD,04,"));
         });
 
 //        it("[2]", [&] {
