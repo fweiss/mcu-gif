@@ -15,17 +15,17 @@ CCSPEC_HOME = ../submodules/ccspec
 
 include ccspec.mk
 
-CPLUS_INCLUDE_PATH = -I$(CCSPEC_HOME)/include
+CPLUS_INCLUDE_PATH = -I$(CCSPEC_HOME)/include -I./helpers
 CXXFLAGS += -std=c++11  $(DEBUG)
 LDLIBS = $(OBJDIR)/libccspec.a
 #MAIN = start
 
-TESTOBJS := $(patsubst $(TESTSRC)/%.cc, $(TESTOBJ)/%.o, $(wildcard $(TESTSRC)/*.cc))
+TESTOBJS := $(patsubst $(TESTSRC)/%.cc, $(TESTOBJ)/%.o, $(wildcard $(TESTSRC)/*.cc $(TESTSRC)/helpers/*.cc))
 MAINOBJS := $(patsubst $(MAINSRC)/%.cc, $(MAINOBJ)/%.o, $(wildcard $(MAINSRC)/*.cc))
 
-init: $(TESTOBJ) $(MAINOBJ)
+init: $(TESTOBJ) $(MAINOBJ) $(TESTOBJ)/helpers
 
-$(TESTOBJ) $(MAINOBJ):
+$(TESTOBJ) $(MAINOBJ) $(TESTOBJ)/helpers:
 	mkdir -p $@	
 
 # run the tests
