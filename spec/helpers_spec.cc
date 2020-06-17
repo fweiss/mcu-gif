@@ -90,21 +90,41 @@ describe("helpers pack", [] {
         });
     });
 
-    // 8C 2D 99 87
-    // 1001 010 110 110 001 010 = 100 1010 1101 1000 1010
-    describe("4, 1, 6, 6, 2, 9 (4 code bits)", [] {
+    // 101 110 110 001 100 = 101 1101 1000 1100
+    describe("4 + 1 + 6 + 6 + 5", [&] {
 
-        before("each", [] {
-//            p.reset();
-            packed = p + 4 + 1 + 6 + Shift(4) + 2 + 9 + 5;
-        });
-
-        it("size", [&] {
-            expect(packed.size()).to(eq(3));
+        before("each", [&] {
+            packed = p + 4 + 1 + 6 + 6 + 5;
         });
 
         it("all", [&] {
-            expect(dump(packed)).to(eq("8C,AD,04,"));
+            expect(dump(packed)).to(eq("8C,5D,"));
+        });
+    });
+
+    // 101 010 110 110 001 100 = 10 1010 1101 1000 1100
+    describe("4 + 1 + 6 + 6 + 2 + 5", [&] {
+
+        before("each", [&] { packed = p + 4 + 1 + 6 + 6 + 2 + 5; });
+
+        it("all", [&] { expect(dump(packed)).to(eq("8C,AD,02,")); });
+    });
+
+    // 8C 2D 99 87
+    //  101 1001 010 110 110 001 100 = 10 1100 1010 1101 1000 1100
+    // 0101 1001 0010 0110 110 001 100 = 0 1011 0010 0100 1101 1000 1100
+    describe("4, 1, 6, Shift(4) 6, 2, 9 (4 code bits)", [] {
+
+        before("each", [] {
+            packed = p + 4 + 1 + 6 + Shift(4) + 6  + 2 + 9 + 5;
+        });
+
+//        it("size", [&] {
+//            expect(packed.size()).to(eq(3));
+//        });
+
+        it("all", [&] {
+            expect(dump(packed)).to(eq("8C,4D,B2,00,"));
         });
 
 //        it("[2]", [&] {

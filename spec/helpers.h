@@ -21,6 +21,7 @@ private:
     std::vector<uint8_t> packed;
 
     uint8_t codeBits;
+    uint16_t codeMask;
     uint8_t onDeckBits;
     uint8_t onDeck;
 };
