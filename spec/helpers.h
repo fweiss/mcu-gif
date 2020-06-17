@@ -13,21 +13,14 @@ public:
 class Pack {
 public:
     Pack();
-    operator std::vector<uint8_t> () {
-        return packed;
-    }
-    void reset() {
-        packed.clear();
-        bits = 3;
-        onDeckBits = 0;
-    }
-    // normal code values
-    Pack &operator+(uint16_t packed);
-    // shift change number of bits
-    Pack &operator+(Shift bits);
+    operator std::vector<uint8_t> ();
+    void reset();
+    Pack &operator+(uint16_t packed); // normal code values
+    Pack &operator+(Shift bits); // shift change number of bits
 private:
     std::vector<uint8_t> packed;
-    uint8_t bits;
 
+    uint8_t codeBits;
     uint8_t onDeckBits;
+    uint8_t onDeck;
 };
