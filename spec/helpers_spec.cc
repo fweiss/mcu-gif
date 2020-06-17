@@ -47,7 +47,7 @@ describe("helpers pack", [] {
         });
 
         it("[1]", [] {
-            expect((uint16_t)packed[1]).to(eq(0x08));
+            expect((uint16_t)packed[1]).to(eq(0x01));
         });
     });
 
