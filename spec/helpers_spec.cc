@@ -19,10 +19,14 @@ describe("helpers pack", [] {
     static Pack p;
     static std::vector<uint8_t> packed;
 
+    before("each", [&] {
+        p.reset();
+    });
+
     describe("4 + 5", [&] {
 
         before("each", [&] {
-            p.reset();
+//            p.reset();
             packed = p + 4 + 5;
         });
 
@@ -38,7 +42,7 @@ describe("helpers pack", [] {
     describe("4 + 1 + 5", [] {
 
         before("each", [] {
-            p.reset();
+//            p.reset();
             packed = p + 4 + 1 + 5;
         });
 
@@ -51,12 +55,38 @@ describe("helpers pack", [] {
         });
     });
 
-    // 8C 2D 99 87
-    describe("4, 1, 6, 6, 2, 9 (4 code bits)", [] {
-        before("each", [] {
-            p.reset();
-//            packed = p + 4 + 1 + 6 + Shift(4) + 2 + 9 + 5;
+    // 101 110 001 100 = 1011 1000 1100
+    describe("4 + 1 + 6 + 5", [&] {
+
+        before("each", [&] {
+            packed = p + 4 + 1 + 6 + 5;
         });
+
+        it("size", [&] {
+            expect(packed.size()).to(eq(2));
+        });
+
+        it("[2]", [&] {
+            expect((uint16_t)packed[1]).to(eq(0xB));
+        });
+    });
+
+    // 8C 2D 99 87
+    // 1001 010 110 110 001 010 = 100 1010 1101 1000 1010
+    describe("4, 1, 6, 6, 2, 9 (4 code bits)", [] {
+
+        before("each", [] {
+//            p.reset();
+            packed = p + 4 + 1 + 6 + Shift(4) + 2 + 9 + 5;
+        });
+
+        it("size", [&] {
+            expect(packed.size()).to(eq(3));
+        });
+
+//        it("[2]", [&] {
+//            expect((uint16_t)packed[2]).to(eq(0x04));
+//        });
     });
 
 });
