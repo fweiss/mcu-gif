@@ -20,6 +20,8 @@ namespace simple {
 
 const size_t outputSize = 1024;  // fixme max output size for a sub block?
 
+typedef std::vector<uint8_t> code_stream_t;
+
 auto image_data_spec =
 describe("image data", [] {
 //    uint8_t minimumCodeSize = 2;
@@ -69,7 +71,7 @@ describe("image data", [] {
         describe("try Pack", [&] {
 
             before("each", [&] {
-                std::vector<uint8_t> packed = p + 4 + 1 + 5;
+                code_stream_t packed = p + 4 + 1 + 5;
                 packed.insert(packed.begin(), packed.size());
                 f_open_memory(packed.data(), packed.size());
                 outputLength = gd_image_sub_block_decode(&blockDecode, output);
