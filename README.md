@@ -8,14 +8,29 @@ The goals of this project are:
 - mcu agnostic
 - file system agnostic
 - developed with TDD
-- developed in C programming language
+- usable in C programming language
 
 It would be nice to try additional languages. For MCUs, C is the most common.
 
-> The test framework, gtest, is C++
+## TDD with ccspec
+Starting afresh with ccspec to try out comprehensible tests.
+The GTest reports where just too bland.
+The ccspec framework promises at least a basic rspec test report.
 
-## Unit testing
+### Running the ccspec tests
+The ccspec git repository is linked as a submodule.
+You'll need to update the git submodules.
+
+``git submodule update --init --recursive``
+
+Then, cd to the spec directory.
+Run the following to run the tests and see the test report:
+``make test``
+
+## Unit testing with gtest (deprecated)
 The main point of this project is to develop a GIF decoder using TDD.
+
+> The test framework, gtest, is C++
 
 ### Running the unit tests
 In the test directory, run ``make test``.
