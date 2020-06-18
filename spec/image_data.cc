@@ -70,7 +70,7 @@ describe("image data", [] {
             it("simple", [&] {
                 std::vector<uint8_t> packed = p + 4 + 1 + 5;
                 packed.insert(packed.begin(), packed.size());
-                f_open_memory(&packed[0], packed.size());
+                f_open_memory(packed.data(), packed.size());
                 outputLength = gd_image_sub_block_decode(&blockDecode, output);
                 expect(outputLength).to(eq(1));
                 expect(output[0]).to(eq(1));
