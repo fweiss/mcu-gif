@@ -12,6 +12,7 @@ using ccspec::matchers::eq;
 using ccspec::matchers::be_truthy;
 
 #include "helpers/fake_file.h"
+#include "helpers/pack.h"
 
 #include "gd.h"
 
@@ -59,6 +60,18 @@ describe("image data", [] {
                 expect(outputLength).to(be == 1);
             });
             it("output[0]", [&] {
+                expect(output[0]).to(eq(1));
+            });
+        });
+
+        describe("try Pack", [&] {
+            it("simple", [&] {
+                Pack p;
+                std::vector<uint8_t> packed = p + 4 + 1;
+                packed.insert(packed.begin(), 2);
+                f_open_memory(&packed[0], packed.size());
+                outputLength = gd_image_data_block_decode(&blockDecode, output);
+                expect(outputLength).to(eq(1));
                 expect(output[0]).to(eq(1));
             });
         });
