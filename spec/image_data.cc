@@ -29,10 +29,12 @@ describe("image data", [] {
     static gd_image_data_block_decode_t blockDecode;
     blockDecode.read = f_read;
     static uint16_t outputLength;
+    static Pack p;
 
     before("each", [] {
         // N.B. 'output' must be the array, not a pointer
         memset(output, 0, sizeof(output));
+        p.reset();
     });
 
     describe("one sub block", [&] {
@@ -66,9 +68,8 @@ describe("image data", [] {
 
         describe("try Pack", [&] {
             it("simple", [&] {
-                Pack p;
-                std::vector<uint8_t> packed = p + 4 + 1;
-                packed.insert(packed.begin(), 2);
+                std::vector<uint8_t> packed = p + 4 + 1 + 5;
+                packed.insert(packed.begin(), packed.size());
                 f_open_memory(&packed[0], packed.size());
                 outputLength = gd_image_sub_block_decode(&blockDecode, output);
                 expect(outputLength).to(eq(1));
