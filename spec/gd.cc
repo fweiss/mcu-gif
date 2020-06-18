@@ -21,7 +21,7 @@ void gd_decode(gd_decode_t *decode) {
     decode->imageData[0] = 0;
 }
 
-uint16_t gd_image_data_block_decode(gd_image_data_block_decode_t *decode, uint16_t *output) {
+uint16_t gd_image_sub_block_decode(gd_image_data_block_decode_t *decode, uint16_t *output) {
     const int fd = -1;
     uint8_t buf[8];
     long count = decode->read(fd, buf, 8);

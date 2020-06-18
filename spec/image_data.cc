@@ -42,7 +42,7 @@ describe("image data", [] {
                 // 1 byte of #4, $5, 1 byte EOB
                 static uint8_t input[8] = { 0x01, 0x2C, 0x00 };
                 FFILE(input);
-                outputLength = gd_image_data_block_decode(&blockDecode, output);
+                outputLength = gd_image_sub_block_decode(&blockDecode, output);
             });
             it("output length", [&] {
                 expect(outputLength).to(be == 0);
@@ -54,7 +54,7 @@ describe("image data", [] {
                 // #4 #1 #5 EOB
                 static uint8_t input[] = { 0x02, 0x4C, 0x01, 0x00 };
                 FFILE(input);
-                outputLength = gd_image_data_block_decode(&blockDecode, output);
+                outputLength = gd_image_sub_block_decode(&blockDecode, output);
             });
             it("output length", [&] {
                 expect(outputLength).to(be == 1);
@@ -70,7 +70,7 @@ describe("image data", [] {
                 std::vector<uint8_t> packed = p + 4 + 1;
                 packed.insert(packed.begin(), 2);
                 f_open_memory(&packed[0], packed.size());
-                outputLength = gd_image_data_block_decode(&blockDecode, output);
+                outputLength = gd_image_sub_block_decode(&blockDecode, output);
                 expect(outputLength).to(eq(1));
                 expect(output[0]).to(eq(1));
             });
