@@ -67,14 +67,17 @@ describe("image data", [] {
         });
 
         describe("try Pack", [&] {
-            it("simple", [&] {
+
+            before("each", [&] {
                 std::vector<uint8_t> packed = p + 4 + 1 + 5;
                 packed.insert(packed.begin(), packed.size());
                 f_open_memory(packed.data(), packed.size());
                 outputLength = gd_image_sub_block_decode(&blockDecode, output);
-                expect(outputLength).to(eq(1));
-                expect(output[0]).to(eq(1));
             });
+
+            it("output length", [&] { expect(outputLength).to(eq(1)); });
+
+            it ("[0]", [&] { expect(output[0]).to(eq(1)); });
         });
 
         // full 10x10 reference example
