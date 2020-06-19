@@ -36,18 +36,20 @@ describe("image subblock with", [] {
         // N.B. 'output' must be the array, not a pointer
         memset(output, 0, sizeof(output));
         p.reset();
+        block.output = output;
+        block.outputLength = 0;
     });
 
     describe("1 code", [&] {
 
-        it("decodes", [&] {
-            block.output = output;
-            block.outputLength = 0;
+        before("each", [&] {
             code_stream_t packed = p + 4 + 1 + 5;
             gd_image_subblock_decode(&block, packed.data(), packed.size());
-            expect(block.outputLength).to(eq(1));
-            expect(block.output[0]).to(eq(0x01));
         });
+
+        it("output length", [&] { expect(block.outputLength).to(eq(1)); });
+
+        it("[0]", [&] { expect(block.output[0]).to(eq(0x01)); });
     });
 
     // full 10x10 reference example
