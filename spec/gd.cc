@@ -21,6 +21,7 @@ void gd_decode(gd_decode_t *decode) {
     decode->imageData[0] = 0;
 }
 
+// deprecated
 uint16_t gd_image_sub_block_decode(gd_image_data_block_decode_t *decode, uint16_t *output) {
     const int fd = -1;
     uint8_t buf[8];
@@ -35,7 +36,7 @@ uint16_t gd_image_sub_block_decode(gd_image_data_block_decode_t *decode, uint16_
 }
 
 void gd_image_subblock_decode(gd_image_block_t *block, uint8_t *subblock, uint8_t count) {
-    uint16_t codeMask = 0x07;
+    uint16_t codeMask = 0x07; // move into block?
     uint8_t codeBits = 3;
     uint16_t onDeck = 0;
     uint8_t onDeckBits = 0;
@@ -44,6 +45,7 @@ void gd_image_subblock_decode(gd_image_block_t *block, uint8_t *subblock, uint8_
     uint16_t top;
 
     for (int i=0; ; ) {
+        // shift out of on deck
         while (onDeckBits >= codeBits) {
             extract = onDeck & codeMask;
             onDeck >>= codeBits;
@@ -58,12 +60,14 @@ void gd_image_subblock_decode(gd_image_block_t *block, uint8_t *subblock, uint8_
                 block->output[block->outputLength++] = extract;
             }
         }
+        // shift into on deck
         if (topBits > 0) {
             uint8_t shiftBits = (topBits > 16 - onDeckBits) ? (16 - onDeckBits) : topBits;
             onDeck |= top << onDeckBits;
             onDeckBits += shiftBits;
             topBits -= shiftBits;
         }
+        // shift into top
         if (topBits == 0 && onDeckBits < codeBits) { // lazy fetch
             if (i == count) {
                 break;
