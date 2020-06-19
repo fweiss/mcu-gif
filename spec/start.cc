@@ -17,6 +17,7 @@ namespace simple {
     extern ExampleGroup* spec_10x10_red_blue_white;
     extern ExampleGroup* image_data_spec;
     extern ExampleGroup* helpers_spec;
+    extern ExampleGroup* image_subblock_spec;
 }
 
 int main() {
@@ -24,6 +25,7 @@ int main() {
         simple::spec_10x10_red_blue_white,
         simple::image_data_spec,
         simple::helpers_spec,
+        simple::image_subblock_spec,
     };
 
     DocumentationFormatter formatter(cout);
