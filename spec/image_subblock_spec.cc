@@ -40,16 +40,36 @@ describe("image subblock with", [] {
         block.outputLength = 0;
     });
 
-    describe("1 code", [&] {
+    describe("codes 4 + 5", [&] {
 
         before("each", [&] {
-            code_stream_t packed = p + 4 + 1 + 5;
+            code_stream_t packed = p + 4 + 5;
+            gd_image_subblock_decode(&block, packed.data(), packed.size());
+        });
+
+        it("output length", [&] { expect(block.outputLength).to(eq(0)); });
+    });
+
+    describe("codes 4 + 0 + 5", [&] {
+
+        before("each", [&] {
+            code_stream_t packed = p + 4 + 0 + 5;
             gd_image_subblock_decode(&block, packed.data(), packed.size());
         });
 
         it("output length", [&] { expect(block.outputLength).to(eq(1)); });
 
-        it("[0]", [&] { expect(block.output[0]).to(eq(0x01)); });
+        it("[0]", [&] { expect(block.output[0]).to(eq(0x00)); });
+    });
+
+    describe("codes 4 + 0 + 1 + 5", [&] {
+
+        before("each", [&] {
+            code_stream_t packed = p + 4 + 0 + 1 + 5;
+            gd_image_subblock_decode(&block, packed.data(), packed.size());
+        });
+        it("output length", [&] { expect(block.outputLength).to(eq(2)); });
+        it("[0]", [&] { expect(block.output[2]).to(eq(0x01)); });
     });
 
     // full 10x10 reference example

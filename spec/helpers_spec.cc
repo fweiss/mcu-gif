@@ -69,6 +69,12 @@ describe("helpers pack", [] {
         });
     });
 
+    describe("4 + 0 + 1 + 5", [&] {
+        before("each", [&] { packed = p + 4 + 0 + 1 + 5; });
+        it ("length", [&] { expect(packed.size()).to(eq(2)); });
+        it ("output", [&] { expect(dump(packed)).to(eq("44,0A,")); });
+    });
+
     // 101 110 001 100 = 1011 1000 1100
     describe("4 + 1 + 6 + 5", [&] {
 

@@ -34,10 +34,35 @@ uint16_t gd_image_sub_block_decode(gd_image_data_block_decode_t *decode, uint16_
     return outputLength;
 }
 
-void gd_image_subblock_decode(gd_image_block_t *block, uint8_t *subblock, uint16_t count) {
-    uint16_t outputLength = 0;
-    if (count == 2) {
-        block->output[0] = 1;
-        block->outputLength++;
+void gd_image_subblock_decode(gd_image_block_t *block, uint8_t *subblock, uint8_t count) {
+    uint16_t codeMask = 0x07;
+    uint8_t codeBits = 3;
+    uint16_t onDeck = 0;
+    uint8_t onDeckBits = 0;
+    uint16_t extract = 0;
+    uint8_t topBits = 0;
+    uint16_t top;
+
+    for (int i=0; i<count; ) {
+        while (onDeckBits > codeBits) {
+            extract = onDeck & codeMask;
+            onDeck >>= codeBits;
+            onDeckBits -= codeBits;
+
+            if (extract != 0x0004 && extract != 0x0005) {
+                block->output[block->outputLength++] = extract;
+            }
+        }
+        while (topBits > 0) {
+            uint8_t shiftBits = topBits > 16 - onDeckBits ? (16 - onDeckBits) : topBits;
+            onDeck |= top << onDeckBits;
+            onDeckBits += shiftBits;
+            topBits -= shiftBits;
+        }
+        if (topBits == 0 && onDeckBits < codeBits) { // lazy fetch
+            top = subblock[i++];
+            topBits = 8;
+        }
     }
 }
+
