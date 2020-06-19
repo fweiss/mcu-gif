@@ -33,3 +33,11 @@ uint16_t gd_image_sub_block_decode(gd_image_data_block_decode_t *decode, uint16_
     }
     return outputLength;
 }
+
+void gd_image_subblock_decode(gd_image_block_t *block, uint8_t *subblock, uint16_t count) {
+    uint16_t outputLength = 0;
+    if (count == 2) {
+        block->output[0] = 1;
+        block->outputLength++;
+    }
+}

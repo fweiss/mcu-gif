@@ -53,6 +53,7 @@ describe("helpers pack", [] {
         });
     });
 
+    // 101 001 100 = 1 0100 1100
     describe("4 + 1 + 5", [] {
 
         before("each", [] {
