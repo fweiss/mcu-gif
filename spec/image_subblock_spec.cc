@@ -69,7 +69,7 @@ describe("image subblock with", [] {
             gd_image_subblock_decode(&block, packed.data(), packed.size());
         });
         it("output length", [&] { expect(block.outputLength).to(eq(2)); });
-        it("[0]", [&] { expect(block.output[2]).to(eq(0x01)); });
+        it("[0]", [&] { expect(block.output[1]).to(eq(0x01)); });
     });
 
     // full 10x10 reference example

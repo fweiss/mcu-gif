@@ -43,23 +43,31 @@ void gd_image_subblock_decode(gd_image_block_t *block, uint8_t *subblock, uint8_
     uint8_t topBits = 0;
     uint16_t top;
 
-    for (int i=0; i<count; ) {
-        while (onDeckBits > codeBits) {
+    for (int i=0; ; ) {
+        while (onDeckBits >= codeBits) {
             extract = onDeck & codeMask;
             onDeck >>= codeBits;
             onDeckBits -= codeBits;
+            // hmm shortcut? unclear why this is relevant at this level of abstraction
+            // possibly a test smell
+            if (extract == 0x005) {
+                onDeckBits = 0;
+            }
 
             if (extract != 0x0004 && extract != 0x0005) {
                 block->output[block->outputLength++] = extract;
             }
         }
-        while (topBits > 0) {
-            uint8_t shiftBits = topBits > 16 - onDeckBits ? (16 - onDeckBits) : topBits;
+        if (topBits > 0) {
+            uint8_t shiftBits = (topBits > 16 - onDeckBits) ? (16 - onDeckBits) : topBits;
             onDeck |= top << onDeckBits;
             onDeckBits += shiftBits;
             topBits -= shiftBits;
         }
         if (topBits == 0 && onDeckBits < codeBits) { // lazy fetch
+            if (i == count) {
+                break;
+            }
             top = subblock[i++];
             topBits = 8;
         }
