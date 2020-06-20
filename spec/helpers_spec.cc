@@ -67,6 +67,9 @@ describe("helpers pack", [] {
         it("[1]", [] {
             expect((uint16_t)packed[1]).to(eq(0x01));
         });
+        it("all", [&] {
+            expect(dump(packed)).to(eq("4C,01,"));
+        });
     });
 
     describe("4 + 0 + 1 + 5", [&] {

@@ -12,7 +12,6 @@ using ccspec::matchers::eq;
 using ccspec::matchers::be_truthy;
 
 #include "helpers/fake_file.h"
-#include "helpers/pack.h"
 
 #include "gd.h"
 
@@ -23,63 +22,65 @@ const size_t outputSize = 1024;  // fixme max output size for a sub block?
 typedef std::vector<uint8_t> code_stream_t;
 
 auto image_data_spec =
-describe("image data", [] {
-//    uint8_t minimumCodeSize = 2;
+describe("image data block", [] {
 
     static uint16_t output[outputSize];
 
-    static gd_image_data_block_decode_t blockDecode;
-    blockDecode.read = f_read;
-    static uint16_t outputLength;
-    static Pack p;
-
+    static gd_main_t main;
+    main.read = f_read;
+    main.image_block.output = output;
     before("each", [] {
         // N.B. 'output' must be the array, not a pointer
         memset(output, 0, sizeof(output));
-        p.reset();
+    });
+
+    describe("empty", [&] {
+        before("each", [&] {
+            static uint8_t input[] = { 0x02, 0x00 };
+            FFILE(input);
+            gd_image_block_read(&main);
+        });
+        it("output length", [&] {
+            expect(main.image_block.outputLength).to(eq(0));
+        });
+    });
+
+    describe("minimum code size 2", [&] {
+        before("each", [&] {
+            static uint8_t input[] = { 0x02, 0x00 };
+            FFILE(input);
+            gd_image_block_read(&main);
+        });
+        it("value", [&] {
+            expect(main.image_block.minumumCodeSize).to(eq(2));
+        });
+    });
+
+    describe("minimum code size 8", [&] {
+        before("each", [&] {
+            static uint8_t input[] = { 0x08, 0x00 };
+            FFILE(input);
+            gd_image_block_read(&main);
+        });
+        it("value", [&] {
+            expect(main.image_block.minumumCodeSize).to(eq(8));
+        });
     });
 
     describe("one sub block", [&] {
 
-        describe("zero codes", [&] {
+        describe("basic", [&] {
             before("each", [&] {
-                // 1 byte of #4, $5, 1 byte EOB
-                static uint8_t input[8] = { 0x01, 0x2C, 0x00 };
+                static uint8_t input[] = { 0x02, 0x02, 0x4C, 0x01, 0x00 };
                 FFILE(input);
-                outputLength = gd_image_sub_block_decode(&blockDecode, output);
+                gd_image_block_read(&main);
             });
             it("output length", [&] {
-                expect(outputLength).to(be == 0);
+                expect(main.image_block.outputLength).to(be == 1);
             });
-        });
-
-        describe("one code", [&] {
-            before("each", [&] {
-                // #4 #1 #5 EOB
-                static uint8_t input[] = { 0x02, 0x4C, 0x01, 0x00 };
-                FFILE(input);
-                outputLength = gd_image_sub_block_decode(&blockDecode, output);
+            it("has one index", [&] {
+                expect(main.image_block.output[0]).to(eq(1));
             });
-            it("output length", [&] {
-                expect(outputLength).to(be == 1);
-            });
-            it("output[0]", [&] {
-                expect(output[0]).to(eq(1));
-            });
-        });
-
-        describe("try Pack", [&] {
-
-            before("each", [&] {
-                code_stream_t packed = p + 4 + 1 + 5;
-                packed.insert(packed.begin(), packed.size());
-                f_open_memory(packed.data(), packed.size());
-                outputLength = gd_image_sub_block_decode(&blockDecode, output);
-            });
-
-            it("output length", [&] { expect(outputLength).to(eq(1)); });
-
-            it ("[0]", [&] { expect(output[0]).to(eq(1)); });
         });
     });
 });

@@ -22,7 +22,7 @@ void gd_decode(gd_decode_t *decode) {
 }
 
 // deprecated
-uint16_t gd_image_sub_block_decode(gd_image_data_block_decode_t *decode, uint16_t *output) {
+uint16_t xxgd_image_sub_block_decode(gd_image_data_block_decode_t *decode, uint16_t *output) {
     const int fd = -1;
     uint8_t buf[8];
     long count = decode->read(fd, buf, 8);
@@ -85,4 +85,19 @@ void gd_image_subblock_decode(gd_image_block_t *block, uint8_t *subblock, uint8_
         }
     }
 }
+
+void gd_image_block_read(gd_main_t *main) {
+    const int fd = 0;
+    long count = main->read(fd, &main->image_block.minumumCodeSize, 1);
+
+    main->image_block.outputLength = 0;
+
+    uint8_t subblockSize;
+    main->read(fd, &subblockSize, 1);
+    static uint8_t subblock[255];
+    count = main->read(fd, subblock, subblockSize);
+
+    gd_image_subblock_decode(&main->image_block, subblock, subblockSize);
+}
+
 

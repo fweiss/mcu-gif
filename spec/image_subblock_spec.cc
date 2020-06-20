@@ -62,6 +62,18 @@ describe("image subblock with", [] {
         it("[0]", [&] { expect(block.output[0]).to(eq(0x00)); });
     });
 
+    describe("codes 4 + 1 + 5", [&] {
+
+        before("each", [&] {
+            code_stream_t packed = p + 4 + 1 + 5;
+            gd_image_subblock_decode(&block, packed.data(), packed.size());
+        });
+
+        it("output length", [&] { expect(block.outputLength).to(eq(1)); });
+
+        it("[0]", [&] { expect(block.output[0]).to(eq(0x0001)); });
+    });
+
     describe("codes 4 + 0 + 1 + 5", [&] {
 
         before("each", [&] {
