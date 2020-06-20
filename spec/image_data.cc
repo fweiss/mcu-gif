@@ -7,9 +7,9 @@ using ccspec::core::describe;
 using ccspec::core::before;
 using ccspec::core::it;
 using ccspec::expect;
-using ccspec::matchers::be;
+//using ccspec::matchers::be;
 using ccspec::matchers::eq;
-using ccspec::matchers::be_truthy;
+//using ccspec::matchers::be_truthy;
 
 #include "helpers/fake_file.h"
 
@@ -76,7 +76,7 @@ describe("image data block", [] {
                 gd_image_block_read(&main);
             });
             it("output length", [&] {
-                expect(main.image_block.outputLength).to(be == 1);
+                expect(main.image_block.outputLength).to(eq(1));
             });
             it("has one index", [&] {
                 expect(main.image_block.output[0]).to(eq(1));

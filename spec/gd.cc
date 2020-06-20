@@ -21,20 +21,6 @@ void gd_decode(gd_decode_t *decode) {
     decode->imageData[0] = 0;
 }
 
-// deprecated
-uint16_t xxgd_image_sub_block_decode(gd_image_data_block_decode_t *decode, uint16_t *output) {
-    const int fd = -1;
-    uint8_t buf[8];
-    long count = decode->read(fd, buf, 8);
-    const long blockSize = buf[0];
-    uint16_t outputLength = 0;
-    if (blockSize == 2) {
-        output[0] = 1;
-        outputLength++;
-    }
-    return outputLength;
-}
-
 void gd_image_decompress_code(gd_image_block_t *block, uint16_t extract) {
     if (extract == 0x0004) {
         block->compressStatus = 1;
