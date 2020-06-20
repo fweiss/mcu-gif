@@ -35,6 +35,19 @@ uint16_t gd_image_sub_block_decode(gd_image_data_block_decode_t *decode, uint16_
     return outputLength;
 }
 
+void gd_image_decompress_code(gd_image_block_t *block, uint16_t extract) {
+    if (extract == 0x0004) {
+        block->compressStatus = 1;
+        return;
+    } else if (extract == 0x0005) {
+        block->compressStatus = 0;
+        return;
+    }
+    if (block->compressStatus) {
+        block->output[block->outputLength++] = extract;
+    }
+}
+
 // given an "image data subblock", unpack it to a "code stream"
 // then decompress the "code stream" to an "index stream"
 void gd_image_subblock_decode(gd_image_block_t *block, uint8_t *subblock, uint8_t count) {
@@ -52,15 +65,8 @@ void gd_image_subblock_decode(gd_image_block_t *block, uint8_t *subblock, uint8_
             extract = onDeck & codeMask;
             onDeck >>= codeBits;
             onDeckBits -= codeBits;
-            // hmm shortcut? unclear why this is relevant at this level of abstraction
-            // possibly a test smell
-            if (extract == 0x005) {
-                onDeckBits = 0;
-            }
 
-            if (extract != 0x0004 && extract != 0x0005) {
-                block->output[block->outputLength++] = extract;
-            }
+            gd_image_decompress_code(block, extract);
         }
         // shift into on deck
         if (topBits > 0) {
