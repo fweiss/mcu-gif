@@ -35,6 +35,8 @@ uint16_t gd_image_sub_block_decode(gd_image_data_block_decode_t *decode, uint16_
     return outputLength;
 }
 
+// given an "image data subblock", unpack it to a "code stream"
+// then decompress the "code stream" to an "index stream"
 void gd_image_subblock_decode(gd_image_block_t *block, uint8_t *subblock, uint8_t count) {
     uint16_t codeMask = 0x07; // move into block?
     uint8_t codeBits = 3;
