@@ -21,6 +21,12 @@ void gd_decode(gd_decode_t *decode) {
     decode->imageData[0] = 0;
 }
 
+void gd_code_size(gd_image_block_t *block, uint8_t codeSize) {
+    block->codeBits = codeSize;
+    const uint16_t one = 1;
+    block->codeMask = (one << codeSize) - 1;
+}
+
 void gd_image_decompress_code(gd_image_block_t *block, uint16_t extract) {
     if (extract == 0x0004) {
         block->compressStatus = 1;
@@ -32,13 +38,17 @@ void gd_image_decompress_code(gd_image_block_t *block, uint16_t extract) {
     if (block->compressStatus) {
         block->output[block->outputLength++] = extract;
     }
+
+    if (extract == 6) {
+        gd_code_size(block, 4);
+    }
 }
 
 // given an "image data subblock", unpack it to a "code stream"
 // then decompress the "code stream" to an "index stream"
 void gd_image_subblock_decode(gd_image_block_t *block, uint8_t *subblock, uint8_t count) {
-    uint16_t codeMask = 0x07; // move into block?
-    uint8_t codeBits = 3;
+    block->codeMask = 0x07; // move into block?
+    block->codeBits = 3;
     uint16_t onDeck = 0;
     uint8_t onDeckBits = 0;
     uint16_t extract = 0;
@@ -47,10 +57,10 @@ void gd_image_subblock_decode(gd_image_block_t *block, uint8_t *subblock, uint8_
 
     for (int i=0; ; ) {
         // shift out of on deck
-        while (onDeckBits >= codeBits) {
-            extract = onDeck & codeMask;
-            onDeck >>= codeBits;
-            onDeckBits -= codeBits;
+        while (onDeckBits >= block->codeBits) {
+            extract = onDeck & block->codeMask;
+            onDeck >>= block->codeBits;
+            onDeckBits -= block->codeBits;
 
             gd_image_decompress_code(block, extract);
         }
@@ -62,7 +72,7 @@ void gd_image_subblock_decode(gd_image_block_t *block, uint8_t *subblock, uint8_
             topBits -= shiftBits;
         }
         // shift into top
-        if (topBits == 0 && onDeckBits < codeBits) { // lazy fetch
+        if (topBits == 0 && onDeckBits < block->codeBits) { // lazy fetch
             if (i == count) {
                 break;
             }

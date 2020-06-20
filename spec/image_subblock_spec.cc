@@ -84,6 +84,17 @@ describe("image subblock with", [] {
         it("[0]", [&] { expect(block.output[1]).to(eq(0x01)); });
     });
 
+    describe("code size increases", [&] {
+        it("to 4 bits", [&] {
+            // based on a priori knowledge that first #6 will enlarge code table
+            // to require 4 bit codes
+            code_stream_t packed = p + 4 + 1 + 6 + Shift(4) + 6 + 5;
+            block.outputLength = 0;
+            gd_image_subblock_decode(&block, packed.data(), packed.size());
+            expect(block.outputLength).to(eq(3);
+        });
+    });
+
     // full 10x10 reference example
     // #4 #1 #6 #6 #2 #9 #9 #7 #8 #10 #2 #12 #1 #14 #15 #6 #0 #21 #0 #10 #7 #22 #23 #18 #26 #7 #10 #29 #13 #24 #12 #18 #16 #36 #12 #5
     // 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 1, 1, 1, 0, 0, 0, 0, 2, 2, 2, 1, 1, 1, 0, 0, 0, 0, 2, 2, 2, ...
