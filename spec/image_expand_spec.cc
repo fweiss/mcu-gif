@@ -32,7 +32,7 @@ describe("image expand", [] {
     static uint16_t outputLength;
 
     // clever use of lambda instead of define
-    auto stream_codes = [&] (std::vector<uint16_t> codes) {
+    auto expand_codes_stream = [&] (std::vector<uint16_t> codes) {
         for (uint16_t code : codes) {
             gd_image_expand_code(&block, code);
         }
@@ -47,7 +47,7 @@ describe("image expand", [] {
 
     describe("simaple", [&] {
         it("works", [&] {
-            stream_codes({ 4, 0, 5 });
+            expand_codes_stream({ 4, 0, 5 });
             expect(block.outputLength).to(eq(1));
             expect(block.output[0]).to(eq(0));
         });
