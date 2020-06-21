@@ -7,9 +7,7 @@ using ccspec::core::describe;
 using ccspec::core::before;
 using ccspec::core::it;
 using ccspec::expect;
-using ccspec::matchers::be;
 using ccspec::matchers::eq;
-using ccspec::matchers::be_truthy;
 
 #include "helpers/fake_file.h"
 #include "helpers/pack.h"
@@ -24,7 +22,6 @@ typedef std::vector<uint8_t> code_stream_t;
 
 auto image_subblock_spec =
 describe("image subblock with", [] {
-//    uint8_t minimumCodeSize = 2;
 
     static uint16_t output[outputSize];
 

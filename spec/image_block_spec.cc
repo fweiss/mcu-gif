@@ -7,9 +7,7 @@ using ccspec::core::describe;
 using ccspec::core::before;
 using ccspec::core::it;
 using ccspec::expect;
-//using ccspec::matchers::be;
 using ccspec::matchers::eq;
-//using ccspec::matchers::be_truthy;
 
 #include "helpers/fake_file.h"
 
