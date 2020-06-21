@@ -12,6 +12,7 @@ using ccspec::matchers::eq;
 #include "helpers/fake_file.h"
 
 #include "gd.h"
+#include "gd_internal.h"
 
 namespace simple {
 

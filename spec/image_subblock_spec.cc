@@ -13,6 +13,7 @@ using ccspec::matchers::eq;
 #include "helpers/pack.h"
 
 #include "gd.h"
+#include "gd_internal.h"
 
 namespace simple {
 
