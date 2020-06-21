@@ -59,7 +59,6 @@ void gd_image_expand_code2(gd_expand_codes_t *expand, uint16_t extract) {
 
     if (extract == 6) {
         expand->codeSize = 4;
-        expand->codeSizeChanged = 1;
     }
 }
 

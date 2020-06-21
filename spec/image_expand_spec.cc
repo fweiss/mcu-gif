@@ -8,7 +8,6 @@ using ccspec::core::before;
 using ccspec::core::it;
 using ccspec::expect;
 using ccspec::matchers::eq;
-using ccspec::matchers::be_truthy;
 
 #include "helpers/fake_file.h"
 #include "helpers/pack.h"
@@ -44,7 +43,6 @@ describe("image expand", [] {
         // N.B. 'output' must be the array, not a pointer
         memset(output, 0, sizeof(output));
         expand.codeSize = 3;
-        expand.codeSizeChanged = 0;
         expand.output = output;
         expand.outputLength = 0;
     });
@@ -60,7 +58,6 @@ describe("image expand", [] {
     describe("code size changed", [&] {
         it("to 16", [&] {
             expand_codes_stream({ 4, 1, 6, 5 });
-            expect(expand.codeSizeChanged).to(be_truthy);
             expect(expand.codeSize).to(eq(4));
         });
     });

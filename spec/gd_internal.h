@@ -4,7 +4,6 @@
 
 typedef struct {
     uint8_t compressStatus;
-    bool codeSizeChanged;
     uint8_t codeSize;
     uint16_t *output;
     uint16_t outputLength;
