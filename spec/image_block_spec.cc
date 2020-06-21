@@ -27,6 +27,8 @@ describe("image data block", [] {
     static gd_main_t main;
     main.read = f_read;
     main.image_block.output = output;
+    static gd_image_block_t block;
+
     before("each", [] {
         // N.B. 'output' must be the array, not a pointer
         memset(output, 0, sizeof(output));
@@ -36,7 +38,7 @@ describe("image data block", [] {
         before("each", [&] {
             static uint8_t input[] = { 0x02, 0x00 };
             FFILE(input);
-            gd_image_block_read(&main);
+            gd_image_block_read(&main, &block);
         });
         it("output length", [&] {
             expect(main.image_block.outputLength).to(eq(0));
@@ -47,7 +49,7 @@ describe("image data block", [] {
         before("each", [&] {
             static uint8_t input[] = { 0x02, 0x00 };
             FFILE(input);
-            gd_image_block_read(&main);
+            gd_image_block_read(&main, &block);
         });
         it("value", [&] {
             expect(main.image_block.minumumCodeSize).to(eq(2));
@@ -58,7 +60,7 @@ describe("image data block", [] {
         before("each", [&] {
             static uint8_t input[] = { 0x08, 0x00 };
             FFILE(input);
-            gd_image_block_read(&main);
+            gd_image_block_read(&main, &block);
         });
         it("value", [&] {
             expect(main.image_block.minumumCodeSize).to(eq(8));
@@ -71,7 +73,7 @@ describe("image data block", [] {
             before("each", [&] {
                 static uint8_t input[] = { 0x02, 0x02, 0x4C, 0x01, 0x00 };
                 FFILE(input);
-                gd_image_block_read(&main);
+                gd_image_block_read(&main, &block);
             });
             it("output length", [&] {
                 expect(main.image_block.outputLength).to(eq(1));

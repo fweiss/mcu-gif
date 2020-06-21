@@ -100,7 +100,7 @@ void gd_image_subblock_decode(gd_image_block_t *block, uint8_t *subblock, uint8_
     }
 }
 
-void gd_image_block_read(gd_main_t *main) {
+void gd_image_block_read(gd_main_t *main, gd_image_block_t *block) {
     const int fd = 0;
     long count = main->read(fd, &main->image_block.minumumCodeSize, 1);
 
