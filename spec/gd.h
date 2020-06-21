@@ -31,7 +31,6 @@ typedef struct {
 
 typedef struct {
     long (*read)(int, uint8_t*, long);
-    gd_image_block_t image_block;
 } gd_main_t;
 
 void gd_open(gd_info_t *info);

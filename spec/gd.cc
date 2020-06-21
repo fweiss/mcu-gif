@@ -100,18 +100,18 @@ void gd_image_subblock_decode(gd_image_block_t *block, uint8_t *subblock, uint8_
     }
 }
 
-void gd_image_block_read(gd_main_t *main, gd_image_block_t *block) {
+void gd_image_block_read(gd_main_t *main, gd_image_block_t *image_block) {
     const int fd = 0;
-    long count = main->read(fd, &main->image_block.minumumCodeSize, 1);
+    long count = main->read(fd, &image_block->minumumCodeSize, 1);
 
-    main->image_block.outputLength = 0;
+    image_block->outputLength = 0;
 
     uint8_t subblockSize;
     main->read(fd, &subblockSize, 1);
     static uint8_t subblock[255];
     count = main->read(fd, subblock, subblockSize);
 
-    gd_image_subblock_decode(&main->image_block, subblock, subblockSize);
+    gd_image_subblock_decode(image_block, subblock, subblockSize);
 }
 
 
