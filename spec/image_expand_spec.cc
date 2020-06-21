@@ -8,11 +8,13 @@ using ccspec::core::before;
 using ccspec::core::it;
 using ccspec::expect;
 using ccspec::matchers::eq;
+using ccspec::matchers::be_truthy;
 
 #include "helpers/fake_file.h"
 #include "helpers/pack.h"
 
 #include "gd.h"
+#include "gd_internal.h"
 
 #include <vector>
 #include <functional>
@@ -28,28 +30,38 @@ describe("image expand", [] {
 
     static uint16_t output[outputSize];
 
-    static gd_image_block_t block;
+    static gd_expand_codes_t expand;
     static uint16_t outputLength;
 
     // clever use of lambda instead of define
     auto expand_codes_stream = [&] (std::vector<uint16_t> codes) {
         for (uint16_t code : codes) {
-            gd_image_expand_code(&block, code);
+            gd_image_expand_code2(&expand, code);
         }
     };
 
     before("each", [] {
         // N.B. 'output' must be the array, not a pointer
         memset(output, 0, sizeof(output));
-        block.output = output;
-        block.outputLength = 0;
+        expand.codeSize = 3;
+        expand.codeSizeChanged = 0;
+        expand.output = output;
+        expand.outputLength = 0;
     });
 
-    describe("simaple", [&] {
+    describe("simple", [&] {
         it("works", [&] {
             expand_codes_stream({ 4, 0, 5 });
-            expect(block.outputLength).to(eq(1));
-            expect(block.output[0]).to(eq(0));
+            expect(expand.outputLength).to(eq(1));
+            expect(expand.output[0]).to(eq(0));
+            expect((short)expand.codeSize).to(eq(3));
+        });
+    });
+    describe("code size changed", [&] {
+        it("to 16", [&] {
+            expand_codes_stream({ 4, 1, 6, 5 });
+            expect(expand.codeSizeChanged).to(be_truthy);
+            expect(expand.codeSize).to(eq(4));
         });
     });
 });

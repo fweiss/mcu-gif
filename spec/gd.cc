@@ -1,4 +1,5 @@
 #include "gd.h"
+#include "gd_internal.h"
 
 static inline uint16_t gd_unpack_word(uint8_t bytes[2]) {
     return bytes[0] + (bytes[1] << 8);
@@ -41,6 +42,24 @@ void gd_image_expand_code(gd_image_block_t *block, uint16_t extract) {
 
     if (extract == 6) {
         gd_code_size(block, 4);
+    }
+}
+
+void gd_image_expand_code2(gd_expand_codes_t *expand, uint16_t extract) {
+    if (extract == 0x0004) {
+        expand->compressStatus = 1;
+        return;
+    } else if (extract == 0x0005) {
+        expand->compressStatus = 0;
+        return;
+    }
+    if (expand->compressStatus) {
+        expand->output[expand->outputLength++] = extract;
+    }
+
+    if (extract == 6) {
+        expand->codeSize = 4;
+        expand->codeSizeChanged = 1;
     }
 }
 
