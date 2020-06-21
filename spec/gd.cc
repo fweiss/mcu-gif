@@ -27,7 +27,7 @@ void gd_code_size(gd_image_block_t *block, uint8_t codeSize) {
     block->codeMask = (one << codeSize) - 1;
 }
 
-void gd_image_decompress_code(gd_image_block_t *block, uint16_t extract) {
+void gd_image_expand_code(gd_image_block_t *block, uint16_t extract) {
     if (extract == 0x0004) {
         block->compressStatus = 1;
         return;
@@ -62,7 +62,7 @@ void gd_image_subblock_decode(gd_image_block_t *block, uint8_t *subblock, uint8_
             onDeck >>= block->codeBits;
             onDeckBits -= block->codeBits;
 
-            gd_image_decompress_code(block, extract);
+            gd_image_expand_code(block, extract);
         }
         // shift into on deck
         if (topBits > 0) {

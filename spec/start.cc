@@ -18,11 +18,13 @@ namespace simple {
     extern ExampleGroup* image_block_spec;
     extern ExampleGroup* helpers_spec;
     extern ExampleGroup* image_subblock_spec;
+    extern ExampleGroup* image_expand_spec;
 }
 
 int main() {
     ExampleGroup* example_groups[] = {
         simple::helpers_spec,
+        simple::image_expand_spec,
         simple::image_subblock_spec,
         simple::image_block_spec,
         simple::spec_10x10_red_blue_white,
