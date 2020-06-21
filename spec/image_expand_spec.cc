@@ -14,6 +14,9 @@ using ccspec::matchers::eq;
 
 #include "gd.h"
 
+#include <vector>
+#include <functional>
+
 namespace simple {
 
 const size_t outputSize = 1024;  // fixme max output size for a sub block?
@@ -28,6 +31,13 @@ describe("image expand", [] {
     static gd_image_block_t block;
     static uint16_t outputLength;
 
+    // clever use of lambda instead of define
+    auto stream_codes = [&] (std::vector<uint16_t> codes) {
+        for (uint16_t code : codes) {
+            gd_image_expand_code(&block, code);
+        }
+    };
+
     before("each", [] {
         // N.B. 'output' must be the array, not a pointer
         memset(output, 0, sizeof(output));
@@ -37,9 +47,7 @@ describe("image expand", [] {
 
     describe("simaple", [&] {
         it("works", [&] {
-            gd_image_expand_code(&block, 0x0004);
-            gd_image_expand_code(&block, 0x0000);
-            gd_image_expand_code(&block, 0x0005);
+            stream_codes({ 4, 0, 5 });
             expect(block.outputLength).to(eq(1));
             expect(block.output[0]).to(eq(0));
         });
