@@ -6,4 +6,4 @@
 	url = https://github.com/google/googletest.git
 [submodule "submodules/ccspec"]
 	path = submodules/ccspec
-	url = https://github.com/zhangsu/ccspec
+	url = https://github.com/zhangsu/ccspec.git
