@@ -28,7 +28,8 @@ void gd_code_size(gd_image_block_t *block, uint8_t codeSize) {
     block->codeMask = (one << codeSize) - 1;
 }
 
-void gd_image_expand_code(gd_image_block_t *block, uint16_t extract) {
+// deprecated
+void xgd_image_expand_code(gd_image_block_t *block, uint16_t extract) {
     if (extract == 0x0004) {
         block->compressStatus = 1;
         return;
@@ -80,7 +81,11 @@ void gd_image_subblock_decode(gd_image_block_t *block, uint8_t *subblock, uint8_
             onDeck >>= block->codeBits;
             onDeckBits -= block->codeBits;
 
-            gd_image_expand_code(block, extract);
+//            gd_image_expand_code(block, extract);
+            gd_image_expand_code2(&block->expand_codes, extract);
+            if (block->expand_codes.codeSize != block->codeBits) {
+                gd_code_size(block, block->expand_codes.codeSize);
+            }
         }
         // shift into on deck
         if (topBits > 0) {
@@ -100,7 +105,16 @@ void gd_image_subblock_decode(gd_image_block_t *block, uint8_t *subblock, uint8_
     }
 }
 
+static void gd_expand_codes_init(gd_expand_codes_t *expand_codes, uint16_t *output) {
+    expand_codes->codeSize = 3;
+    expand_codes->output = output;
+    expand_codes->outputLength =0;
+    expand_codes->compressStatus = 0;
+}
+
 void gd_image_block_read(gd_main_t *main, gd_image_block_t *image_block) {
+    gd_expand_codes_init(&image_block->expand_codes, image_block->output);
+
     const int fd = 0;
     long count = main->read(fd, &image_block->minumumCodeSize, 1);
 
@@ -112,6 +126,8 @@ void gd_image_block_read(gd_main_t *main, gd_image_block_t *image_block) {
     count = main->read(fd, subblock, subblockSize);
 
     gd_image_subblock_decode(image_block, subblock, subblockSize);
+
+    image_block->outputLength = image_block->expand_codes.outputLength;
 }
 
 

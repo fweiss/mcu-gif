@@ -27,6 +27,7 @@ describe("image subblock with", [] {
     static uint16_t output[outputSize];
 
     static gd_image_block_t block;
+    static gd_expand_codes_t &expand_codes = block.expand_codes;
     static uint16_t outputLength;
     static Pack p;
 
@@ -36,6 +37,11 @@ describe("image subblock with", [] {
         p.reset();
         block.output = output;
         block.outputLength = 0;
+
+        block.expand_codes.codeSize = 3;
+        block.expand_codes.output = output;
+        block.expand_codes.outputLength = 0;
+        block.expand_codes.compressStatus = 0;
     });
 
     describe("codes 4 + 5", [&] {
@@ -45,7 +51,7 @@ describe("image subblock with", [] {
             gd_image_subblock_decode(&block, packed.data(), packed.size());
         });
 
-        it("output length", [&] { expect(block.outputLength).to(eq(0)); });
+        it("output length", [&] { expect(expand_codes.outputLength).to(eq(0)); });
     });
 
     describe("codes 4 + 0 + 5", [&] {
@@ -55,9 +61,9 @@ describe("image subblock with", [] {
             gd_image_subblock_decode(&block, packed.data(), packed.size());
         });
 
-        it("output length", [&] { expect(block.outputLength).to(eq(1)); });
+        it("output length", [&] { expect(expand_codes.outputLength).to(eq(1)); });
 
-        it("[0]", [&] { expect(block.output[0]).to(eq(0x00)); });
+        it("[0]", [&] { expect(expand_codes.output[0]).to(eq(0x00)); });
     });
 
     describe("codes 4 + 1 + 5", [&] {
@@ -67,9 +73,9 @@ describe("image subblock with", [] {
             gd_image_subblock_decode(&block, packed.data(), packed.size());
         });
 
-        it("output length", [&] { expect(block.outputLength).to(eq(1)); });
+        it("output length", [&] { expect(expand_codes.outputLength).to(eq(1)); });
 
-        it("[0]", [&] { expect(block.output[0]).to(eq(0x0001)); });
+        it("[0]", [&] { expect(expand_codes.output[0]).to(eq(0x0001)); });
     });
 
     describe("codes 4 + 0 + 1 + 5", [&] {
@@ -78,8 +84,8 @@ describe("image subblock with", [] {
             code_stream_t packed = p + 4 + 0 + 1 + 5;
             gd_image_subblock_decode(&block, packed.data(), packed.size());
         });
-        it("output length", [&] { expect(block.outputLength).to(eq(2)); });
-        it("[0]", [&] { expect(block.output[1]).to(eq(0x01)); });
+        it("output length", [&] { expect(expand_codes.outputLength).to(eq(2)); });
+        it("[0]", [&] { expect(expand_codes.output[1]).to(eq(0x01)); });
     });
 
     describe("code size increases", [&] {
@@ -89,7 +95,7 @@ describe("image subblock with", [] {
             code_stream_t packed = p + 4 + 1 + 6 + Shift(4) + 6 + 5;
             block.outputLength = 0;
             gd_image_subblock_decode(&block, packed.data(), packed.size());
-            expect(block.outputLength).to(eq(3));
+            expect(expand_codes.outputLength).to(eq(3));
         });
     });
 

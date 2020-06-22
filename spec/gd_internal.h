@@ -16,6 +16,7 @@ typedef struct {
     uint16_t *output;
     uint16_t outputLength;
     uint8_t compressStatus;
+    gd_expand_codes_t expand_codes;
 } gd_image_block_t;
 
 void gd_image_expand_code2(gd_expand_codes_t *expand, uint16_t code);
