@@ -28,25 +28,7 @@ void gd_code_size(gd_image_block_t *block, uint8_t codeSize) {
     block->codeMask = (one << codeSize) - 1;
 }
 
-// deprecated
-void xgd_image_expand_code(gd_image_block_t *block, uint16_t extract) {
-    if (extract == 0x0004) {
-        block->compressStatus = 1;
-        return;
-    } else if (extract == 0x0005) {
-        block->compressStatus = 0;
-        return;
-    }
-    if (block->compressStatus) {
-        block->output[block->outputLength++] = extract;
-    }
-
-    if (extract == 6) {
-        gd_code_size(block, 4);
-    }
-}
-
-void gd_image_expand_code2(gd_expand_codes_t *expand, uint16_t extract) {
+void gd_image_expand_code(gd_expand_codes_t *expand, uint16_t extract) {
     if (extract == 0x0004) {
         expand->compressStatus = 1;
         return;
@@ -82,7 +64,7 @@ void gd_image_subblock_decode(gd_image_block_t *block, uint8_t *subblock, uint8_
             onDeckBits -= block->codeBits;
 
 //            gd_image_expand_code(block, extract);
-            gd_image_expand_code2(&block->expand_codes, extract);
+            gd_image_expand_code(&block->expand_codes, extract);
             if (block->expand_codes.codeSize != block->codeBits) {
                 gd_code_size(block, block->expand_codes.codeSize);
             }

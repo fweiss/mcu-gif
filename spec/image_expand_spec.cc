@@ -35,7 +35,7 @@ describe("image expand", [] {
     // clever use of lambda instead of define
     auto expand_codes_stream = [&] (std::vector<uint16_t> codes) {
         for (uint16_t code : codes) {
-            gd_image_expand_code2(&expand, code);
+            gd_image_expand_code(&expand, code);
         }
     };
 
@@ -56,9 +56,15 @@ describe("image expand", [] {
         });
     });
     describe("code size changed", [&] {
-        it("to 16", [&] {
+        it("to 4", [&] {
             expand_codes_stream({ 4, 1, 6, 5 });
             expect(expand.codeSize).to(eq(4));
+        });
+    });
+    describe("single index sequence", [&] {
+        it("10", [&] {
+            expand_codes_stream({ 4, 1, 6, 7, 8, 5});
+            expect(expand.outputLength).to(eq(10));
         });
     });
 });
