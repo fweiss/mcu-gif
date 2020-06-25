@@ -1,6 +1,8 @@
 #include "gd.h"
 #include "gd_internal.h"
 
+#include <stdlib.h>
+
 static inline uint16_t gd_unpack_word(uint8_t bytes[2]) {
     return bytes[0] + (bytes[1] << 8);
 }
@@ -28,9 +30,18 @@ void gd_code_size(gd_image_block_t *block, uint8_t codeSize) {
     block->codeMask = (one << codeSize) - 1;
 }
 
+static void gd_string_table_init(gd_expand_codes_t *expand) {
+    gd_string_t *string = (gd_string_t*)malloc(sizeof(gd_string_t) + sizeof(uint16_t));
+    string->data[0] = 0x0000;
+    expand->codeTable = string;
+}
+
 void gd_image_expand_code(gd_expand_codes_t *expand, uint16_t extract) {
     if (extract == 0x0004) {
         expand->compressStatus = 1;
+        // init code table
+        gd_string_table_init(expand);
+        expand->codeTableSize = 6;
         return;
     } else if (extract == 0x0005) {
         expand->compressStatus = 0;
@@ -42,6 +53,7 @@ void gd_image_expand_code(gd_expand_codes_t *expand, uint16_t extract) {
 
     if (extract == 6) {
         expand->codeSize = 4;
+        expand->codeTableSize = 7;
     }
 }
 

@@ -3,8 +3,15 @@
 #include "gd.h"
 
 typedef struct {
+    uint16_t size;
+    uint16_t data[];
+} gd_string_t;
+
+typedef struct {
     uint8_t compressStatus;
     uint8_t codeSize;
+    uint16_t codeTableSize;
+    gd_string_t *codeTable;
     uint16_t *output;
     uint16_t outputLength;
 } gd_expand_codes_t;

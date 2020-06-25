@@ -20,6 +20,11 @@ domain
 - - comment extension
 - - application extension
 
+also
+- code size
+- compress
+- compression code
+
 - header signature
 - version
 - logical screen descriptor
