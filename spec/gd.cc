@@ -76,6 +76,7 @@ uint16_t gd_string_table_add(gd_string_table_t *table, gd_string2_t *string) {
         uint16_t code = table->length;
         gd_string_table_entry_t *entry = &table->entries[table->length++];
         entry->length = string->length;
+        entry->offset = table->strings_length;
         memcpy((void*)&table->strings[table->strings_length], (void*)string->value, string->length * 2);
         table->strings_length += string->length;
         return code;

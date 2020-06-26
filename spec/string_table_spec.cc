@@ -48,14 +48,25 @@ describe("string table", [] {
             string.length = sizeof(raw_string) / sizeof(raw_string[0]);
             string.value = raw_string;
         });
-        it("out of space", [&] {
+        it("out of entryies space", [&] {
             string_table.capacity = 6;
+            uint16_t code = gd_string_table_add(&string_table, &string);
+            expect(code).to(eq(0xFFFF));
+        });
+        it("out of strings space", [&] {
+            string_table.strings_capacity = 2;
             uint16_t code = gd_string_table_add(&string_table, &string);
             expect(code).to(eq(0xFFFF));
         });
         it("return new code", [&] {
             uint16_t code = gd_string_table_add(&string_table, &string);
             expect(code).to(eq(6));
+        });
+        it("lookup", [&] {
+            uint16_t code = gd_string_table_add(&string_table, &string);
+            gd_string2_t string = gd_string_table_at(&string_table, 6);
+            expect(string.length).to(eq(4));
+            expect(string.value[2]).to(eq(7));
         });
     });
 });
