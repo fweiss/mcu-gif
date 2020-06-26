@@ -2,6 +2,7 @@
 #include "gd_internal.h"
 
 #include <stdlib.h>
+#include <string>
 
 static inline uint16_t gd_unpack_word(uint8_t bytes[2]) {
     return bytes[0] + (bytes[1] << 8);
@@ -42,8 +43,11 @@ void gd_string_table_init(gd_string_table_t *table) {
     static uint16_t strings[512];
 
     table->entries = entries;
-    table->strings = strings;
     table->length = 6;
+    table->capacity = 64;
+    table->strings = strings;
+    table->strings_length = 4;
+    table->strings_capacity = 512;
 
     for (int i=0; i<4; i++) {
         gd_string_table_entry_t *entry = &table->entries[i];
@@ -52,6 +56,7 @@ void gd_string_table_init(gd_string_table_t *table) {
         table->strings[i] = i;
     }
 }
+
 gd_string2_t gd_string_table_at(gd_string_table_t *table, uint16_t code) {
     static gd_string2_t string;
     if (code < table->length) {
@@ -62,6 +67,21 @@ gd_string2_t gd_string_table_at(gd_string_table_t *table, uint16_t code) {
         string.length = 0;
     }
     return string;
+}
+
+uint16_t gd_string_table_add(gd_string_table_t *table, gd_string2_t *string) {
+    const bool entries_has_space= table->length < table->capacity;
+    const bool strings_has_space = table->strings_length + string->length < table->strings_capacity;
+    if (entries_has_space && strings_has_space) {
+        uint16_t code = table->length;
+        gd_string_table_entry_t *entry = &table->entries[table->length++];
+        entry->length = string->length;
+        memcpy((void*)&table->strings[table->strings_length], (void*)string->value, string->length * 2);
+        table->strings_length += string->length;
+        return code;
+    } else {
+        return 0xFFFF;
+    }
 }
 
 void gd_image_expand_code(gd_expand_codes_t *expand, uint16_t extract) {
