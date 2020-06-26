@@ -32,23 +32,23 @@ describe("for 10x10 red-blue-white", [] {
     // but then it segfaults because before each isn't invoked for second it
 
     describe("info", [] {
-        gd_info_t info;
+        static gd_info_t info;
 
-        before("each", [&info] {
+        before("each", [&] {
             FFILE(header_logical_screen_descriptor);
             info.read = f_read;
             gd_open(&info);
         });
 
-        it("width", [&info] {
+        it("width", [&] {
             expect(info.width).to(eq(10));
         });
 
-        it("height", [&info] {
+        it("height", [&] {
             expect(info.height).to(eq(10));
         });
 
-        it("global color table flag", [&info] {
+        it("global color table flag", [&] {
             expect(info.globalColorTableFlag).to(be_truthy);
         });
 
