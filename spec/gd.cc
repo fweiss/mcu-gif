@@ -133,8 +133,11 @@ void gd_image_expand_code(gd_expand_codes_t *expand, uint16_t extract) {
         }
     }
     expand->string = found_string;
+
     if (expand->string_table.length == 8) {
         expand->codeSize = 4;
+    } else if (expand->string_table.length == 16) {
+        expand->codeSize = 5;
     }
 }
 

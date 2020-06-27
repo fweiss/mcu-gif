@@ -95,7 +95,7 @@ describe("image subblock with", [] {
             code_stream_t packed = p + 4 + 1 + 6 + 6 + Shift(4) + 2 + 5;
             block.outputLength = 0;
             gd_image_subblock_decode(&block, packed.data(), packed.size());
-            expect(expand_codes.outputLength).to(eq(6));
+            expect(expand_codes.codeSize).to(eq(4));
         });
     });
 

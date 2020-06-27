@@ -47,6 +47,35 @@ describe("image expand", [] {
         expand.outputLength = 0;
     });
 
+    // 1's will output index one-for-one
+    describe("simple uncompressed", [&] {
+        describe("code sequence 8 1's", [&] {
+            before("each", [&] {
+                expand_codes_stream({ 4, 1, 1, 1, 1, 1, 1, 1, 1, 5});
+            });
+            it("output count", [&] {
+                expect(expand.outputLength).to(eq(8));
+            });
+            it("output [1]", [&] {
+                expect(expand.output[1]).to(eq(1));
+            });
+            it("output [7]", [&] {
+                expect(expand.output[7]).to(eq(1));
+            });
+            it("code size", [&] {
+                expect((uint16_t)expand.codeSize).to(eq(4));
+            });
+        });
+        describe("code sequence 12 1's", [&] {
+            before("each", [&] {
+                expand_codes_stream({ 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5});
+            });
+            it("code size", [&] {
+                expect((uint16_t)expand.codeSize).to(eq(5));
+            });
+        });
+    });
+
     describe("simple", [&] {
         it("works", [&] {
             expand_codes_stream({ 4, 0, 5 });
@@ -66,16 +95,21 @@ describe("image expand", [] {
             expect((uint16_t)expand.codeSize).to(eq(4));
         });
     });
-    describe("single index sequence", [&] {
-        it("10", [&] {
-//            expand_codes_stream({ 4, 1, 6, 7, 8, 5});
-            uint16_t codes[] = { 4, 1, 6, 6, 7, 6, 5};
+
+    describe("full example", [&] {
+        before("each", [&] {
+//            expand_codes_stream({ 4, 1, 6, 6, 2, 9, 9, 7, 8, 10, 2, 12, 1, 14, 15, 6, 0, 21, 0, 10, 7, 22, 23, 18, 26, 7, 10, 29, 13, 24, 12, 18, 16, 36, 12, 5});
+            uint16_t codes[] = { 4, 1, 6, 6, 2, 9, 9, 7, 8, 10, 2, 12, 1, 14, 15, 6, 0, 21, 0, 10, 7, 22, 23, 18, 26, 7, 10, 29, 13, 24, 12, 18, 16, 36, 12, 5};
             for (auto code : codes) {
                 gd_image_expand_code(&expand, code);
             }
-            expect(expand.outputLength).to(eq(10));
+        });
+        it("output count", [&] {
+            expect(expand.outputLength).to(eq(100));
         });
     });
+
+
 //    describe("code table", [&] {
 //        describe("initial", [&] {
 //            before("each", [&] {
