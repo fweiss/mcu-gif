@@ -90,12 +90,12 @@ describe("image subblock with", [] {
 
     describe("code size increases", [&] {
         it("to 4 bits", [&] {
-            // based on a priori knowledge that first #6 will enlarge code table
+            // based on a priori knowledge that first #2 will enlarge code table
             // to require 4 bit codes
-            code_stream_t packed = p + 4 + 1 + 6 + Shift(4) + 6 + 5;
+            code_stream_t packed = p + 4 + 1 + 6 + 6 + Shift(4) + 2 + 5;
             block.outputLength = 0;
             gd_image_subblock_decode(&block, packed.data(), packed.size());
-            expect(expand_codes.outputLength).to(eq(3));
+            expect(expand_codes.outputLength).to(eq(6));
         });
     });
 

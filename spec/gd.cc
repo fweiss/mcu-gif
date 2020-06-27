@@ -32,11 +32,11 @@ void gd_code_size(gd_image_block_t *block, uint8_t codeSize) {
 }
 
 // deprecated
-static void gd_string_table_init(gd_expand_codes_t *expand) {
-    gd_string_t *string = (gd_string_t*)malloc(sizeof(gd_string_t) + sizeof(uint16_t));
-    string->data[0] = 0x0000;
-    expand->codeTable = string;
-}
+//static void gd_string_table_init(gd_expand_codes_t *expand) {
+//    gd_string_t *string = (gd_string_t*)malloc(sizeof(gd_string_t) + sizeof(uint16_t));
+//    string->data[0] = 0x0000;
+//    expand->codeTable = string;
+//}
 
 void gd_string_table_init(gd_string_table_t *table) {
     static gd_string_table_entry_t entries[64];
@@ -89,20 +89,52 @@ void gd_image_expand_code(gd_expand_codes_t *expand, uint16_t extract) {
     if (extract == 0x0004) {
         expand->compressStatus = 1;
         // init code table
-        gd_string_table_init(expand);
-        expand->codeTableSize = 6;
+//        gd_string_table_init(expand);
+//        expand->codeTableSize = 6;
+        gd_string_table_init(&expand->string_table);
+        expand->string.length = 0;
         return;
     } else if (extract == 0x0005) {
         expand->compressStatus = 0;
         return;
     }
-    if (expand->compressStatus) {
-        expand->output[expand->outputLength++] = extract;
+    if (expand->compressStatus == 0) {
+        return;
     }
 
-    if (extract == 6) {
+    uint16_t new_code;
+    static uint16_t raw_string[64];
+    gd_string2_t new_string;
+    new_string.value = raw_string;
+
+    gd_string2_t found_string = gd_string_table_at(&expand->string_table, extract);
+    bool found = found_string.length != 0;
+    if (found) {
+        for (int i=0; i<found_string.length; i++) {
+            expand->output[expand->outputLength++] = found_string.value[i];;
+        }
+        if (expand->string.length > 0) {
+            memcpy(raw_string, found_string.value, found_string.length);
+            raw_string[found_string.length] = expand->string.value[0];
+            new_string.length = found_string.length + 1;
+
+            new_code = gd_string_table_add(&expand->string_table, &new_string);
+        } else {
+            new_code = extract;
+        }
+    } else {
+        memcpy(raw_string, expand->string.value, expand->string.length);
+        raw_string[expand->string.length] = expand->string.value[0];
+        new_string.length = expand->string.length + 1;
+
+        new_code = gd_string_table_add(&expand->string_table, &new_string);
+        for (int i=0; i<new_string.length; i++) {
+            expand->output[expand->outputLength++] = new_string.value[i];;
+        }
+    }
+    expand->string = found_string;
+    if (expand->string_table.length == 8) {
         expand->codeSize = 4;
-        expand->codeTableSize = 7;
     }
 }
 

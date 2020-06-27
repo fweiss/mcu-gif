@@ -57,16 +57,25 @@ describe("image expand", [] {
     });
     describe("code size changed", [&] {
         it("to 4", [&] {
-            expand_codes_stream({ 4, 1, 6, 5 });
-            expect(expand.codeSize).to(eq(4));
+//            expand_codes_stream({ 4, 1, 6, 6, 2, 5 });
+            uint16_t codes[] = { 4, 1, 6, 6, 2, 5};
+            for (auto code : codes) {
+                gd_image_expand_code(&expand, code);
+            }
+//            expect(expand.string_table.length).to(eq(6));
+            expect((uint16_t)expand.codeSize).to(eq(4));
         });
     });
-//    describe("single index sequence", [&] {
-//        it("10", [&] {
+    describe("single index sequence", [&] {
+        it("10", [&] {
 //            expand_codes_stream({ 4, 1, 6, 7, 8, 5});
-//            expect(expand.outputLength).to(eq(10));
-//        });
-//    });
+            uint16_t codes[] = { 4, 1, 6, 6, 7, 6, 5};
+            for (auto code : codes) {
+                gd_image_expand_code(&expand, code);
+            }
+            expect(expand.outputLength).to(eq(10));
+        });
+    });
 //    describe("code table", [&] {
 //        describe("initial", [&] {
 //            before("each", [&] {
