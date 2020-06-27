@@ -74,6 +74,18 @@ describe("image expand", [] {
                 expect((uint16_t)expand.codeSize).to(eq(5));
             });
         });
+        describe("code sequence 28 1's", [&] {
+            before("each", [&] {
+                gd_image_expand_code(&expand, 4);
+                for (int i=0; i<28; i++) {
+                    gd_image_expand_code(&expand, 1);
+                }
+                gd_image_expand_code(&expand, 5);
+            });
+            it("code size", [&] {
+                expect((uint16_t)expand.codeSize).to(eq(6));
+            });
+        });
     });
 
     describe("simple", [&] {
