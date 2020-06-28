@@ -118,6 +118,7 @@ void gd_image_expand_code(gd_expand_codes_t *expand, uint16_t extract) {
         }
         if (expand->string.length > 0) {
             memcpy(raw_string, found_string.value, found_string.length);
+
             raw_string[found_string.length] = expand->string.value[0];
             new_string.length = found_string.length + 1;
 
@@ -127,6 +128,7 @@ void gd_image_expand_code(gd_expand_codes_t *expand, uint16_t extract) {
         }
     } else {
         memcpy(raw_string, expand->string.value, expand->string.length);
+
         raw_string[expand->string.length] = expand->string.value[0];
         new_string.length = expand->string.length + 1;
 

@@ -119,6 +119,27 @@ describe("image expand", [] {
         it("output count", [&] {
             expect(expand.outputLength).to(eq(100));
         });
+        it("output [4]", [&] {
+            expect(expand.output[4]).to(eq(1));
+        });
+        it("output [5]", [&] {
+            expect(expand.output[5]).to(eq(2));
+        });
+        it("output [9]", [&] {
+            expect(expand.output[5]).to(eq(2));
+        });
+        it("output [19]", [&] {
+            expect(expand.output[5]).to(eq(2));
+        });
+        it("output [30]", [&] {
+            expect(expand.output[99]).to(eq(1));
+        });
+        it("output [32]", [&] {
+            expect(expand.output[99]).to(eq(1));
+        });
+        it("output [99]", [&] {
+            expect(expand.output[99]).to(eq(2));
+        });
     });
 
 
