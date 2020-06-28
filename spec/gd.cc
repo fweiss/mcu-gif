@@ -79,8 +79,11 @@ uint16_t gd_string_table_add(gd_string_table_t *table, gd_string2_t *string) {
         entry->offset = table->strings_length;
         memcpy((void*)&table->strings[table->strings_length], (void*)string->value, string->length * 2);
         table->strings_length += string->length;
+
+        table->status = GD_OK;
         return code;
     } else {
+        table->status = GD_ERROR;
         return 0xFFFF;
     }
 }

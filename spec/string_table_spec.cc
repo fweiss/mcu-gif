@@ -51,15 +51,17 @@ describe("string table", [] {
         it("out of entryies space", [&] {
             string_table.capacity = 6;
             uint16_t code = gd_string_table_add(&string_table, &string);
-            expect(code).to(eq(0xFFFF));
+//            expect(code).to(eq(0xFFFF));
+            expect((uint16_t)string_table.status).to(eq((uint16_t)GD_ERROR));
         });
         it("out of strings space", [&] {
             string_table.strings_capacity = 2;
             uint16_t code = gd_string_table_add(&string_table, &string);
-            expect(code).to(eq(0xFFFF));
+            expect((uint16_t)string_table.status).to(eq((uint16_t)GD_ERROR));
         });
         it("return new code", [&] {
             uint16_t code = gd_string_table_add(&string_table, &string);
+            expect((uint16_t)string_table.status).to(eq((uint16_t)GD_OK));
             expect(code).to(eq(6));
         });
         it("lookup", [&] {

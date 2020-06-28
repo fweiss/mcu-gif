@@ -18,7 +18,13 @@ typedef struct {
     uint16_t offset;
 } gd_string_table_entry_t;
 
+typedef enum {
+    GD_OK,
+    GD_ERROR,
+} gd_status_t;
+
 typedef struct {
+    gd_status_t status;
     uint16_t capacity;
     uint16_t length;
     gd_string_table_entry_t *entries;
