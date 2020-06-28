@@ -48,26 +48,38 @@ describe("string table", [] {
             string.length = sizeof(raw_string) / sizeof(raw_string[0]);
             string.value = raw_string;
         });
-        it("out of entryies space", [&] {
-            string_table.capacity = 6;
-            uint16_t code = gd_string_table_add(&string_table, &string);
-//            expect(code).to(eq(0xFFFF));
-            expect((uint16_t)string_table.status).to(eq((uint16_t)GD_ERROR));
-        });
-        it("out of strings space", [&] {
-            string_table.strings_capacity = 2;
-            uint16_t code = gd_string_table_add(&string_table, &string);
-            expect((uint16_t)string_table.status).to(eq((uint16_t)GD_ERROR));
+        describe("out of space", [&] {
+            it("entries", [&] {
+                string_table.capacity = 6;
+                uint16_t code = gd_string_table_add(&string_table, &string);
+    //            expect(code).to(eq(0xFFFF));
+                expect((uint16_t)string_table.status).to(eq((uint16_t)GD_ERROR));
+            });
+            it("strings", [&] {
+                string_table.strings_capacity = 2;
+                uint16_t code = gd_string_table_add(&string_table, &string);
+                expect((uint16_t)string_table.status).to(eq((uint16_t)GD_ERROR));
+            });
         });
         it("return new code", [&] {
             uint16_t code = gd_string_table_add(&string_table, &string);
             expect((uint16_t)string_table.status).to(eq((uint16_t)GD_OK));
             expect(code).to(eq(6));
         });
-        it("lookup", [&] {
+    });
+    describe("lookup", [&] {
+        static uint16_t raw_string[] = { 1, 6, 7, 30 };
+        static gd_string2_t string;
+        before("each", [&] {
+            string.length = sizeof(raw_string) / sizeof(raw_string[0]);
+            string.value = raw_string;
             uint16_t code = gd_string_table_add(&string_table, &string);
-            gd_string2_t string = gd_string_table_at(&string_table, 6);
+            string = gd_string_table_at(&string_table, 6);
+        });
+        it("returns length", [&] {
             expect(string.length).to(eq(4));
+        });
+        it("returns value[2]", [&] {
             expect(string.value[2]).to(eq(7));
         });
     });

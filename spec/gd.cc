@@ -131,6 +131,7 @@ void gd_image_expand_code(gd_expand_codes_t *expand, uint16_t extract) {
         new_string.length = expand->string.length + 1;
 
         new_code = gd_string_table_add(&expand->string_table, &new_string);
+        found_string = new_string;
         for (int i=0; i<new_string.length; i++) {
             expand->output[expand->outputLength++] = new_string.value[i];;
         }
