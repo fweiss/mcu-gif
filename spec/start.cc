@@ -20,6 +20,7 @@ namespace simple {
     extern ExampleGroup* image_subblock_spec;
     extern ExampleGroup* image_expand_spec;
     extern ExampleGroup* string_table_spec;
+    extern ExampleGroup* expand_state_spec;
 }
 
 int main() {
@@ -27,6 +28,7 @@ int main() {
         simple::helpers_spec,
         simple::string_table_spec,
         simple::image_expand_spec,
+        simple::expand_state_spec,
         simple::image_subblock_spec,
         simple::image_block_spec,
         simple::spec_10x10_red_blue_white,
