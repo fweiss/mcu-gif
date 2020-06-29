@@ -39,54 +39,57 @@ describe("expand state", [] {
             expect(expand.string_table.length).to(eq(6));
         });
     });
-    describe("first", [&] {
-        before("each", [] {
-                gd_image_expand_code(&expand, 4);
-        });
-        describe("found code", [&] {
-            before("each", [&] {
-                gd_image_expand_code(&expand, 2);
+    describe("scenario", [] {
+            describe("first", [&] {
+                before("each", [] {
+                        gd_image_expand_code(&expand, 4);
+                });
+                describe("found code", [&] {
+                    before("each", [&] {
+                        gd_image_expand_code(&expand, 2);
+                    });
+                    it("prior code", [] {
+                        expect(expand.string.length).to(eq(1));
+                        expect(expand.string.value[0]).to(eq(2));
+                    });
+                });
+        // behavior unspecified
+                describe("not found code", [] {
+        //            before("each", [&] {
+        //                gd_image_expand_code(&expand, 6);
+        //            });
+        //            it("prior code", [] {
+        //                expect(expand.string.length).to(eq(1));
+        //            });
+                });
             });
-            it("prior code", [] {
-                expect(expand.string.length).to(eq(1));
-                expect(expand.string.value[0]).to(eq(2));
+            describe("second", [] {
+                    before("each", [] {
+                        gd_image_expand_code(&expand, 4);
+                        gd_image_expand_code(&expand, 2);
+                        gd_image_expand_code(&expand, 6);
+                    });
+                    it("prior code", [] {
+                        expect(expand.string.length).to(eq(2));
+                        expect(expand.string.value[0]).to(eq(2));
+                        expect(expand.string.value[1]).to(eq(2));
+                    });
             });
-        });
-// behavior unspecified
-        describe("not found code", [] {
-//            before("each", [&] {
-//                gd_image_expand_code(&expand, 6);
-//            });
-//            it("prior code", [] {
-//                expect(expand.string.length).to(eq(1));
-//            });
-        });
+            describe("third", [] {
+                    before("each", [] {
+                        gd_image_expand_code(&expand, 4);
+                        gd_image_expand_code(&expand, 3);
+                        gd_image_expand_code(&expand, 6);
+                        gd_image_expand_code(&expand, 6);
+                    });
+                    it("prior code", [] {
+                        expect(expand.string.length).to(eq(2));
+                        expect(expand.string.value[0]).to(eq(2));
+                        expect(expand.string.value[1]).to(eq(2));
+                    });
+            });
     });
-    describe("second", [] {
-            before("each", [] {
-                gd_image_expand_code(&expand, 4);
-                gd_image_expand_code(&expand, 2);
-                gd_image_expand_code(&expand, 6);
-            });
-            it("prior code", [] {
-                expect(expand.string.length).to(eq(2));
-                expect(expand.string.value[0]).to(eq(2));
-                expect(expand.string.value[1]).to(eq(2));
-            });
-    });
-    describe("third", [] {
-            before("each", [] {
-                gd_image_expand_code(&expand, 4);
-                gd_image_expand_code(&expand, 3);
-                gd_image_expand_code(&expand, 6);
-                gd_image_expand_code(&expand, 6);
-            });
-            it("prior code", [] {
-                expect(expand.string.length).to(eq(2));
-                expect(expand.string.value[0]).to(eq(2));
-                expect(expand.string.value[1]).to(eq(2));
-            });
-    });
+
 });
 
 } // namespace
