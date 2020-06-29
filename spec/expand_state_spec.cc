@@ -55,6 +55,40 @@ describe("expand state", [] {
                 });
             });
         });
+        describe("prior string (3)", [] {
+            static uint16_t string[] = { 3 };
+            describe("found 2 {2}", []  {
+                before("each", [] {
+                    gd_image_expand_code(&expand, 4);
+                    expand.string.length = 1;
+                    expand.string.value = string;
+                    gd_image_expand_code(&expand, 2);
+                });
+                it("prior length", [] {
+                     expect(expand.string.length).to(eq(1));
+                });
+                it("prior value[0]", [] {
+                     expect(expand.string.value[0]).to(eq(2));
+                });
+            });
+            describe("not found 6 {}", [] {
+                before("each", [] {
+                    gd_image_expand_code(&expand, 4);
+                    expand.string.length = 1;
+                    expand.string.value = string;
+                    gd_image_expand_code(&expand, 6);
+                });
+                it("prior length", [] {
+                     expect(expand.string.length).to(eq(2));
+                });
+                it("prior value[0]", [] {
+                     expect(expand.string.value[0]).to(eq(3));
+                });
+                it("prior value[1]", [] {
+                     expect(expand.string.value[1]).to(eq(3));
+                });
+            });
+        });
         describe("first", [&] {
             before("each", [] {
                     gd_image_expand_code(&expand, 4);
