@@ -24,3 +24,11 @@ Correponding string insertions:
 - 1 6 7 8 9 10 11 12 13 14 15 16 17 18 19
 
 
+Pseudocode teardown
+
+cin << next_code
+(found, code) = st.lookup(next_code)
+K = found ? code[0] : priorcode[0]
+index_stream << found ? {code} : {priorcode} + K
+code_table + {priorcode} + K
+{priorcode} = {code}
