@@ -40,10 +40,12 @@ describe("expand state", [] {
         });
     });
     describe("scenario", [] {
+        before("each", [] {
+                gd_image_expand_code(&expand, 4);
+        });
         describe("prior string ()", [] {
             describe("found (2)", []  {
                 before("each", [] {
-                    gd_image_expand_code(&expand, 4);
                     expand.string.length = 0;
                     gd_image_expand_code(&expand, 2);
                 });
@@ -59,7 +61,6 @@ describe("expand state", [] {
             static uint16_t string[] = { 3 };
             describe("found 2 {2}", []  {
                 before("each", [] {
-                    gd_image_expand_code(&expand, 4);
                     expand.string.length = 1;
                     expand.string.value = string;
                     gd_image_expand_code(&expand, 2);
@@ -73,7 +74,6 @@ describe("expand state", [] {
             });
             describe("not found 6 {}", [] {
                 before("each", [] {
-                    gd_image_expand_code(&expand, 4);
                     expand.string.length = 1;
                     expand.string.value = string;
                     gd_image_expand_code(&expand, 6);
@@ -89,9 +89,17 @@ describe("expand state", [] {
                 });
             });
         });
+        describe("prior string (1,1)", [] {
+
+        });
+        describe("prior string (1,2)", [] {
+
+        });
+        describe("prior string (2,1)", [] {
+
+        });
         describe("first", [&] {
             before("each", [] {
-                    gd_image_expand_code(&expand, 4);
             });
             describe("found code", [&] {
                 before("each", [&] {
@@ -114,7 +122,6 @@ describe("expand state", [] {
         });
         describe("second", [] {
             before("each", [] {
-                gd_image_expand_code(&expand, 4);
                 gd_image_expand_code(&expand, 2);
                 gd_image_expand_code(&expand, 6);
             });
@@ -126,7 +133,6 @@ describe("expand state", [] {
         });
         describe("third", [] {
             before("each", [] {
-                gd_image_expand_code(&expand, 4);
                 gd_image_expand_code(&expand, 3);
                 gd_image_expand_code(&expand, 6);
                 gd_image_expand_code(&expand, 6);
