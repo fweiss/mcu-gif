@@ -37,7 +37,7 @@ typedef struct {
     uint8_t compressStatus;
     uint8_t codeSize;
     gd_string_table_t string_table;
-    gd_string2_t string;
+    gd_string2_t prior_string;
     uint16_t *output;
     uint16_t outputLength;
 } gd_expand_codes_t;
