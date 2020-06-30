@@ -41,62 +41,90 @@ describe("expand state", [] {
     });
     describe("scenario", [] {
         before("each", [] {
-                gd_image_expand_code(&expand, 4);
+            gd_image_expand_code(&expand, 4);
         });
-        describe("prior string ()", [] {
-            describe("found (2)", []  {
+        describe("prior string was ()", [] {
+            before("each", [] {
+                expand.string.length = 0;
+            });
+            describe("found 2 (2)", []  {
                 before("each", [] {
-                    expand.string.length = 0;
                     gd_image_expand_code(&expand, 2);
                 });
-                it("prior length", [] {
+                it("prior length 1", [] {
                      expect(expand.string.length).to(eq(1));
                 });
-                it("prior value[0]", [] {
+                it("prior value[0] 2", [] {
                      expect(expand.string.value[0]).to(eq(2));
                 });
             });
+            describe("not found", [] {
+                it("undefined", [] {});
+            });
         });
-        describe("prior string (3)", [] {
+        describe("prior string was (3)", [] {
             static uint16_t string[] = { 3 };
+            before("each", [] {
+                expand.string.length = 1;
+                expand.string.value = string;
+            });
             describe("found 2 {2}", []  {
                 before("each", [] {
-                    expand.string.length = 1;
-                    expand.string.value = string;
                     gd_image_expand_code(&expand, 2);
                 });
-                it("prior length", [] {
+                it("prior length 1", [] {
                      expect(expand.string.length).to(eq(1));
                 });
-                it("prior value[0]", [] {
+                it("prior value[0] 2", [] {
                      expect(expand.string.value[0]).to(eq(2));
                 });
             });
-            describe("not found 6 {}", [] {
+            describe("not found 6 ()", [] {
                 before("each", [] {
-                    expand.string.length = 1;
-                    expand.string.value = string;
                     gd_image_expand_code(&expand, 6);
                 });
-                it("prior length", [] {
+                it("prior length 2", [] {
                      expect(expand.string.length).to(eq(2));
                 });
-                it("prior value[0]", [] {
+                it("prior value[0] 3", [] {
                      expect(expand.string.value[0]).to(eq(3));
                 });
-                it("prior value[1]", [] {
+                it("prior value[1] 3", [] {
                      expect(expand.string.value[1]).to(eq(3));
                 });
             });
         });
-        describe("prior string (1,1)", [] {
-
-        });
         describe("prior string (1,2)", [] {
-
-        });
-        describe("prior string (2,1)", [] {
-
+            before("each", [] {
+                static uint16_t value[] = { 1, 2 };
+                expand.string.length = 2;
+                expand.string.value = value;
+            });
+            describe("found 3 (3)", [] {
+                before("each", [] {
+                    gd_image_expand_code(&expand, 3);
+                });
+                it("prior length 1", [] {
+                    expect(expand.string.length).to(eq(1));
+                });
+                it("prior value[0] 3", [] {
+                    expect(expand.string.value[0]).to(eq(3));
+                });
+            });
+            describe("not found", [] {
+                it("prior length 3", [] {
+                    expect(expand.string.length).to(eq(3));
+                });
+                it("prior value[0] 1", [] {
+                    expect(expand.string.value[0]).to(eq(1));
+                });
+                it("prior value[1] 2", [] {
+                    expect(expand.string.value[0]).to(eq(2));
+                });
+                it("prior value[2] 1", [] {
+                    expect(expand.string.value[0]).to(eq(1));
+                });
+            });
         });
         describe("first", [&] {
             before("each", [] {
