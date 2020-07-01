@@ -73,6 +73,17 @@ describe("for 10x10 red-blue-white", [] {
         });
 
     });
+    describe("read image", [] {
+        it("a pixel", [] {
+            // set file system read handler
+            // read header, logical screen descriptor
+            // read global color table
+            // read graphic control extension
+            // read image descriptor
+            // read image
+            // read trailer
+        });
+    });
 });
 
 } // namespace simple
