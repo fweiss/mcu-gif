@@ -1,8 +1,8 @@
 #include "gd.h"
 #include "gd_internal.h"
 
-#include <stdlib.h>
-#include <string>
+#include <stdbool.h>
+#include <string.h>
 
 static inline uint16_t gd_unpack_word(uint8_t bytes[2]) {
     return bytes[0] + (bytes[1] << 8);
