@@ -61,8 +61,11 @@ Several portable GUI frameworks were investigated:
 - openGL - may be poorly supported on OS X
 
 ### SDL2 setup for Mac
-Download the dmg
-Copy the framework to the project root directory
+Download the dmg from libsdl.org.
+Copy SDL2.framework to either:
+- the project root directory
+- your home directory (such as ~/Library/)
+- a global directory (such as /Library/Frameworks)
 
 ## CCSpec
 I think RSpec is a good model for writing tests. There has been some effort to provide this for C/C++.

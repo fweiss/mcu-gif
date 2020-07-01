@@ -1,6 +1,6 @@
 OBJDIR = build
 
-SDL2_DIR = ./SDL2.framework
+SDL2_DIR = /Library/Frameworks/SDL2.framework
 
 CC := clang
 
