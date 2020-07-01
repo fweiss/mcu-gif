@@ -111,9 +111,29 @@ describe("expand state", [] {
                     expect(expand.prior_string.value[0]).to(eq(3));
                 });
             });
-            describe("not found 6", [] {
+            describe("found 6 (0,3)", [] {
                 before("each", [] {
+                    static uint16_t string_value[] = { 0, 3 };
+                    gd_string2_t string;
+                    string.length = 2;
+                    string.value = string_value;
+                    // assume this will add code 6
+                    gd_string_table_add(&expand.string_table, &string);
                     gd_image_expand_code(&expand, 6);
+                });
+                it("prior length 2", [] {
+                    expect(expand.prior_string.length).to(eq(2));
+                });
+                it("prior value[0] 1", [] {
+                    expect(expand.prior_string.value[0]).to(eq(0));
+                });
+                it("prior value[1] 2", [] {
+                    expect(expand.prior_string.value[1]).to(eq(3));
+                });
+            });
+            describe("not found 7", [] {
+                before("each", [] {
+                    gd_image_expand_code(&expand, 7);
                 });
                 it("prior length 3", [] {
                     expect(expand.prior_string.length).to(eq(3));
