@@ -137,8 +137,8 @@ describe("image expand", [] {
         it("output [32] 1", [&] {
             expect(expand.output[99]).to(eq(1));
         });
-        it("output [99] 2", [&] {
-            expect(expand.output[99]).to(eq(2));
+        it("output [99] 1", [&] {
+            expect(expand.output[99]).to(eq(1));
         });
     });
 

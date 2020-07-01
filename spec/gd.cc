@@ -119,7 +119,7 @@ void gd_image_expand_code(gd_expand_codes_t *expand, uint16_t extract) {
     }
     expand->prior_string = found ? found_string : new_string;
 
-    memcpy(&expand->output[expand->outputLength], expand->prior_string.value, expand->prior_string.length);
+    memcpy(&expand->output[expand->outputLength], expand->prior_string.value, expand->prior_string.length * sizeof(uint16_t));
     expand->outputLength += expand->prior_string.length;
 
 //    if (found) {
