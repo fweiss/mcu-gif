@@ -111,7 +111,10 @@ describe("expand state", [] {
                     expect(expand.prior_string.value[0]).to(eq(3));
                 });
             });
-            describe("not found", [] {
+            describe("not found 6", [] {
+                before("each", [] {
+                    gd_image_expand_code(&expand, 6);
+                });
                 it("prior length 3", [] {
                     expect(expand.prior_string.length).to(eq(3));
                 });
@@ -119,14 +122,14 @@ describe("expand state", [] {
                     expect(expand.prior_string.value[0]).to(eq(1));
                 });
                 it("prior value[1] 2", [] {
-                    expect(expand.prior_string.value[0]).to(eq(2));
+                    expect(expand.prior_string.value[1]).to(eq(2));
                 });
                 it("prior value[2] 1", [] {
-                    expect(expand.prior_string.value[0]).to(eq(1));
+                    expect(expand.prior_string.value[2]).to(eq(1));
                 });
             });
         });
-        describe("first", [&] {
+/*        describe("first", [&] {
             before("each", [] {
             });
             describe("found code", [&] {
@@ -170,7 +173,7 @@ describe("expand state", [] {
                 expect(expand.prior_string.value[0]).to(eq(3));
                 expect(expand.prior_string.value[1]).to(eq(3));
             });
-        });
+        });*/
     });
 
 });
