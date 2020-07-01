@@ -21,7 +21,7 @@ LDLIBS = $(OBJDIR)/libccspec.a
 #MAIN = start
 
 TESTOBJS := $(patsubst $(TESTSRC)/%.cc, $(TESTOBJ)/%.o, $(wildcard $(TESTSRC)/*.cc $(TESTSRC)/helpers/*.cc))
-MAINOBJS := $(patsubst $(MAINSRC)/%.cc, $(MAINOBJ)/%.o, $(wildcard $(MAINSRC)/*.cc))
+MAINOBJS := $(patsubst $(MAINSRC)/%.c, $(MAINOBJ)/%.o, $(wildcard $(MAINSRC)/*.c))
 
 init: $(TESTOBJ) $(MAINOBJ) $(TESTOBJ)/helpers
 
@@ -44,7 +44,7 @@ $(TESTOBJ)/%.o: $(TESTSRC)/%.cc
 	$(CXX) -c -o $@ $< $(CXXFLAGS) $(CPLUS_INCLUDE_PATH) -I$(MAINSRC)
 	
 # compile the sources
-$(MAINOBJ)/%.o: $(MAINSRC)/%.cc
+$(MAINOBJ)/%.o: $(MAINSRC)/%.c
 	$(CXX) -c -o $@ $^ $(CXXFLAGS) $(CPLUS_INCLUDE_PATH)
 
 .PHONY: clean
