@@ -5,13 +5,13 @@ DEBUG := -g -O0
 OBJDIR = build
 #SRCDIR = man/src
 
-TESTSRC = .
-MAINSRC = main/src
+TESTSRC = spec
+MAINSRC = src
 TESTOBJ = $(OBJDIR)/test
 MAINOBJ = $(OBJDIR)/main
 
 # submodules
-CCSPEC_HOME = ../submodules/ccspec
+CCSPEC_HOME = submodules/ccspec
 
 include ccspec.mk
 
@@ -37,11 +37,11 @@ $(OBJDIR)/start: $(TESTOBJS) $(MAINOBJS) $(LDLIBS)
 	$(CXX) -o $@ $^
 
 # some explicit .h dependencies
-$(TESTOBJS): gd.h gd_internal.h
+$(TESTOBJS): $(MAINSRC)/gd.h $(MAINSRC)/gd_internal.h
 
 # compile the tests
 $(TESTOBJ)/%.o: $(TESTSRC)/%.cc
-	$(CXX) -c -o $@ $< $(CXXFLAGS) $(CPLUS_INCLUDE_PATH)
+	$(CXX) -c -o $@ $< $(CXXFLAGS) $(CPLUS_INCLUDE_PATH) -I$(MAINSRC)
 	
 # compile the sources
 $(MAINOBJ)/%.o: $(MAINSRC)/%.cc
