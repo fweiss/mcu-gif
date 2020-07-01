@@ -114,7 +114,7 @@ describe("expand state", [] {
             describe("found 6 (0,3)", [] {
                 before("each", [] {
                     static uint16_t string_value[] = { 0, 3 };
-                    gd_string2_t string;
+                    gd_string_t string;
                     string.length = 2;
                     string.value = string_value;
                     // assume this will add code 6

@@ -50,8 +50,8 @@ void gd_string_table_init(gd_string_table_t *table) {
     }
 }
 
-gd_string2_t gd_string_table_at(gd_string_table_t *table, uint16_t code) {
-    static gd_string2_t string;
+gd_string_t gd_string_table_at(gd_string_table_t *table, uint16_t code) {
+    static gd_string_t string;
     if (code < table->length) {
         gd_string_table_entry_t entry = table->entries[code];
         string.length = entry.length;
@@ -62,7 +62,7 @@ gd_string2_t gd_string_table_at(gd_string_table_t *table, uint16_t code) {
     return string;
 }
 
-uint16_t gd_string_table_add(gd_string_table_t *table, gd_string2_t *string) {
+uint16_t gd_string_table_add(gd_string_table_t *table, gd_string_t *string) {
     const bool entries_has_space= table->length < table->capacity;
     const bool strings_has_space = table->strings_length + string->length < table->strings_capacity;
     if (entries_has_space && strings_has_space) {
@@ -97,10 +97,10 @@ void gd_image_expand_code(gd_expand_codes_t *expand, uint16_t extract) {
 
     uint16_t new_code;
     static uint16_t raw_string[64];
-    gd_string2_t new_string;
+    gd_string_t new_string;
     new_string.value = raw_string;
 
-    gd_string2_t found_string = gd_string_table_at(&expand->string_table, extract);
+    gd_string_t found_string = gd_string_table_at(&expand->string_table, extract);
     bool found = found_string.length != 0;
 
     memcpy(new_string.value, expand->prior_string.value, expand->prior_string.length * sizeof(uint16_t));

@@ -16,7 +16,7 @@ namespace simple {
 auto string_table_spec =
 describe("string table", [] {
     static gd_string_table_t string_table;
-    static gd_string2_t string;
+    static gd_string_t string;
 
     before("each", [&] {
         gd_string_table_init(&string_table);
@@ -69,7 +69,7 @@ describe("string table", [] {
     });
     describe("lookup", [&] {
         static uint16_t raw_string[] = { 1, 6, 7, 30 };
-        static gd_string2_t string;
+        static gd_string_t string;
         before("each", [&] {
             string.length = sizeof(raw_string) / sizeof(raw_string[0]);
             string.value = raw_string;
