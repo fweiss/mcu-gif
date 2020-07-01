@@ -113,7 +113,14 @@ void gd_image_expand_code(gd_expand_codes_t *expand, uint16_t extract) {
     memcpy(new_string.value, expand->prior_string.value, expand->prior_string.length * sizeof(uint16_t));
     new_string.value[expand->prior_string.length] = found ? found_string.value[0] : expand->prior_string.value[0];
     new_string.length = expand->prior_string.length + 1;
+
+    if (expand->prior_string.length > 0) {
+        gd_string_table_add(&expand->string_table, &new_string);
+    }
     expand->prior_string = found ? found_string : new_string;
+
+    memcpy(&expand->output[expand->outputLength], expand->prior_string.value, expand->prior_string.length);
+    expand->outputLength += expand->prior_string.length;
 
 //    if (found) {
 //        for (int i=0; i<found_string.length; i++) {
