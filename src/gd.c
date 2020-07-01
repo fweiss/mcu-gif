@@ -80,7 +80,17 @@ uint16_t gd_string_table_add(gd_string_table_t *table, gd_string_t *string) {
         return 0xFFFF;
     }
 }
-
+/**
+ * Gist of the algorithm
+ * C = found string
+ * A = added string
+ * P = prior string
+ *
+ * Found:
+ *   Output C, Add P+C[0], Next prior: P+C[0]
+ * Not found:
+ *   Output: P+P[0], add P+P[0], Next prior: P+P[0]
+ */
 void gd_image_expand_code(gd_expand_codes_t *expand, uint16_t extract) {
     if (extract == 0x0004) {
         expand->compressStatus = 1;
