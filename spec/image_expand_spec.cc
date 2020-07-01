@@ -142,30 +142,6 @@ describe("image expand", [] {
         });
     });
 
-
-//    describe("code table", [&] {
-//        describe("initial", [&] {
-//            before("each", [&] {
-//                expand_codes_stream({ 4 });
-//            });
-//            it("size", [&] {
-//                expect(expand.codeTableSize).to(eq(6));
-//            });
-//            it("[0]", [&] {
-//                gd_string_t string = expand.codeTable[0];
-//                expect(string.size).to(eq(1));
-//                expect(string.data[0]).to(eq(0));
-//            });
-//        });
-//        it("adds one", [&] {
-//            expand_codes_stream({ 4, 1, 6 });
-//            expect(expand.codeTableSize).to(eq(7));
-//        });
-//        it("adds two", [&] {
-//            expand_codes_stream({ 4, 1, 6, 7 });
-//            expect(expand.codeTableSize).to(eq(8));
-//        });
-//    });
 });
 
 } // namespace simple

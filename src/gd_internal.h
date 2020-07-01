@@ -2,12 +2,6 @@
 
 #include "gd.h"
 
-// deprecated
-typedef struct {
-    uint16_t size;
-    uint16_t data[];
-} gd_string_t;
-
 typedef struct {
     uint16_t length;
     uint16_t *value;

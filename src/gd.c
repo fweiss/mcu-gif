@@ -31,13 +31,6 @@ void gd_code_size(gd_image_block_t *block, uint8_t codeSize) {
     block->codeMask = (one << codeSize) - 1;
 }
 
-// deprecated
-//static void gd_string_table_init(gd_expand_codes_t *expand) {
-//    gd_string_t *string = (gd_string_t*)malloc(sizeof(gd_string_t) + sizeof(uint16_t));
-//    string->data[0] = 0x0000;
-//    expand->codeTable = string;
-//}
-
 void gd_string_table_init(gd_string_table_t *table) {
     static gd_string_table_entry_t entries[64];
     static uint16_t strings[512];
