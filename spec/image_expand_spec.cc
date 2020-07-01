@@ -116,28 +116,28 @@ describe("image expand", [] {
                 gd_image_expand_code(&expand, code);
             }
         });
-        it("output count", [&] {
+        it("output count 100", [&] {
             expect(expand.outputLength).to(eq(100));
         });
-        it("output [4]", [&] {
+        it("output [4] 1", [&] {
             expect(expand.output[4]).to(eq(1));
         });
-        it("output [5]", [&] {
+        it("output [5] 2", [&] {
             expect(expand.output[5]).to(eq(2));
         });
-        it("output [9]", [&] {
+        it("output [9] 2", [&] {
             expect(expand.output[5]).to(eq(2));
         });
-        it("output [19]", [&] {
+        it("output [19] 2", [&] {
             expect(expand.output[5]).to(eq(2));
         });
-        it("output [30]", [&] {
+        it("output [30] 1", [&] {
             expect(expand.output[99]).to(eq(1));
         });
-        it("output [32]", [&] {
+        it("output [32] 1", [&] {
             expect(expand.output[99]).to(eq(1));
         });
-        it("output [99]", [&] {
+        it("output [99] 2", [&] {
             expect(expand.output[99]).to(eq(2));
         });
     });
