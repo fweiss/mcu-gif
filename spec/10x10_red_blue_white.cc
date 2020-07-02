@@ -75,13 +75,16 @@ describe("for 10x10 red-blue-white", [] {
     });
     describe("read image", [] {
         it("a pixel", [] {
-            // set file system read handler
-            // read header, logical screen descriptor
-            // read global color table
-            // read graphic control extension
-            // read image descriptor
-            // read image
-            // read trailer
+//            gd_main _t main;
+//            main.read = f_read;
+//            gd_init(&main);
+//
+//            gd_read_header(&main);
+//            gd_read_global_color_table(&main, colors);
+//            gd read_graphic_control_extension(&main);
+//            gd_read_image_descriptor(&main);
+//            gd_read_image(&main, output, output_length);
+//            gd_read_trailer(&main);
         });
     });
 });
