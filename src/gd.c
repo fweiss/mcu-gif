@@ -234,4 +234,22 @@ void gd_image_block_read(gd_main_t *main, gd_image_block_t *image_block) {
     image_block->outputLength = image_block->expand_codes.outputLength;
 }
 
+void gd_init(gd_main_t *main) {
+
+}
+
+void gd_read_header(gd_main_t *main) {
+    const size_t header_size = 6;
+    const size_t logical_screen_descriptor_length = 7;
+    const size_t global_color_table_length = 12;
+    const size_t graphic_control_extension_length = 8;
+    uint8_t buf[header_size + logical_screen_descriptor_length + global_color_table_length + graphic_control_extension_length];;
+
+    main->read(0, buf, sizeof(buf));
+}
+
+void gd_read_image(gd_main_t *main, uint16_t *output, size_t capacity) {
+    output[5] = 2;
+}
+
 
