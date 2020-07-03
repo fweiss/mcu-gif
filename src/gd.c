@@ -219,15 +219,14 @@ static void gd_expand_codes_init(gd_expand_codes_t *expand_codes, uint16_t *outp
 void gd_image_block_read(gd_main_t *main, gd_image_block_t *image_block) {
     gd_expand_codes_init(&image_block->expand_codes, image_block->output);
 
-    const int fd = 0;
-    long count = main->read(fd, &image_block->minumumCodeSize, 1);
+    long count = main->read(main->fd, &image_block->minumumCodeSize, 1);
 
     image_block->outputLength = 0;
 
     uint8_t subblockSize;
-    main->read(fd, &subblockSize, 1);
+    main->read(main->fd, &subblockSize, 1);
     static uint8_t subblock[255];
-    count = main->read(fd, subblock, subblockSize);
+    count = main->read(main->fd, subblock, subblockSize);
 
     gd_image_subblock_decode(image_block, subblock, subblockSize);
 
@@ -246,7 +245,7 @@ void gd_read_header(gd_main_t *main) {
     const size_t image_descriptor_length = 10;
     uint8_t buf[header_size + logical_screen_descriptor_length + global_color_table_length + graphic_control_extension_length + image_descriptor_length];;
 
-    main->read(0, buf, sizeof(buf));
+    main->read(main->fd, buf, sizeof(buf));
 }
 
 void gd_read_image(gd_main_t *main, uint16_t *output, size_t capacity) {

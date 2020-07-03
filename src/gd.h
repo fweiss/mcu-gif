@@ -18,6 +18,7 @@ typedef struct {
 
 typedef struct {
     long (*read)(int, uint8_t*, long);
+    int fd;
 } gd_main_t;
 
 // deprecated
