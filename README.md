@@ -2,7 +2,6 @@
 
 A GIF decoder for MCUs
 
-
 The goals of this project are:
 
 - mcu agnostic
@@ -23,17 +22,13 @@ You'll need to update the git submodules.
 
 ``git submodule update --init --recursive``
 
-Then, cd to the spec directory.
-Run the following to run the tests and see the test report:
+The following command will run the tests and display the test report:
 ``make test``
 
 ## Unit testing with gtest (deprecated)
-The main point of this project is to develop a GIF decoder using TDD.
+This project was originally developed with TDD using gtest.
 
-> The test framework, gtest, is C++
-
-### Running the unit tests
-In the test directory, run ``make test``.
+> The gtest example code is in the ``gtest`` branch.
 
 ### Debugging
 Example on MacOS using lldb
