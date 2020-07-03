@@ -43,7 +43,7 @@ void reader() {
 */
 
 void drawGif(SDL_Renderer *renderer) {
-    static uint16_t pix[] = {0};
+    static uint16_t pix[100] = {0};
 
     int fd = open("sample_1.gif", O_RDONLY);
     printf("fd: %d\n", fd);
@@ -74,7 +74,6 @@ void drawGif(SDL_Renderer *renderer) {
             rect.y = y * 10 + 100;
             uint16_t i = y * 10 + x;
             uint32_t c = pct[pix[i]];
-            printf("%x\n", pix[i]);
             uint8_t r = (c >> 24) & 0xff;;
             uint8_t g = (c >> 16) & 0xff;
             uint8_t b = (c >> 8) & 0xff;
