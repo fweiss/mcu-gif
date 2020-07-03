@@ -20,11 +20,6 @@ void gd_open(gd_info_t *info) {
     info->globalColorTableSize = 1 << ((buf[10] & GLOBAL_COLOR_TABLE_SIZE) + 1);
 }
 
-void gd_decode(gd_decode_t *decode) {
-    decode->colorTable[0] = 0xff0000ff;
-    decode->imageData[0] = 0;
-}
-
 void gd_code_size(gd_image_block_t *block, uint8_t codeSize) {
     block->codeBits = codeSize;
     const uint16_t one = 1;

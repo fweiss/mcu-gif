@@ -23,8 +23,6 @@ typedef struct {
 
 // deprecated
 void gd_open(gd_info_t *info);
-// deprecated
-void gd_decode(gd_decode_t *decode);
 
 void gd_init(gd_main_t *main);
 void gd_read_header(gd_main_t *main);
