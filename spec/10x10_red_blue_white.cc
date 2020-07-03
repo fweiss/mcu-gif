@@ -57,22 +57,6 @@ describe("for 10x10 red-blue-white", [] {
         });
     });
 
-    describe("decodes indexed rgba", [] {
-        gd_decode_t decode;
-        uint8_t imageData[10 * 10];
-        uint32_t colorTable[4];
-
-        before("each", [&] {
-            decode.imageData = imageData;
-            decode.colorTable = colorTable;
-            gd_decode(&decode);
-        });
-
-        it("pixel[0][0] red", [&] {
-            expect(colorTable[imageData[0]]).to(eq(0xff0000ff));
-        });
-
-    });
     describe("read image", [] {
         static uint8_t sample1[] = {
                 0x47, 0x49, 0x46, 0x38, 0x39, 0x61, 0x0A, 0x00, 0x0A, 0x00, 0x91, 0x00, 0x00,
