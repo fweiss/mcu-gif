@@ -94,4 +94,9 @@ Some good insights into TDD applied to GIF decoding:
 http://debuggable.com/posts/test-driven-development-in-real-world-apps:480f4dd5-514c-45f2-b3dc-4a16cbdd56cb
 
 [The official W3C GIF89a specification](https://www.w3.org/Graphics/GIF/spec-gif89a.txt)
+
+A good summary of the GIF file format:
+
+http://netghost.narod.ru/gff/graphics/summary/gif.htm
+
  
