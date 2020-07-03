@@ -96,6 +96,12 @@ describe("for 10x10 red-blue-white", [] {
         it("pixel[5] 2", [] {
             expect(output[5]).to(eq(2));
         });
+        it("pixel[10] 1", [] {
+            expect(output[10]).to(eq(1));
+        });
+        it("pixel[33] 0", [] {
+            expect(output[33]).to(eq(0));
+        });
     });
 });
 

@@ -243,13 +243,21 @@ void gd_read_header(gd_main_t *main) {
     const size_t logical_screen_descriptor_length = 7;
     const size_t global_color_table_length = 12;
     const size_t graphic_control_extension_length = 8;
-    uint8_t buf[header_size + logical_screen_descriptor_length + global_color_table_length + graphic_control_extension_length];;
+    const size_t image_descriptor_length = 10;
+    uint8_t buf[header_size + logical_screen_descriptor_length + global_color_table_length + graphic_control_extension_length + image_descriptor_length];;
 
     main->read(0, buf, sizeof(buf));
 }
 
 void gd_read_image(gd_main_t *main, uint16_t *output, size_t capacity) {
-    output[5] = 2;
+//    output[5] = 2;
+//    uint8_t block_id;
+//    main->read(0, &block_id, 1); // epxect 0x2C
+
+    gd_image_block_t image_block;
+    image_block.output = output;
+    image_block.outputLength = capacity;
+    gd_image_block_read(main, &image_block);
 }
 
 
