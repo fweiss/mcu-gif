@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <string.h>
 
 typedef struct {
     long (*read)(int, uint8_t*, long);
@@ -19,5 +20,12 @@ typedef struct {
     long (*read)(int, uint8_t*, long);
 } gd_main_t;
 
+// deprecated
 void gd_open(gd_info_t *info);
+// deprecated
 void gd_decode(gd_decode_t *decode);
+
+void gd_init(gd_main_t *main);
+void gd_read_header(gd_main_t *main);
+
+void gd_read_image(gd_main_t *main, uint16_t *output, size_t capacity);
