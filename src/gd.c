@@ -100,7 +100,6 @@ void gd_image_expand_code(gd_expand_codes_t *expand, uint16_t extract) {
         return;
     }
 
-    uint16_t new_code;
     static uint16_t raw_string[64];
     gd_string_t new_string;
     new_string.value = raw_string;
@@ -125,33 +124,6 @@ void gd_image_expand_code(gd_expand_codes_t *expand, uint16_t extract) {
     // output to index stream
     memcpy(&expand->output[expand->outputLength], expand->prior_string.value, expand->prior_string.length * sizeof(uint16_t));
     expand->outputLength += expand->prior_string.length;
-
-//    if (found) {
-//        for (int i=0; i<found_string.length; i++) {
-//            expand->output[expand->outputLength++] = found_string.value[i];;
-//        }
-//        if (expand->prior_string.length > 0) {
-//            memcpy(raw_string, found_string.value, found_string.length);
-//
-//            raw_string[found_string.length] = expand->prior_string.value[0];
-//            new_string.length = found_string.length + 1;
-//
-//            new_code = gd_string_table_add(&expand->string_table, &new_string);
-//        } else {
-//            new_code = extract;
-//        }
-//    } else {
-//        memcpy(raw_string, expand->prior_string.value, expand->prior_string.length);
-//
-//        raw_string[expand->prior_string.length] = expand->prior_string.value[0];
-//        new_string.length = expand->prior_string.length + 1;
-//
-//        new_code = gd_string_table_add(&expand->string_table, &new_string);
-//        found_string = new_string;
-//        for (int i=0; i<new_string.length; i++) {
-//            expand->output[expand->outputLength++] = new_string.value[i];;
-//        }
-//    }
 
     if (expand->string_table.length == 8) {
         expand->codeSize = 4;
@@ -244,10 +216,6 @@ void gd_read_header(gd_main_t *main) {
 }
 
 void gd_read_image(gd_main_t *main, uint16_t *output, size_t capacity) {
-//    output[5] = 2;
-//    uint8_t block_id;
-//    main->read(0, &block_id, 1); // epxect 0x2C
-
     gd_image_block_t image_block;
     image_block.output = output;
     image_block.outputLength = capacity;
