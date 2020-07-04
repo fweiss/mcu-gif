@@ -3,6 +3,8 @@
 #include <stdint.h>
 #include <string.h>
 
+typedef uint8_t gd_index_t;
+
 typedef struct {
     long (*read)(int, uint8_t*, long);
     uint16_t width;
@@ -25,6 +27,6 @@ typedef struct {
 void gd_open(gd_info_t *info);
 
 void gd_init(gd_main_t *main);
-void gd_read_header(gd_main_t *main);
+void gd_read_header(gd_main_t *main, gd_info_t *info);
 
-void gd_read_image(gd_main_t *main, uint16_t *output, size_t capacity);
+void gd_read_image(gd_main_t *main, gd_index_t *output, size_t capacity);

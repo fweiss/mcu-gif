@@ -2,9 +2,11 @@
 
 #include "gd.h"
 
+typedef uint16_t gd_code_t;
+
 typedef struct {
     uint16_t length;
-    uint16_t *value;
+    gd_index_t *value;
 } gd_string_t;
 
 typedef struct {
@@ -24,7 +26,7 @@ typedef struct {
     gd_string_table_entry_t *entries;
     uint16_t strings_capacity;
     uint16_t strings_length;
-    uint16_t *strings;
+    gd_index_t *strings;
 } gd_string_table_t;
 
 typedef struct {
@@ -32,7 +34,7 @@ typedef struct {
     uint8_t codeSize;
     gd_string_table_t string_table;
     gd_string_t prior_string;
-    uint16_t *output;
+    gd_index_t *output;
     uint16_t outputLength;
 } gd_expand_codes_t;
 
@@ -40,7 +42,7 @@ typedef struct {
     uint8_t minumumCodeSize;
     uint8_t codeBits;
     uint16_t codeMask;
-    uint16_t *output;
+    gd_index_t *output;
     uint16_t outputLength;
     uint8_t compressStatus;
     gd_expand_codes_t expand_codes;

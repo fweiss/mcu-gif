@@ -16,7 +16,7 @@ void gd_code_size(gd_image_block_t *block, uint8_t codeSize) {
 
 void gd_string_table_init(gd_string_table_t *table) {
     static gd_string_table_entry_t entries[64];
-    static uint16_t strings[512];
+    static gd_index_t strings[512];
 
     table->entries = entries;
     table->length = 6;
@@ -53,7 +53,7 @@ uint16_t gd_string_table_add(gd_string_table_t *table, gd_string_t *string) {
         gd_string_table_entry_t *entry = &table->entries[table->length++];
         entry->length = string->length;
         entry->offset = table->strings_length;
-        memcpy((void*)&table->strings[table->strings_length], (void*)string->value, string->length * 2);
+        memcpy((void*)&table->strings[table->strings_length], (void*)string->value, string->length * sizeof(gd_index_t));
         table->strings_length += string->length;
 
         table->status = GD_OK;
@@ -88,7 +88,7 @@ void gd_image_expand_code(gd_expand_codes_t *expand, uint16_t extract) {
         return;
     }
 
-    static uint16_t raw_string[64];
+    static gd_index_t raw_string[64];
     gd_string_t new_string;
     new_string.value = raw_string;
 
@@ -97,7 +97,7 @@ void gd_image_expand_code(gd_expand_codes_t *expand, uint16_t extract) {
     bool found = found_string.length != 0;
 
     // create new string from prior
-    memcpy(new_string.value, expand->prior_string.value, expand->prior_string.length * sizeof(uint16_t));
+    memcpy(new_string.value, expand->prior_string.value, expand->prior_string.length * sizeof(gd_index_t));
     new_string.value[expand->prior_string.length] = found ? found_string.value[0] : expand->prior_string.value[0];
     new_string.length = expand->prior_string.length + 1;
 
@@ -110,7 +110,7 @@ void gd_image_expand_code(gd_expand_codes_t *expand, uint16_t extract) {
     expand->prior_string = found ? found_string : new_string;
 
     // output to index stream
-    memcpy(&expand->output[expand->outputLength], expand->prior_string.value, expand->prior_string.length * sizeof(uint16_t));
+    memcpy(&expand->output[expand->outputLength], expand->prior_string.value, expand->prior_string.length * sizeof(gd_index_t));
     expand->outputLength += expand->prior_string.length;
 
     if (expand->string_table.length == 8) {
@@ -164,7 +164,7 @@ void gd_image_subblock_decode(gd_image_block_t *block, uint8_t *subblock, uint8_
     }
 }
 
-static void gd_expand_codes_init(gd_expand_codes_t *expand_codes, uint16_t *output) {
+static void gd_expand_codes_init(gd_expand_codes_t *expand_codes, gd_index_t *output) {
     expand_codes->codeSize = 3;
     expand_codes->output = output;
     expand_codes->outputLength =0;
@@ -192,19 +192,18 @@ void gd_init(gd_main_t *main) {
 
 }
 
-void gd_open(gd_info_t *info) {
+void gd_read_logical_screen_descriptor(gd_main_t *main, gd_info_t *info) {
     const uint8_t GLOBAL_COLOR_TABLE_FLAG = 0x80;
     const uint8_t GLOBAL_COLOR_TABLE_SIZE = 0x03;
-    int fd = 0;
-    uint8_t buf[13];
-    int count = (*info->read)(fd, buf, sizeof(buf));
-    info->width = gd_unpack_word(&buf[6]);
-    info->height = gd_unpack_word(&buf[8]);
-    info->globalColorTableFlag = buf[10] & GLOBAL_COLOR_TABLE_FLAG;
-    info->globalColorTableSize = 1 << ((buf[10] & GLOBAL_COLOR_TABLE_SIZE) + 1);
+    uint8_t buf[7];
+    int count = main->read(main->fd, buf, sizeof(buf));
+    info->width = gd_unpack_word(&buf[6-6]);
+    info->height = gd_unpack_word(&buf[8-6]);
+    info->globalColorTableFlag = buf[10-6] & GLOBAL_COLOR_TABLE_FLAG;
+    info->globalColorTableSize = 1 << ((buf[10-6] & GLOBAL_COLOR_TABLE_SIZE) + 1);
 }
 
-void gd_read_header(gd_main_t *main) {
+void gd_read_header(gd_main_t *main, gd_info_t *info) {
     const size_t header_length = 6;
     const size_t logical_screen_descriptor_length = 7;
     const size_t global_color_table_length = 12;
@@ -213,13 +212,14 @@ void gd_read_header(gd_main_t *main) {
     uint8_t buf[header_length + logical_screen_descriptor_length + global_color_table_length + graphic_control_extension_length + image_descriptor_length];;
 
     main->read(main->fd, buf, header_length);
-    main->read(main->fd, buf, logical_screen_descriptor_length);
+//    main->read(main->fd, buf, logical_screen_descriptor_length);
+    gd_read_logical_screen_descriptor(main, info);
     main->read(main->fd, buf, global_color_table_length);
     main->read(main->fd, buf, graphic_control_extension_length);
     main->read(main->fd, buf, image_descriptor_length);
 }
 
-void gd_read_image(gd_main_t *main, uint16_t *output, size_t capacity) {
+void gd_read_image(gd_main_t *main, gd_index_t *output, size_t capacity) {
     gd_image_block_t image_block;
     image_block.output = output;
     image_block.outputLength = capacity;

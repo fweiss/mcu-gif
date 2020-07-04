@@ -43,7 +43,7 @@ describe("string table", [] {
     });
 
     describe("add one", [&] {
-        static uint16_t raw_string[] = { 1, 6, 7, 30 };
+        static gd_index_t raw_string[] = { 1, 6, 7, 30 };
         before("each", [&] {
             string.length = sizeof(raw_string) / sizeof(raw_string[0]);
             string.value = raw_string;
@@ -68,7 +68,7 @@ describe("string table", [] {
         });
     });
     describe("lookup", [&] {
-        static uint16_t raw_string[] = { 1, 6, 7, 30 };
+        static gd_index_t raw_string[] = { 1, 6, 7, 30 };
         static gd_string_t string;
         before("each", [&] {
             string.length = sizeof(raw_string) / sizeof(raw_string[0]);

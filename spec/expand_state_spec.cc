@@ -21,7 +21,7 @@ auto expand_state_spec =
 describe("expand state", [] {
 
     static gd_expand_codes_t expand;
-    static uint16_t output[outputSize];
+    static gd_index_t output[outputSize];
 
     before("each", [] {
         memset(output, 0, sizeof(output));
@@ -63,7 +63,7 @@ describe("expand state", [] {
             });
         });
         describe("prior string was (3)", [] {
-            static uint16_t string[] = { 3 };
+            static gd_index_t string[] = { 3 };
             before("each", [] {
                 expand.prior_string.length = 1;
                 expand.prior_string.value = string;
@@ -96,7 +96,7 @@ describe("expand state", [] {
         });
         describe("prior string (1,2)", [] {
             before("each", [] {
-                static uint16_t value[] = { 1, 2 };
+                static gd_index_t value[] = { 1, 2 };
                 expand.prior_string.length = 2;
                 expand.prior_string.value = value;
             });
@@ -113,7 +113,7 @@ describe("expand state", [] {
             });
             describe("found 6 (0,3)", [] {
                 before("each", [] {
-                    static uint16_t string_value[] = { 0, 3 };
+                    static gd_index_t string_value[] = { 0, 3 };
                     gd_string_t string;
                     string.length = 2;
                     string.value = string_value;

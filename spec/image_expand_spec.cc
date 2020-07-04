@@ -27,7 +27,7 @@ typedef std::vector<uint8_t> code_stream_t;
 auto image_expand_spec =
 describe("image expand", [] {
 
-    static uint16_t output[outputSize];
+    static gd_index_t output[outputSize];
 
     static gd_expand_codes_t expand;
     static uint16_t outputLength;

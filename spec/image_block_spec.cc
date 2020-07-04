@@ -23,7 +23,7 @@ typedef std::vector<uint8_t> code_stream_t;
 auto image_block_spec =
 describe("image data block", [] {
 
-    static uint16_t output[outputSize];
+    static gd_index_t output[outputSize];
 
     static gd_main_t main;
     main.read = f_read;

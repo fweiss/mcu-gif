@@ -24,7 +24,7 @@ typedef std::vector<uint8_t> code_stream_t;
 auto image_subblock_spec =
 describe("image subblock with", [] {
 
-    static uint16_t output[outputSize];
+    static gd_index_t output[outputSize];
 
     static gd_image_block_t block;
     static gd_expand_codes_t &expand_codes = block.expand_codes;

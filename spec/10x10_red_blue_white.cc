@@ -32,12 +32,14 @@ describe("for 10x10 red-blue-white", [] {
     // but then it segfaults because before each isn't invoked for second it
 
     describe("info", [] {
+        static gd_main_t main;
         static gd_info_t info;
 
         before("each", [&] {
             FFILE(header_logical_screen_descriptor);
-            info.read = f_read;
-            gd_open(&info);
+            main.read = f_read;
+            gd_init(&main);
+            gd_read_header(&main, &info);
         });
 
         it("width", [&] {
@@ -64,13 +66,15 @@ describe("for 10x10 red-blue-white", [] {
                 0x21, 0xF9, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00,
                 0x2C, 0x00, 0x00, 0x00, 0x00, 0x0A, 0x00, 0x0A, 0x00, 0x00, 0x02, 0x16, 0x8C, 0x2D, 0x99, 0x87, 0x2A, 0x1C, 0xDC, 0x33, 0xA0, 0x02, 0x75, 0xEC, 0x95, 0xFA, 0xA8, 0xDE, 0x60, 0x8C, 0x04, 0x91, 0x4C, 0x01, 0x00, 0x3B
         };
-        static uint16_t output[100];
+        static gd_index_t output[100];
         before("each", [] {
             FFILE(sample1);
             gd_main_t main;
             main.read = f_read;
+            gd_info_t info;
+
             gd_init(&main);
-            gd_read_header(&main);
+            gd_read_header(&main, &info);
 //            gd_read_global_color_table(&main, colors);
 //            gd read_graphic_control_extension(&main);
 //            gd_read_image_descriptor(&main);

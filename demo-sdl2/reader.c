@@ -43,16 +43,18 @@ void reader() {
 */
 
 void drawGif(SDL_Renderer *renderer) {
-    static uint16_t pix[100] = {0};
+    static gd_index_t pix[100] = {0};
 
     int fd = open("sample_1.gif", O_RDONLY);
     printf("fd: %d\n", fd);
 
     gd_main_t main;
+    gd_info_t info;
     main.read = read;
     main.fd = fd;
+
     gd_init(&main);
-    gd_read_header(&main);
+    gd_read_header(&main, &info);
 //            gd_read_global_color_table(&main, colors);
 //            gd read_graphic_control_extension(&main);
 //            gd_read_image_descriptor(&main);
