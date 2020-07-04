@@ -113,12 +113,16 @@ void gd_image_expand_code(gd_expand_codes_t *expand, uint16_t extract) {
     memcpy(&expand->output[expand->outputLength], expand->prior_string.value, expand->prior_string.length * sizeof(gd_index_t));
     expand->outputLength += expand->prior_string.length;
 
-    if (expand->string_table.length == 8) {
-        expand->codeSize = 4;
-    } else if (expand->string_table.length == 16) {
-        expand->codeSize = 5;
-    } else if (expand->string_table.length == 32) {
-        expand->codeSize = 6;
+//    if (expand->string_table.length == 8) {
+//        expand->codeSize = 4;
+//    } else if (expand->string_table.length == 16) {
+//        expand->codeSize = 5;
+//    } else if (expand->string_table.length == 32) {
+//        expand->codeSize = 6;
+//    }
+    // does code not fit in code size bits?
+    if (expand->string_table.length >> expand->codeSize) {
+        expand->codeSize++;
     }
 }
 
