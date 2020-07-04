@@ -8,18 +8,6 @@ static inline uint16_t gd_unpack_word(uint8_t bytes[2]) {
     return bytes[0] + (bytes[1] << 8);
 }
 
-void gd_open(gd_info_t *info) {
-    const uint8_t GLOBAL_COLOR_TABLE_FLAG = 0x80;
-    const uint8_t GLOBAL_COLOR_TABLE_SIZE = 0x03;
-    int fd = 0;
-    uint8_t buf[13];
-    int count = (*info->read)(fd, buf, sizeof(buf));
-    info->width = gd_unpack_word(&buf[6]);
-    info->height = gd_unpack_word(&buf[8]);
-    info->globalColorTableFlag = buf[10] & GLOBAL_COLOR_TABLE_FLAG;
-    info->globalColorTableSize = 1 << ((buf[10] & GLOBAL_COLOR_TABLE_SIZE) + 1);
-}
-
 void gd_code_size(gd_image_block_t *block, uint8_t codeSize) {
     block->codeBits = codeSize;
     const uint16_t one = 1;
@@ -204,15 +192,31 @@ void gd_init(gd_main_t *main) {
 
 }
 
+void gd_open(gd_info_t *info) {
+    const uint8_t GLOBAL_COLOR_TABLE_FLAG = 0x80;
+    const uint8_t GLOBAL_COLOR_TABLE_SIZE = 0x03;
+    int fd = 0;
+    uint8_t buf[13];
+    int count = (*info->read)(fd, buf, sizeof(buf));
+    info->width = gd_unpack_word(&buf[6]);
+    info->height = gd_unpack_word(&buf[8]);
+    info->globalColorTableFlag = buf[10] & GLOBAL_COLOR_TABLE_FLAG;
+    info->globalColorTableSize = 1 << ((buf[10] & GLOBAL_COLOR_TABLE_SIZE) + 1);
+}
+
 void gd_read_header(gd_main_t *main) {
-    const size_t header_size = 6;
+    const size_t header_length = 6;
     const size_t logical_screen_descriptor_length = 7;
     const size_t global_color_table_length = 12;
     const size_t graphic_control_extension_length = 8;
     const size_t image_descriptor_length = 10;
-    uint8_t buf[header_size + logical_screen_descriptor_length + global_color_table_length + graphic_control_extension_length + image_descriptor_length];;
+    uint8_t buf[header_length + logical_screen_descriptor_length + global_color_table_length + graphic_control_extension_length + image_descriptor_length];;
 
-    main->read(main->fd, buf, sizeof(buf));
+    main->read(main->fd, buf, header_length);
+    main->read(main->fd, buf, logical_screen_descriptor_length);
+    main->read(main->fd, buf, global_color_table_length);
+    main->read(main->fd, buf, graphic_control_extension_length);
+    main->read(main->fd, buf, image_descriptor_length);
 }
 
 void gd_read_image(gd_main_t *main, uint16_t *output, size_t capacity) {
