@@ -15,6 +15,8 @@ CCSPEC_HOME = submodules/ccspec
 
 include ccspec.mk
 
+include demo.mk
+
 CPLUS_INCLUDE_PATH = -I$(CCSPEC_HOME)/include
 CXXFLAGS += -std=c++11  $(DEBUG)
 LDLIBS = $(OBJDIR)/libccspec.a
