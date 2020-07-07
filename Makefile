@@ -25,9 +25,9 @@ LDLIBS = $(OBJDIR)/libccspec.a
 TESTOBJS := $(patsubst $(TESTSRC)/%.cc, $(TESTOBJ)/%.o, $(wildcard $(TESTSRC)/*.cc $(TESTSRC)/helpers/*.cc))
 MAINOBJS := $(patsubst $(MAINSRC)/%.c, $(MAINOBJ)/%.o, $(wildcard $(MAINSRC)/*.c))
 
-init: $(TESTOBJ) $(MAINOBJ) $(TESTOBJ)/helpers
+#init: $(TESTOBJ) $(MAINOBJ) $(TESTOBJ)/helpers
 
-$(TESTOBJ) $(MAINOBJ) $(TESTOBJ)/helpers:
+$(TESTOBJ) $(MAINOBJ) $(TESTOBJ)/helpers build/demo:
 	mkdir -p $@	
 
 # run the tests
@@ -42,14 +42,15 @@ $(OBJDIR)/start: $(TESTOBJS) $(MAINOBJS) $(LDLIBS)
 $(TESTOBJS): $(MAINSRC)/gd.h $(MAINSRC)/gd_internal.h
 
 # compile the tests
-$(TESTOBJ)/%.o: $(TESTSRC)/%.cc
+$(TESTOBJ)/%.o: $(TESTSRC)/%.cc | $(TESTOBJ) $(TESTOBJ)/helpers
 	$(CXX) -c -o $@ $< $(CXXFLAGS) $(CPLUS_INCLUDE_PATH) -I$(MAINSRC)
 	
 # compile the sources
-$(MAINOBJ)/%.o: $(MAINSRC)/%.c
+$(MAINOBJ)/%.o: $(MAINSRC)/%.c | $(MAINOBJ)
 	$(CXX) -c -o $@ $^ $(CXXFLAGS) $(CPLUS_INCLUDE_PATH)
 
 .PHONY: clean
 clean:
 	rm -rf $(OBJDIR)/*
+	rm demo
 	
