@@ -6,7 +6,6 @@
 typedef uint8_t gd_index_t;
 
 typedef struct {
-    long (*read)(int, uint8_t*, long);
     uint16_t width;
     uint16_t height;
     uint8_t globalColorTableFlag;
@@ -19,7 +18,7 @@ typedef struct {
 } gd_decode_t;
 
 typedef struct {
-    long (*read)(int, uint8_t*, long);
+    ssize_t (*read)(int, void*, size_t);
     int fd;
 } gd_main_t;
 

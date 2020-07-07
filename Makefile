@@ -52,5 +52,5 @@ $(MAINOBJ)/%.o: $(MAINSRC)/%.c | $(MAINOBJ)
 .PHONY: clean
 clean:
 	rm -rf $(OBJDIR)/*
-	rm demo
+	rm -f demo
 	

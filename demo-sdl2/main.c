@@ -6,7 +6,7 @@ extern void reader();
 
 void drawMemory(SDL_Renderer *renderer);
 void drawFile(SDL_Renderer *renderer);
-extern void frawGuf(SDL_Renderer *renderer);
+extern void drawGif(SDL_Renderer *renderer);
 
 void draw(SDL_Renderer *renderer) {
 //    reader();
