@@ -43,22 +43,24 @@ static const vector<uint8_t> global_color_table({
 namespace simple {
 
 auto file_read_spec =
-describe("file read", [] {
-//    test = header + logical_screen_descriptor;
-//    static uint8_t *header_logical_screen_descriptor = test.data();
+describe("file next block type", [] {
 
-    it("initial block type", [] {
-        gd_main_t main;
+    static gd_main_t main;
+    static gd_info_t info;
+
+    before("each", [] {
+        memset(&main, 0, sizeof(main));
+        memset(&info, 0, sizeof(info));
+    });
+    it("initial block", [] {
         gd_init(&main);
         gd_block_type_t type = gd_next_block_type(&main);
         expect(type).to(eq(GD_BLOCK_INITIAL));
     });
-    it("global color table type", [] {
+    it("global color table", [] {
         vector<uint8_t> file = header + logical_screen_descriptor;
         FFILE(file.data());
 
-        gd_main_t main;
-        gd_info_t info;
         main.read = f_read;
 
         gd_init(&main);
@@ -67,12 +69,10 @@ describe("file read", [] {
 
         expect((int)type).to(eq((int)GD_BLOCK_GLOBAL_COLOR_TABLE));
     });
-    it("graphic control extension type", [] {
+    it("graphic control extension", [] {
         vector<uint8_t> file = header + logical_screen_descriptor + global_color_table;
         FFILE(file.data());
 
-        gd_main_t main;
-        gd_info_t info;
         main.read = f_read;
         uint8_t gct[4 * 3];
 
