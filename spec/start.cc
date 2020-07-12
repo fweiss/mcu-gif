@@ -21,6 +21,7 @@ namespace simple {
     extern ExampleGroup* image_expand_spec;
     extern ExampleGroup* string_table_spec;
     extern ExampleGroup* expand_state_spec;
+    extern ExampleGroup* file_read_spec;
 }
 
 int main() {
@@ -32,6 +33,7 @@ int main() {
         simple::image_subblock_spec,
         simple::image_block_spec,
         simple::spec_10x10_red_blue_white,
+        simple::file_read_spec,
     };
 
     DocumentationFormatter formatter(cout);

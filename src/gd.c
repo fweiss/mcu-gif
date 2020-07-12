@@ -193,7 +193,7 @@ void gd_image_block_read(gd_main_t *main, gd_image_block_t *image_block) {
 }
 
 void gd_init(gd_main_t *main) {
-
+    main->next_block_type = GD_BLOCK_INITIAL;
 }
 
 void gd_read_logical_screen_descriptor(gd_main_t *main, gd_info_t *info) {
@@ -221,6 +221,7 @@ void gd_read_header(gd_main_t *main, gd_info_t *info) {
     main->read(main->fd, buf, global_color_table_length);
     main->read(main->fd, buf, graphic_control_extension_length);
     main->read(main->fd, buf, image_descriptor_length);
+    main->next_block_type = GD_BLOCK_GLOBAL_COLOR_TABLE;
 }
 
 void gd_read_image(gd_main_t *main, gd_index_t *output, size_t capacity) {
@@ -228,6 +229,10 @@ void gd_read_image(gd_main_t *main, gd_index_t *output, size_t capacity) {
     image_block.output = output;
     image_block.outputLength = capacity;
     gd_image_block_read(main, &image_block);
+}
+
+gd_block_type_t gd_next_block_type(gd_main_t * main) {
+    return main->next_block_type;
 }
 
 
