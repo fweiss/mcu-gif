@@ -25,7 +25,7 @@ const size_t outputSize = 1024;  // fixme max output size for a sub block?
 typedef std::vector<uint8_t> code_stream_t;
 
 auto image_expand_spec =
-describe("image expand", [] {
+describe("expand image indexes", [] {
 
     static gd_index_t output[outputSize];
 

@@ -32,7 +32,7 @@ namespace simple {
 auto helpers_spec =
 describe("helpers", [] {
 
-    describe("pack", [] {
+    describe("pack codes", [] {
         static Pack p;
         static std::vector<uint8_t> packed;
 
