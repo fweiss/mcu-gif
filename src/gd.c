@@ -224,6 +224,10 @@ void gd_read_header(gd_main_t *main, gd_info_t *info) {
     main->next_block_type = GD_BLOCK_GLOBAL_COLOR_TABLE;
 }
 
+void gd_read_global_color_table(gd_main_t *main, uint8_t *color_table) {
+    main->next_block_type = GD_BLOCK_GRAPHIC_CONTROL_EXTENSION;
+}
+
 void gd_read_image(gd_main_t *main, gd_index_t *output, size_t capacity) {
     gd_image_block_t image_block;
     image_block.output = output;
