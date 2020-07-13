@@ -16,7 +16,7 @@
 					<folderInfo id="cdt.managedbuild.toolchain.llvm.clang.macosx.base.1652952114.1524728442" name="/" resourcePath="">
 						<toolChain id="cdt.managedbuild.toolchain.llvm.clang.macosx.base.1851784157" name="LLVM with Clang (MacOSX)" superClass="cdt.managedbuild.toolchain.llvm.clang.macosx.base">
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.MachO64" id="cdt.managedbuild.target.llvm.macosx.platform.base.1957550227" isAbstract="true" name="Debug Platform" osList="macosx" superClass="cdt.managedbuild.target.llvm.macosx.platform.base"/>
-							<builder buildPath="${workspace_loc:/mcu-gif-eclipse}/Default" id="cdt.managedbuild.target.llvm.builder.base.417802039" managedBuildOn="false" name="CDT Internal Builder.Default" superClass="cdt.managedbuild.target.llvm.builder.base"/>
+							<builder buildPath="${workspace_loc:/mcu-gif}/Default" id="cdt.managedbuild.target.llvm.builder.base.417802039" managedBuildOn="false" name="CDT Internal Builder.Default" superClass="cdt.managedbuild.target.llvm.builder.base"/>
 							<tool id="cdt.managedbuild.tool.llvm.assembler.base.845237161" name="LLVM assembler" superClass="cdt.managedbuild.tool.llvm.assembler.base"/>
 							<tool id="cdt.managedbuild.tool.llvm.archiver.base.2100673981" name="LLVM archiver" superClass="cdt.managedbuild.tool.llvm.archiver.base"/>
 							<tool id="cdt.managedbuild.tool.llvm.c.compiler.base.965190659" name="LLVM Clang" superClass="cdt.managedbuild.tool.llvm.c.compiler.base"/>
@@ -31,7 +31,7 @@
 		</cconfiguration>
 	</storageModule>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-		<project id="mcu-gif-eclipse.null.175352199" name="mcu-gif-eclipse"/>
+		<project id="mcu-gif.null.175352199" name="mcu-gif"/>
 	</storageModule>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
