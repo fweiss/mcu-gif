@@ -12,7 +12,9 @@ using ccspec::matchers::be_truthy;
 
 #include "helpers/fake_file.h"
 
-#include "gd.h"
+extern "C" {
+	#include "gd.h"
+}
 
 static uint8_t header_logical_screen_descriptor[13] =
 {

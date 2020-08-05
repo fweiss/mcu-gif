@@ -11,7 +11,9 @@ using ccspec::matchers::eq;
 
 #include <string>
 
-#include "gd_internal.h"
+extern "C" {
+	#include "gd_internal.h"
+}
 
 namespace simple {
 
