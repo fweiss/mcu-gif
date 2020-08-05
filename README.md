@@ -30,6 +30,7 @@ The project has been cobverted from make to CMake.
 There's a bug in ccspec. In submodules/ccspec/src/CMakeLists.txt,
 in the target_include_directories command,
 replace CMAKE_SOURCE_DIR with CMAKE_CURRENT_SOURCE_DIR.
+and add '../' before include.
 
 ## Unit testing with gtest (deprecated)
 This project was originally developed with TDD using gtest.
