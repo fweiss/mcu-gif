@@ -32,6 +32,16 @@ in the target_include_directories command,
 replace CMAKE_SOURCE_DIR with CMAKE_CURRENT_SOURCE_DIR.
 and add '../' before include.
 
+https://wiki.eclipse.org/CDT/User/NewIn83#Toolchains
+
+Finally got <vector> initializer list working. 
+The trick is that the LLVM library include file is "vector" not "vector.h"
+consequenlty the default indexer settings to not properly index it.
+
+Project > Propoerties > C/C++ General > Indexer:
+- Enable project-specific settings
+- Index all variants of specific headers: enter "vector"
+
 ## Unit testing with gtest (deprecated)
 This project was originally developed with TDD using gtest.
 
