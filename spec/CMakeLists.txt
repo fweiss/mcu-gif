@@ -31,8 +31,8 @@ target_include_directories(start PUBLIC "../src")
 #		/Users/frankw/Projects/TDD/cmake-mcu-gif/submodules/ccspec/build/src)
 
 file(GLOB_RECURSE MAIN "../src/*.h" "../src/*.c")
-add_library(main ${MAIN})
+add_library(main2 ${MAIN})
 
-target_link_libraries(start main ccspec)
+target_link_libraries(start main2 ccspec)
 
 
