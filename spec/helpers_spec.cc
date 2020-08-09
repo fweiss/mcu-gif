@@ -11,9 +11,11 @@ using ccspec::matchers::eq;
 using ccspec::matchers::be_truthy;
 
 #include "helpers/pack.h"
+#include "helpers/fake_file.h"
 
 #include <string>
 #include <cstdio>
+#include <vector>
 
 // for comparing vectors, until ccspec has a diff reporter
 static std::string dump(std::vector<uint8_t> p) {
@@ -124,6 +126,26 @@ describe("helpers", [] {
                 expect(dump(packed)).to(eq("8C,4D,B2,00,"));
             });
         });
+    });
+
+    describe("fake file", [] {
+		describe("from vector", [] {
+			before("each", [] {
+				std::vector<uint8_t> file({ 0, 1, 2, 3, 4, 5});
+				FFILEV(file);
+			});
+			it("has correct size", [] {
+				uint8_t buf[10];
+				size_t size = f_read(0, buf, sizeof(buf));
+				expect(size).to(eq(6));
+			});
+			it("has correct data[3]", [] {
+				uint8_t buf[10];
+				buf[3] = 0xff;
+				size_t size = f_read(0, buf, sizeof(buf));
+				expect(buf[3]).to(eq(3));
+			});
+		});
     });
 });
 
