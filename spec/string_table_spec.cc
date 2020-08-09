@@ -9,7 +9,9 @@ using ccspec::core::it;
 using ccspec::expect;
 using ccspec::matchers::eq;
 
-#include "gd_internal.h"
+extern "C" {
+	#include "gd_internal.h"
+}
 
 namespace simple {
 

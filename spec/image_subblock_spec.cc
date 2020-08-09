@@ -12,8 +12,10 @@ using ccspec::matchers::eq;
 #include "helpers/fake_file.h"
 #include "helpers/pack.h"
 
-#include "gd.h"
-#include "gd_internal.h"
+extern "C" {
+	#include "gd.h"
+	#include "gd_internal.h"
+}
 
 namespace simple {
 

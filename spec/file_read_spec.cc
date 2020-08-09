@@ -11,8 +11,10 @@ using ccspec::matchers::be;
 
 using std::vector;
 
-#include "gd.h"
-#include "gd_internal.h"
+extern "C" {
+	#include "gd.h"
+	#include "gd_internal.h"
+}
 
 #include "helpers/fake_file.h"
 

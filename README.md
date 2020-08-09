@@ -25,6 +25,23 @@ You'll need to update the git submodules.
 The following command will run the tests and display the test report:
 ``make test``
 
+## Building and running with CMake
+The project has been cobverted from make to CMake.
+There's a bug in ccspec. In submodules/ccspec/src/CMakeLists.txt,
+in the target_include_directories command,
+replace CMAKE_SOURCE_DIR with CMAKE_CURRENT_SOURCE_DIR.
+and add '../' before include.
+
+https://wiki.eclipse.org/CDT/User/NewIn83#Toolchains
+
+Finally got <vector> initializer list working. 
+The trick is that the LLVM library include file is "vector" not "vector.h"
+consequenlty the default indexer settings to not properly index it.
+
+Project > Propoerties > C/C++ General > Indexer:
+- Enable project-specific settings
+- Index all variants of specific headers: enter "vector"
+
 ## Unit testing with gtest (deprecated)
 This project was originally developed with TDD using gtest.
 
