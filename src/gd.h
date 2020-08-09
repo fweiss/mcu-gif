@@ -36,5 +36,6 @@ void gd_init(gd_main_t *main);
 gd_block_type_t gd_next_block_type(gd_main_t *main);
 
 void gd_read_header(gd_main_t *main, gd_info_t *info);
+void gd_read_header2(gd_main_t *main, gd_info_t *info);
 void gd_read_global_color_table(gd_main_t *main, uint8_t *color_table);
 void gd_read_image(gd_main_t *main, gd_index_t *output, size_t capacity);

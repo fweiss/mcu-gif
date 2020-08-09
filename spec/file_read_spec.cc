@@ -85,6 +85,29 @@ describe("file next block type", [] {
         gd_block_type_t type = gd_next_block_type(&main);
         expect((int)type).to(eq((int)GD_BLOCK_GRAPHIC_CONTROL_EXTENSION));
     });
+    describe("10x10 screen and 4 global colors", [] {
+		static gd_main_t main;
+		static gd_info_t info;
+		static uint8_t gct[4 * 3];
+		before("each", [] {
+			vector<uint8_t> file = header + logical_screen_descriptor + global_color_table;
+			FFILEV(file);
+			main.read = f_read;
+
+			gct[2] = 0xaa;
+
+			gd_init(&main);
+			gd_read_header2(&main, &info);
+			gd_read_global_color_table(&main, gct);
+		});
+		it("has correct color[2]", [] {
+			expect(gct[2]).to(eq(0xff));
+		});
+		it("has correct color[4]", [] {
+			expect(gct[4]).to(eq(0x00));
+		});
+
+    });
 });
 
 } // namespace
