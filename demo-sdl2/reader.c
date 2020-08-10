@@ -45,8 +45,14 @@ void reader() {
 void drawGif(SDL_Renderer *renderer) {
     static gd_index_t pix[100] = {0};
 
-    int fd = open("demo-sdl2/sample_1.gif", O_RDONLY);
+    const char *gifPath = "../demo-sdl2/sample_1.gif";
+
+    int fd = open(gifPath, O_RDONLY);
     printf("fd: %d\n", fd);
+    if (fd < 0) {
+    	printf("error opening file: %s\n", gifPath);
+    	exit(0);
+    }
 
     gd_main_t main;
     gd_info_t info;
