@@ -235,9 +235,22 @@ void gd_read_header2(gd_main_t *main, gd_info_t *info) {
     main->read(main->fd, buf, header_length);
     gd_read_logical_screen_descriptor(main, info);
 }
+void gd_read_header3(gd_main_t *main) {
+    const size_t header_length = 6;
+    const size_t logical_screen_descriptor_length = 7;
+    const size_t global_color_table_length = 12;
+    const size_t graphic_control_extension_length = 8;
+    const size_t image_descriptor_length = 10;
+    uint8_t buf[header_length];;
+
+    main->read(main->fd, buf, header_length);
+
+    // TODO validation
+    main->next_block_type = GD_BLOCK_LOGICAL_SCREEN_DESCRIPTOR;
+}
 
 void gd_read_global_color_table(gd_main_t *main, uint8_t *color_table) {
-	const color_table_size = 4 * 3;
+	const size_t color_table_size = 4 * 3;
 	main->read(main->fd, color_table, color_table_size);
     main->next_block_type = GD_BLOCK_GRAPHIC_CONTROL_EXTENSION;
 }

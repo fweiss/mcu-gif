@@ -96,6 +96,25 @@ describe("file next block type", [] {
 
 			gct[2] = 0xaa;
 		});
+		describe("block type sequence", [] {
+			before("each", [] {
+				gd_init(&main);
+			});
+			it("block initial", [] {
+				expect(gd_next_block_type(&main)).to(eq(GD_BLOCK_INITIAL));
+			});
+
+		});
+		describe("block type sequence", [] {
+			before("each", [] {
+				gd_init(&main);
+				gd_read_header3(&main);
+			});
+			it("block logical screen descriptor", [] {
+				expect(gd_next_block_type(&main)).to(eq(GD_BLOCK_LOGICAL_SCREEN_DESCRIPTOR));
+			});
+
+		});
 		it("block type sequence", [] {
 			gd_init(&main);
 			expect(gd_next_block_type(&main)).to(eq(GD_BLOCK_INITIAL));
