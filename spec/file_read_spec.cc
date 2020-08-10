@@ -95,16 +95,29 @@ describe("file next block type", [] {
 			main.read = f_read;
 
 			gct[2] = 0xaa;
-
+		});
+		it("block type sequence", [] {
 			gd_init(&main);
+			expect(gd_next_block_type(&main)).to(eq(GD_BLOCK_INITIAL));
 			gd_read_header2(&main, &info);
+//			expect(gd_next_block_type(&main)).to(eq(GD_BLOCK_LOGICAL_SCREEN_DESCRIPTOR));
+//			expect(gd_next_block_type(&main)).to(eq(GD_BLOCK_GLOBAL_COLOR_TABLE));
 			gd_read_global_color_table(&main, gct);
+			// next eof?
 		});
-		it("has correct color[2]", [] {
-			expect(gct[2]).to(eq(0xff));
-		});
-		it("has correct color[4]", [] {
-			expect(gct[4]).to(eq(0x00));
+		describe("global color table", [] {
+			before("each", [] {
+				gd_init(&main);
+				gd_read_header2(&main, &info);
+				gd_read_global_color_table(&main, gct);
+			});
+			it("has correct color[2]", [] {
+				expect(gct[2]).to(eq(0xff));
+			});
+			it("has correct color[4]", [] {
+				expect(gct[4]).to(eq(0x00));
+			});
+
 		});
 
     });
