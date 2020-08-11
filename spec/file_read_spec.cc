@@ -97,32 +97,21 @@ describe("file next block type", [] {
 			gct[2] = 0xaa;
 		});
 		describe("block type sequence", [] {
-			before("each", [] {
-				gd_init(&main);
-			});
 			it("block initial", [] {
+				gd_init(&main);
 				expect(gd_next_block_type(&main)).to(eq(GD_BLOCK_INITIAL));
 			});
-
-		});
-		describe("block type sequence", [] {
-			before("each", [] {
+			it("block logical screen descriptor", [] {
 				gd_init(&main);
 				gd_read_header3(&main);
-			});
-			it("block logical screen descriptor", [] {
 				expect(gd_next_block_type(&main)).to(eq(GD_BLOCK_LOGICAL_SCREEN_DESCRIPTOR));
 			});
-
-		});
-		it("block type sequence", [] {
-			gd_init(&main);
-			expect(gd_next_block_type(&main)).to(eq(GD_BLOCK_INITIAL));
-			gd_read_header2(&main, &info);
-//			expect(gd_next_block_type(&main)).to(eq(GD_BLOCK_LOGICAL_SCREEN_DESCRIPTOR));
-//			expect(gd_next_block_type(&main)).to(eq(GD_BLOCK_GLOBAL_COLOR_TABLE));
-			gd_read_global_color_table(&main, gct);
-			// next eof?
+			it("block global color table", [] {
+				gd_init(&main);
+				gd_read_header3(&main);
+				gd_read_logical_screen_descriptor(&main, &info);
+				expect(gd_next_block_type(&main)).to(eq(GD_BLOCK_GLOBAL_COLOR_TABLE));
+			});
 		});
 		describe("global color table", [] {
 			before("each", [] {

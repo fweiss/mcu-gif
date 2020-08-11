@@ -196,17 +196,6 @@ void gd_init(gd_main_t *main) {
     main->next_block_type = GD_BLOCK_INITIAL;
 }
 
-void gd_read_logical_screen_descriptor(gd_main_t *main, gd_info_t *info) {
-    const uint8_t GLOBAL_COLOR_TABLE_FLAG = 0x80;
-    const uint8_t GLOBAL_COLOR_TABLE_SIZE = 0x03;
-    uint8_t buf[7];
-    int count = main->read(main->fd, buf, sizeof(buf));
-    info->width = gd_unpack_word(&buf[6-6]);
-    info->height = gd_unpack_word(&buf[8-6]);
-    info->globalColorTableFlag = buf[10-6] & GLOBAL_COLOR_TABLE_FLAG;
-    info->globalColorTableSize = 1 << ((buf[10-6] & GLOBAL_COLOR_TABLE_SIZE) + 1);
-}
-
 void gd_read_header(gd_main_t *main, gd_info_t *info) {
     const size_t header_length = 6;
     const size_t logical_screen_descriptor_length = 7;
@@ -247,6 +236,17 @@ void gd_read_header3(gd_main_t *main) {
 
     // TODO validation
     main->next_block_type = GD_BLOCK_LOGICAL_SCREEN_DESCRIPTOR;
+}
+void gd_read_logical_screen_descriptor(gd_main_t *main, gd_info_t *info) {
+    const uint8_t GLOBAL_COLOR_TABLE_FLAG = 0x80;
+    const uint8_t GLOBAL_COLOR_TABLE_SIZE = 0x03;
+    uint8_t buf[7];
+    int count = main->read(main->fd, buf, sizeof(buf));
+    info->width = gd_unpack_word(&buf[6-6]);
+    info->height = gd_unpack_word(&buf[8-6]);
+    info->globalColorTableFlag = buf[10-6] & GLOBAL_COLOR_TABLE_FLAG;
+    info->globalColorTableSize = 1 << ((buf[10-6] & GLOBAL_COLOR_TABLE_SIZE) + 1);
+    main->next_block_type = GD_BLOCK_GLOBAL_COLOR_TABLE;
 }
 
 void gd_read_global_color_table(gd_main_t *main, uint8_t *color_table) {
