@@ -4,4 +4,3 @@ project(mcugif)
 
 add_subdirectory(src)
 add_subdirectory(spec)
-add_subdirectory(submodules/ccspec)

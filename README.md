@@ -1,6 +1,5 @@
 # mcu-gif
-
-A GIF decoder for MCUs
+A GIF decoder for embedded MCUs
 
 The goals of this project are:
 
@@ -16,24 +15,42 @@ Starting afresh with ccspec to try out comprehensible tests.
 The GTest reports where just too bland.
 The ccspec framework promises at least a basic rspec test report.
 
-### Running the ccspec tests
+## Running the ccspec tests
+Since this is a TDD project, we'll start by running the tests.
+The steps are:
+- update the Git submodule
+- generate the make files with CMake
+- run the tests
+
+### Update the Git submodule
 The ccspec git repository is linked as a submodule.
-You'll need to update the git submodules.
+You'll need to update the git submodule with:
 
 ``git submodule update --init --recursive``
 
+### Generate the make files with CMake
+Run Cmake in the build directory with:
+
+``cmake ..``
+
+> There's a bug in ccspec. In submodules/ccspec/src/CMakeLists.txt,
+> in the target_include_directories command,
+> replace CMAKE_SOURCE_DIR with CMAKE_CURRENT_SOURCE_DIR.
+> and add '../' before include.
+
+### Run the tests
 The following command will run the tests and display the test report:
-``make test``
 
-## Building and running with CMake
-The project has been cobverted from make to CMake.
-There's a bug in ccspec. In submodules/ccspec/src/CMakeLists.txt,
-in the target_include_directories command,
-replace CMAKE_SOURCE_DIR with CMAKE_CURRENT_SOURCE_DIR.
-and add '../' before include.
+``spec/start``
 
-https://wiki.eclipse.org/CDT/User/NewIn83#Toolchains
+> Notice the nested structure of the test report.
 
+## Unit testing with gtest (deprecated)
+This project was originally developed with TDD using gtest.
+
+> The gtest example code is in the ``gtest`` branch.
+
+## Eclipse notes
 Finally got <vector> initializer list working. 
 The trick is that the LLVM library include file is "vector" not "vector.h"
 consequenlty the default indexer settings to not properly index it.
@@ -42,12 +59,10 @@ Project > Propoerties > C/C++ General > Indexer:
 - Enable project-specific settings
 - Index all variants of specific headers: enter "vector"
 
-## Unit testing with gtest (deprecated)
-This project was originally developed with TDD using gtest.
+https://wiki.eclipse.org/CDT/User/NewIn83#Toolchains
 
-> The gtest example code is in the ``gtest`` branch.
 
-### Debugging
+## Debugging
 Example on MacOS using lldb
 
 In CXXFLAGS, add ``-g -O0``
@@ -60,17 +75,8 @@ Set a breakpoint: ``br set -f gd-test.cpp -l 148``
 
 Run to breakpoint: ``r``
 
-## Visual testing
-The visually verify the decoder, a small GUI is included. It can be run on the development host.
-
-Several portable GUI frameworks were investigated:
-
-- GTK - to heavy weight
-- QT 
-- EasyBMP 
-- SDL2 - well supported, OS X binaries
-- graphics.h - too old
-- openGL - may be poorly supported on OS X
+## Visual test
+To visually verify the decoder, a small GUI is included. It can be run on the development host.
 
 ### SDL2 setup for Mac
 Download the dmg from libsdl.org.
@@ -79,8 +85,28 @@ Copy SDL2.framework to either:
 - your home directory (such as ~/Library/)
 - a global directory (such as /Library/Frameworks)
 
+### Building and running the visual test
+- cd to ``demo-sdl2``
+- run ``make``
+- run ``./main``
+
+You should see a window open, displaying a GIF.
+
+> This subproject has not been converted to CMake
+
+### Alternative GUI visualizers
+Several portable GUI frameworks were investigated:
+
+- GTK - too heavy weight
+- QT - a whole ecosystem
+- EasyBMP 
+- SDL2 - well supported, OS X binaries
+- graphics.h - too old
+- openGL - may be poorly supported on OS X
+
 ## CCSpec
-I think RSpec is a good model for writing tests. There has been some effort to provide this for C/C++.
+RSpec is a great model for developing software using TDD.
+I think ccpec provide a solid implementation for C/C++.
 
 https://github.com/zhangsu/ccspec
 
