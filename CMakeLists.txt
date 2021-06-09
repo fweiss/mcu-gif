@@ -4,5 +4,5 @@ project(mcugif)
 
 add_subdirectory(src)
 add_subdirectory(spec)
-add_subdirectory(demo-sdl2)
-add_subdirectory(submodules/ccspec)
+# add_subdirectory(demo-sdl2)
+# add_subdirectory(submodules/ccspec)
