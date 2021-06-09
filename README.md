@@ -33,7 +33,7 @@ Run Cmake in the build directory with:
 
 ``cmake ..``
 
-> There's a bug in ccspec. In submodules/ccspec/src/CMakeLists.txt,
+> There's a bug in ccspec: "cannot open include file 'ccspec/core/example.h'". In submodules/ccspec/src/CMakeLists.txt,
 > in the target_include_directories command,
 > replace CMAKE_SOURCE_DIR with CMAKE_CURRENT_SOURCE_DIR.
 > and add '../' before include.
@@ -44,6 +44,16 @@ The following command will run the tests and display the test report:
 ``spec/start``
 
 > Notice the nested structure of the test report.
+
+### Windows notes
+There are several toolchain options on Windows.
+I chose the bare-bones Visual Studio 2019 command line tools.
+
+- open a Developer Command Prompt for VS
+- in the build directory, run ``cmake -G "NMake Makefiles" ..``
+- run ``nmake``
+
+``"C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Tools\MSVC\14.28.29910\bin\Hostx64\x64\nmake"``
 
 ## Unit testing with gtest (deprecated)
 This project was originally developed with TDD using gtest.

@@ -1,38 +1,45 @@
 cmake_minimum_required(VERSION 3.17)
 
+# problems
+# run spec\start, then ccspec.dll is missing
+# but it is in spec\ccspec, as well as ccspec.lib
+# tried to do static, but then get linked errors
+
 project(spec)
 
-if(APPLE)
-  set(CMAKE_MACOSX_RPATH ON)
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+  set(CMAKE_INSTALL_PREFIX "./bin" CACHE PATH "..." FORCE)
 endif()
-
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
-
-add_subdirectory("../submodules/ccspec/src" "build")
-
-# but ultimately lib
-file(GLOB MAIN "../src/*.c")
 
 file(GLOB_RECURSE SOURCES "*.cc")
 add_executable(start ${SOURCES})
+# set(CMAKE_EXE_LINKER_FLAGS "-lz")
 
-target_include_directories(start PUBLIC "../submodules/ccspec/include")
-target_include_directories(start PUBLIC "../src")
+# set_target_properties(start PROPERTIES COMPILE_FLAGS -DBUILDER_STATIC_DEFINE)
+# set_target_properties(start PROPERTIES COMPILE_DEFINITIONS BUILDER_STATIC_DEFINE)
+# set_target_properties(start PROPERTIES IMPORTED_LOCATION )
 
-# for mac
-#set(CMAKE_MACOSX_RPATH OFF)
+# set(CMAKE_FIND_LIBRARY_SUFFIXES ".lib")
+# target_compile_options(start PUBLIC /MT)
+# target_link_options(start PUBLIC /INCREMENTAL:NO /NODEFAULTLIB:MSVCRT)
 
-#set(CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_STATIC_LIBRARY_SUFFIX})
-#find_library(
-#	LIBCCSPEC
-#	libccspec.0.1.0.dylib
-#	PATHS
-#		/Users/frankw/Projects/TDD/cmake-mcu-gif/submodules/ccspec/build/src)
+# set(CMAKE_FIND_LIBRARY_SUFFIXES ".lib")
+# target_compile_options(start PUBLIC /MT)
+# target_link_options(start PUBLIC /INCREMENTAL:NO /NODEFAULTLIB:MSVCRTD)
+# target_link_options(start PUBLIC /WHOLEARCHIVE:ccspec/ccspec.lib)
 
-file(GLOB_RECURSE MAIN "../src/*.h" "../src/*.c")
-add_library(main2 ${MAIN})
+target_include_directories(start PUBLIC ../src)
+target_include_directories(start PUBLIC ../submodules/ccspec/include)
 
-target_link_libraries(start main2 ccspec)
+# set(CMAKE_CXX_STANDARD 11)
+# set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+# just the runtime
+add_subdirectory("../submodules/ccspec/src" "ccspec")
+# target_link_libraries(start PUBLIC ccspec)
+target_link_libraries(start PRIVATE ccspec)
 
+# add_subdirectory("../src" "build-main")
+target_link_libraries(start PUBLIC main)
+
+install(TARGETS start ccspec DESTINATION .)
