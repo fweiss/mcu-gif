@@ -202,7 +202,9 @@ void gd_read_header(gd_main_t *main, gd_info_t *info) {
     const size_t global_color_table_length = 12;
     const size_t graphic_control_extension_length = 8;
     const size_t image_descriptor_length = 10;
-    uint8_t buf[header_length + logical_screen_descriptor_length + global_color_table_length + graphic_control_extension_length + image_descriptor_length];;
+    // MSVC C2057, C99 does not allow this kind of constant expression
+    // uint8_t buf[header_length + logical_screen_descriptor_length + global_color_table_length + graphic_control_extension_length + image_descriptor_length];
+    uint8_t buf[6+7+12+8+10];
 
     main->read(main->fd, buf, header_length);
 //    main->read(main->fd, buf, logical_screen_descriptor_length);

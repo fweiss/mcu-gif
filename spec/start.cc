@@ -41,7 +41,7 @@ int main() {
 
     bool succeeded = true;
     for (auto example_group : example_groups) {
-        bool succeeded = example_group->run(reporter) && succeeded;
+        succeeded = example_group->run(reporter) && succeeded;
         delete example_group;
     }
 
