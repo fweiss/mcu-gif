@@ -91,6 +91,3 @@ C++ v14.29 (16.8) ATL for v142 build tools (x86 & x64)
 
 Enterprise didn't work, added directory level
 
-$LastExitCode
-C0000135 missing dll
-copy spec\ccspec\ccspec.dll test

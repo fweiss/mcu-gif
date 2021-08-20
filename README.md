@@ -45,15 +45,7 @@ The following command will run the tests and display the test report:
 
 > Notice the nested structure of the test report.
 
-### Windows notes
-There are several toolchain options on Windows.
-I chose the bare-bones Visual Studio 2019 command line tools.
-
-- open a Developer Command Prompt for VS
-- in the build directory, run ``cmake -G "NMake Makefiles" ..``
-- run ``nmake``
-
-``"C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Tools\MSVC\14.28.29910\bin\Hostx64\x64\nmake"``
+> See WINDOWS.md for a guide specific to Windows.
 
 ## Unit testing with gtest (deprecated)
 This project was originally developed with TDD using gtest.
@@ -129,9 +121,6 @@ NMAKE : fatal error U1073: don't know how to make 'spec\ccspec\ccspec.lib'
 Stop.
 NMAKE : fatal error U1077: '"C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Tools\MSVC\14.29.30037\bin\HostX86\x86\nmake.exe"' : return code '0x2'
 ```
-
-### ./nmake.bat
-needs to be kept in sync with cxx version, still needed?
 
 ## Links and references
 
