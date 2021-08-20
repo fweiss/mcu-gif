@@ -122,6 +122,17 @@ https://github.com/zhangsu/ccspec
 
 https://github.com/zhangsu/ccspec-example
 
+## Bugs
+```
+string_table_spec.cc
+NMAKE : fatal error U1073: don't know how to make 'spec\ccspec\ccspec.lib'
+Stop.
+NMAKE : fatal error U1077: '"C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Tools\MSVC\14.29.30037\bin\HostX86\x86\nmake.exe"' : return code '0x2'
+```
+
+### ./nmake.bat
+needs to be kept in sync with cxx version, still needed?
+
 ## Links and references
 
 Really easy and comprehensive guide to decoding GIFs:
@@ -151,5 +162,14 @@ http://debuggable.com/posts/test-driven-development-in-real-world-apps:480f4dd5-
 A good summary of the GIF file format:
 
 http://netghost.narod.ru/gff/graphics/summary/gif.htm
+
+### Microsoft Visual Studio command line tools
+https://docs.microsoft.com/en-us/cpp/build/building-on-the-command-line?view=msvc-160
+
+Visual Studio Build Tools 2019 - 16.10.4
+Desktop Development with C++
+defaults OK
+
+
 
  

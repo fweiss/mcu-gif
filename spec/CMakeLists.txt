@@ -36,10 +36,10 @@ target_include_directories(start PUBLIC ../submodules/ccspec/include)
 
 # just the runtime
 add_subdirectory("../submodules/ccspec/src" "ccspec")
-# target_link_libraries(start PUBLIC ccspec)
-target_link_libraries(start PRIVATE ccspec)
+target_link_libraries(start PUBLIC ccspec)
+# target_link_libraries(start PRIVATE ccspec)
 
 # add_subdirectory("../src" "build-main")
 target_link_libraries(start PUBLIC main)
 
-install(TARGETS start ccspec DESTINATION .)
+install(TARGETS start ccspec RUNTIME DESTINATION .)
