@@ -19,8 +19,7 @@ The ccspec framework promises at least a basic rspec test report.
 Since this is a TDD project, we'll start by running the tests.
 The steps are:
 - update the Git submodule
-- generate the make files with CMake
-- run the tests
+- build and run the tests
 
 ### Update the Git submodule
 The ccspec git repository is linked as a submodule.
@@ -28,7 +27,12 @@ You'll need to update the git submodule with:
 
 ``git submodule update --init --recursive``
 
-### Generate the make files with CMake
+### Build and run the tests
+CMake is used to build the code.
+
+> See WINDOWS.md for a guide specific to Windows.
+> The following is for MacOS.
+
 Run Cmake in the build directory with:
 
 ``cmake ..``
@@ -41,28 +45,9 @@ Run Cmake in the build directory with:
 ### Run the tests
 The following command will run the tests and display the test report:
 
-``spec/start``
+``bin/start``
 
 > Notice the nested structure of the test report.
-
-> See WINDOWS.md for a guide specific to Windows.
-
-## Unit testing with gtest (deprecated)
-This project was originally developed with TDD using gtest.
-
-> The gtest example code is in the ``gtest`` branch.
-
-## Eclipse notes
-Finally got <vector> initializer list working. 
-The trick is that the LLVM library include file is "vector" not "vector.h"
-consequenlty the default indexer settings to not properly index it.
-
-Project > Propoerties > C/C++ General > Indexer:
-- Enable project-specific settings
-- Index all variants of specific headers: enter "vector"
-
-https://wiki.eclipse.org/CDT/User/NewIn83#Toolchains
-
 
 ## Debugging
 Example on MacOS using lldb
@@ -114,6 +99,22 @@ https://github.com/zhangsu/ccspec
 
 https://github.com/zhangsu/ccspec-example
 
+## Unit testing with gtest (deprecated)
+This project was originally developed with TDD using gtest.
+
+> The gtest example code is in the ``gtest`` branch.
+
+## Eclipse notes
+Finally got <vector> initializer list working. 
+The trick is that the LLVM library include file is "vector" not "vector.h"
+consequenlty the default indexer settings to not properly index it.
+
+Project > Propoerties > C/C++ General > Indexer:
+- Enable project-specific settings
+- Index all variants of specific headers: enter "vector"
+
+https://wiki.eclipse.org/CDT/User/NewIn83#Toolchains
+
 ## Bugs
 ```
 string_table_spec.cc
@@ -151,14 +152,3 @@ http://debuggable.com/posts/test-driven-development-in-real-world-apps:480f4dd5-
 A good summary of the GIF file format:
 
 http://netghost.narod.ru/gff/graphics/summary/gif.htm
-
-### Microsoft Visual Studio command line tools
-https://docs.microsoft.com/en-us/cpp/build/building-on-the-command-line?view=msvc-160
-
-Visual Studio Build Tools 2019 - 16.10.4
-Desktop Development with C++
-defaults OK
-
-
-
- 
