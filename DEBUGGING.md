@@ -1,7 +1,7 @@
 ## Windows
 Modified several CMakeList.txt file for use with MSVC Command line tools
 
-nmake
+## BeTruthy
 
 ``error LNK2001: unresolved external symbol "class ccspec::matchers::BeTruthy const & const ccspec::matchers::be_truthy" (?be_truthy@matchers@ccspec@@3ABVBeTruthy@12@B)``
 
@@ -23,6 +23,25 @@ maybe /MD vs /MT - nah, that's for multi-thread
 
 decide to try cmake install. this works by putting the start and dll in the build/bin folder
 was avoiding it because it seemed to add a step that wasn't needed on the OSX
+
+getting back to the linker problem
+
+in ``be_truthy.h`` we got ``extern const BeTruthy& be_truthy;``.
+
+Recqapping the bug: ``10x10_red_blue_white.cc.obj : error LNK2001: unresolved external symbol "class ccspec::matchers::BeTruthy const & const ccspec::matchers::be_truthy" (?be_truthy@matchers@ccspec@@3ABVBeTruthy@12@B)``
+
+Which it riggered by "10x10 red" around line 55, It's attempting
+to pass the global in be_truthy to ``expect().to(be_truthy)``.
+
+So the linker is looking for that montsrsity above, basicallY
+"const reference to const BeTruthy"
+
+Maybe because it's in the .h file?
+
+Let's look at the fucntion reference. 
+
+Bug appear to be in betruthy.cc, where the initializer ``extern const BeTruthy& be_truthy;``
+is missing the inner const.
 
 ## Unable to open 'deque'
 In VSC debugger, launch spec\ccspec.
