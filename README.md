@@ -19,8 +19,7 @@ The ccspec framework promises at least a basic rspec test report.
 Since this is a TDD project, we'll start by running the tests.
 The steps are:
 - update the Git submodule
-- generate the make files with CMake
-- run the tests
+- build and run the tests
 
 ### Update the Git submodule
 The ccspec git repository is linked as a submodule.
@@ -28,7 +27,12 @@ You'll need to update the git submodule with:
 
 ``git submodule update --init --recursive``
 
-### Generate the make files with CMake
+### Build and run the tests
+CMake is used to build the code.
+
+> See WINDOWS.md for a guide specific to Windows.
+> The following is for MacOS.
+
 Run Cmake in the build directory with:
 
 ``cmake ..``
@@ -41,53 +45,9 @@ Run Cmake in the build directory with:
 ### Run the tests
 The following command will run the tests and display the test report:
 
-``spec/start``
+``bin/start``
 
 > Notice the nested structure of the test report.
-
-### Windows notes
-There are several toolchain options on Windows.
-I chose the bare-bones Visual Studio 2019 command line tools.
-
-- open a Developer Command Prompt for VS
-- in the build directory, run ``cmake -G "NMake Makefiles" ..``
-- run ``nmake``
-
-``"C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Tools\MSVC\14.28.29910\bin\Hostx64\x64\nmake"``
-
-## Building and running with CMake
-The project has been cobverted from make to CMake.
-There's a bug in ccspec. In submodules/ccspec/src/CMakeLists.txt,
-in the target_include_directories command,
-replace CMAKE_SOURCE_DIR with CMAKE_CURRENT_SOURCE_DIR.
-and add '../' before include.
-
-https://wiki.eclipse.org/CDT/User/NewIn83#Toolchains
-
-Finally got <vector> initializer list working. 
-The trick is that the LLVM library include file is "vector" not "vector.h"
-consequenlty the default indexer settings to not properly index it.
-
-Project > Propoerties > C/C++ General > Indexer:
-- Enable project-specific settings
-- Index all variants of specific headers: enter "vector"
-
-## Unit testing with gtest (deprecated)
-This project was originally developed with TDD using gtest.
-
-> The gtest example code is in the ``gtest`` branch.
-
-## Eclipse notes
-Finally got <vector> initializer list working. 
-The trick is that the LLVM library include file is "vector" not "vector.h"
-consequenlty the default indexer settings to not properly index it.
-
-Project > Propoerties > C/C++ General > Indexer:
-- Enable project-specific settings
-- Index all variants of specific headers: enter "vector"
-
-https://wiki.eclipse.org/CDT/User/NewIn83#Toolchains
-
 
 ## Debugging
 Example on MacOS using lldb
@@ -139,6 +99,30 @@ https://github.com/zhangsu/ccspec
 
 https://github.com/zhangsu/ccspec-example
 
+## Unit testing with gtest (deprecated)
+This project was originally developed with TDD using gtest.
+
+> The gtest example code is in the ``gtest`` branch.
+
+## Eclipse notes
+Finally got <vector> initializer list working. 
+The trick is that the LLVM library include file is "vector" not "vector.h"
+consequenlty the default indexer settings to not properly index it.
+
+Project > Propoerties > C/C++ General > Indexer:
+- Enable project-specific settings
+- Index all variants of specific headers: enter "vector"
+
+https://wiki.eclipse.org/CDT/User/NewIn83#Toolchains
+
+## Bugs
+```
+string_table_spec.cc
+NMAKE : fatal error U1073: don't know how to make 'spec\ccspec\ccspec.lib'
+Stop.
+NMAKE : fatal error U1077: '"C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Tools\MSVC\14.29.30037\bin\HostX86\x86\nmake.exe"' : return code '0x2'
+```
+
 ## Links and references
 
 Really easy and comprehensive guide to decoding GIFs:
@@ -168,5 +152,3 @@ http://debuggable.com/posts/test-driven-development-in-real-world-apps:480f4dd5-
 A good summary of the GIF file format:
 
 http://netghost.narod.ru/gff/graphics/summary/gif.htm
-
- 
