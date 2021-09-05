@@ -29,11 +29,12 @@ int main(int argc, char *argv[])
     SDL_Texture *texture = NULL;
     SDL_Renderer *renderer = NULL;
 
-//    SDL_Window* win = SDL_CreateWindow("GAME",
-//                                       SDL_WINDOWPOS_CENTERED,
-//                                       SDL_WINDOWPOS_CENTERED,
-//                                       1000, 1000, 0);
-    window = SDL_CreateWindow("Hello World!", 100, 100, 640, 480, SDL_WINDOW_SHOWN);
+    const int windowWidth = 640;
+    const int windowHeight = 480;
+    window = SDL_CreateWindow("Hello World!", 
+        SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 
+        windowWidth, windowHeight, 
+        SDL_WINDOW_SHOWN);     
     if (window == 0){
         printf("SDL_CreateWindow Error: %s\n", SDL_GetError());
         SDL_Quit();

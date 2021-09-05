@@ -49,9 +49,9 @@ void drawGif(SDL_Renderer *renderer) {
     printf("fd: %d\n", fd);
 
     gd_main_t main;
-    gd_info_t info;
     main.read = read;
     main.fd = fd;
+    gd_info_t info;
 
     gd_init(&main);
     gd_read_header(&main, &info);
