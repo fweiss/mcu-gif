@@ -37,6 +37,10 @@ Run Cmake in the build directory with:
 
 ``cmake ..``
 
+Compile the code:
+
+``make install``
+
 > There's a bug in ccspec: "cannot open include file 'ccspec/core/example.h'". In submodules/ccspec/src/CMakeLists.txt,
 > in the target_include_directories command,
 > replace CMAKE_SOURCE_DIR with CMAKE_CURRENT_SOURCE_DIR.
