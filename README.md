@@ -62,9 +62,11 @@ Start the lldb debugger: ``lldb build/gd-test``
 
 Launch a process to debug: ``process launch --environment GTEST_FILTER=DecodeSubBlock.simple``
 
-Set a breakpoint: ``br set -f gd-test.cpp -l 148``
-
-Run to breakpoint: ``r``
+Handy commands:
+- Set a breakpoint: ``br set -f gd-test.cpp -l 148``
+- Run to breakpoint: ``r``
+- stack trace: ``thread backtrace``
+- add debug info to binaries: ``cmake -DCMAKE_BUILD_TYPE=Debug ..``
 
 ## Visual test
 To visually verify the decoder, a small GUI is included. It can be run on the development host.
