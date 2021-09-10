@@ -21,11 +21,11 @@ extern "C" {
 // a little DSL to concatenate vectors
 // provides for constructing test files out of blocks
 // doesn't have to be efficient
-vector<uint8_t> operator+(const vector<uint8_t> &a, const vector<uint8_t> &b) {
-    vector<uint8_t> r = a;
-    r.insert(r.end(), b.begin(), b.end());
-    return r;
-}
+// vector<uint8_t> operator+(const vector<uint8_t> &a, const vector<uint8_t> &b) {
+//     vector<uint8_t> r = a;
+//     r.insert(r.end(), b.begin(), b.end());
+//     return r;
+// }
 
 static const vector<uint8_t> header({ 'G', 'I', 'F', '8', '9', 'a' });
 static const vector<uint8_t> logical_screen_descriptor({

@@ -4,6 +4,7 @@
 
 using ccspec::core::describe;
 using ccspec::core::before;
+using ccspec::core::after;
 using ccspec::core::it;
 using ccspec::expect;
 using ccspec::matchers::eq;

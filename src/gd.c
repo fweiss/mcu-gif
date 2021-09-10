@@ -196,15 +196,25 @@ void gd_init(gd_main_t *main) {
     main->next_block_type = GD_BLOCK_INITIAL;
 }
 
+void gd_read_header2(gd_main_t *main) {
+    const size_t header_length = 6;
+    uint8_t buf[header_length];
+    main->read(main->fd, buf, sizeof(buf));
+    main->next_block_type = GD_BLOCK_LOGICAL_SCREEN_DESCRIPTOR;
+}
+
+
 void gd_read_logical_screen_descriptor(gd_main_t *main, gd_info_t *info) {
     const uint8_t GLOBAL_COLOR_TABLE_FLAG = 0x80;
     const uint8_t GLOBAL_COLOR_TABLE_SIZE = 0x03;
     uint8_t buf[7];
-    int count = main->read(main->fd, buf, sizeof(buf));
-    info->width = gd_unpack_word(&buf[6-6]);
+    const int count = main->read(main->fd, buf, sizeof(buf));
+    // todo check count
+    info->width = gd_unpack_word(&buf[0]);
     info->height = gd_unpack_word(&buf[8-6]);
     info->globalColorTableFlag = buf[10-6] & GLOBAL_COLOR_TABLE_FLAG;
     info->globalColorTableSize = 1 << ((buf[10-6] & GLOBAL_COLOR_TABLE_SIZE) + 1);
+    main->next_block_type = GD_BLOCK_GLOBAL_COLOR_TABLE;
 }
 
 void gd_read_header(gd_main_t *main, gd_info_t *info) {
