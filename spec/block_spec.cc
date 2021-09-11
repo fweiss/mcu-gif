@@ -56,20 +56,20 @@ auto block_spec = describe("block read", [] {
         });
     });
     describe("global color table", [&] {
-        static uint8_t gct[12];
+        static uint8_t *gct;
         before("all", [&] {
             FFILEV(header + logical_screen_descriptor + global_color_table);
 
             gd_read_header2(&main);
             gd_read_logical_screen_descriptor(&main, &info);
-            // gct = (uint8_t*)malloc(info.globalColorTableSize * 3);
+            gct = (uint8_t*)malloc(info.globalColorTableSize * 3);
             gd_read_global_color_table(&main, gct);
         });
         after("all", [&] {
-            // if (gct) {
-            //     free(gct);
-            //     gct = 0;
-            // }
+            if (gct) {
+                free(gct);
+                gct = 0;
+            }
         });
         it("has color", [&] {
             expect((int)gct[0]).to(eq((int)0xff));
