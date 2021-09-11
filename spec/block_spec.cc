@@ -15,7 +15,7 @@ auto block_spec = describe("block read", [] {
         0x00, // background color index
         0x00 // aspect ratio
     });
-    const vector<uint8_t> global_color_table({
+    static const vector<uint8_t> global_color_table({
         0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00
     });
     static gd_main_t main;
@@ -38,20 +38,20 @@ auto block_spec = describe("block read", [] {
     });
     describe("logical screen descriptor", [&] {
         before("all", [&] {
-            // FFILEV(header + logical_screen_descriptor);
+            FFILEV(header + logical_screen_descriptor);
             // f_open_memory(header + logical_screen_descriptor);
 
-            std::vector<uint8_t> result {};
-            result.reserve(header.size() + logical_screen_descriptor.size());
-            result.insert(result.cend(), header.cbegin(), header.cend());
-            result.insert(result.cend(), logical_screen_descriptor.cbegin(), logical_screen_descriptor.cend());
+            // std::vector<uint8_t> result {};
+            // result.reserve(header.size() + logical_screen_descriptor.size());
+            // result.insert(result.cend(), header.cbegin(), header.cend());
+            // result.insert(result.cend(), logical_screen_descriptor.cbegin(), logical_screen_descriptor.cend());
 
-            f_open_memory(result);
+            // f_open_memory(result);
 
-            std::cout << "=== hello ";
-            for (int i=0; i < result.size(); i++)
-                std::cout << "'" << std::hex << (int)result[i] << "' ";
-            std::cout << "\n";
+            // std::cout << "=== hello ";
+            // for (int i=0; i < result.size(); i++)
+            //     std::cout << "'" << std::hex << (int)result[i] << "' ";
+            // std::cout << "\n";
 
             gd_read_header2(&main);
             gd_read_logical_screen_descriptor(&main, &info);
@@ -78,17 +78,14 @@ auto block_spec = describe("block read", [] {
             // result.insert(result.cend(), header.cbegin(), header.cend());
             // result.insert(result.cend(), rhs.cbegin(), rhs.cend());
 
-            // std::cout << "=== hello " << std::hex;
-            // // for (auto uint8_t& c : x)
-            // for (int i=0; i < x.size(); i++)
-            //     std::cout << "'" << x[i] << "' ";
-            // std::cout << "\n";
-            // // f_open_memory(x);
+            FFILEV(header + logical_screen_descriptor + global_color_table);
+            // std::vector<uint8_t> x = header + logical_screen_descriptor + global_color_table;
+            f_print_memory();
 
-            // // f_open_memory(header + logical_screen_descriptor + global_color_table);
-            // // gd_read_header(&main, &info);
-            // // gct = (uint8_t*)malloc(info.globalColorTableSize * 3);
-            // // gd_read_global_color_table(&main, gct);
+            gd_read_header2(&main);
+            gd_read_logical_screen_descriptor(&main, &info);
+            // gct = (uint8_t*)malloc(info.globalColorTableSize * 3);
+            gd_read_global_color_table(&main, gct);
         });
         after("all", [&] {
             // if (gct) {
@@ -97,7 +94,7 @@ auto block_spec = describe("block read", [] {
             // }
         });
         it("has color", [&] {
-            // expect(gct[0]).to(be((uint8_t)0));
+            expect((int)gct[0]).to(eq((int)0xff));
         });
     });
     describe("graphic control extension", [] {

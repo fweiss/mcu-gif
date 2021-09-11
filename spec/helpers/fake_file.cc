@@ -1,6 +1,7 @@
 #include "fake_file.h"
 
 #include <algorithm>
+#include <iostream>
 
 static const uint8_t *f_read_data = 0;
 static size_t f_read_data_length = 0;
@@ -24,4 +25,36 @@ extern void f_open_memory(const vector<uint8_t> &data) {
     f_read_data = data.data();
     f_read_data_length = data.size();
     f_read_pos = 0;
+}
+
+extern void f_print_memory() {
+        printf("= %d\n", *f_read_data);
+
+    std::cout << "=== hello " << std::hex;
+    // for (auto uint8_t& c : x)
+    for (int i=0; i < f_read_data_length; i++)
+        std::cout << "'" << (uint8_t)f_read_data[i]+0 << "' ";
+    std::cout << "\n";
+}
+
+// a little DSL to concatenate vectors
+// provides for constructing test files out of blocks
+// doesn't have to be efficient
+//  vector<uint8_t> operator+(const vector<uint8_t> &a, const vector<uint8_t> &b) {
+//     vector<uint8_t> r = a;
+//     r.insert(r.end(), b.begin(), b.end());
+//     // printf("concat %d %d %d\n", (int)a.size(), (int)b.size(), (int)r.size());
+//     return r;
+// }
+
+std::vector<uint8_t> operator+(const std::vector<uint8_t>& lhs, const std::vector<uint8_t>& rhs)
+{
+    if (lhs.empty()) return rhs;
+    if (rhs.empty()) return lhs;
+    std::vector<uint8_t> result {};
+    // printf("+ %d\n", lhs[0]);
+    result.reserve(lhs.size() + rhs.size());
+    result.insert(result.cend(), lhs.cbegin(), lhs.cend());
+    result.insert(result.cend(), rhs.cbegin(), rhs.cend());
+    return result;
 }

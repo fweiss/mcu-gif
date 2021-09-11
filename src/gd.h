@@ -32,6 +32,7 @@ typedef struct {
 typedef struct {
     ssize_t (*read)(int, void*, size_t);
     int fd;
+    gd_info_t info;
     gd_block_type_t next_block_type;
 } gd_main_t;
 

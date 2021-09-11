@@ -13,10 +13,11 @@ typedef SSIZE_T ssize_t;
 
 extern void f_open_memory(const uint8_t *data, long size);
 extern void f_open_memory(const vector<uint8_t> &data);
+extern void f_print_memory();
 extern ssize_t f_read(int fd, void *buf, size_t count);
 
 #define FFILE(init) (f_open_memory(init, sizeof(init)))
-#define FFILEV(init) (f_open_memory(init))
+#define FFILEV(init) const vector<uint8_t> m = (init); f_open_memory(m)
 
 extern vector<uint8_t> operator+(const vector<uint8_t> &a, const vector<uint8_t> &b);
 
@@ -30,13 +31,13 @@ extern vector<uint8_t> operator+(const vector<uint8_t> &a, const vector<uint8_t>
 // }
 
 // template <typename T>
-std::vector<uint8_t> inline operator+(const std::vector<uint8_t>& lhs, const std::vector<uint8_t>& rhs)
-{
-    if (lhs.empty()) return rhs;
-    if (rhs.empty()) return lhs;
-    std::vector<uint8_t> result {};
-    result.reserve(lhs.size() + rhs.size());
-    result.insert(result.cend(), lhs.cbegin(), lhs.cend());
-    result.insert(result.cend(), rhs.cbegin(), rhs.cend());
-    return result;
-}
+// std::vector<uint8_t> inline operator+(const std::vector<uint8_t>& lhs, const std::vector<uint8_t>& rhs)
+// {
+//     if (lhs.empty()) return rhs;
+//     if (rhs.empty()) return lhs;
+//     std::vector<uint8_t> result {};
+//     result.reserve(lhs.size() + rhs.size());
+//     result.insert(result.cend(), lhs.cbegin(), lhs.cend());
+//     result.insert(result.cend(), rhs.cbegin(), rhs.cend());
+//     return result;
+// }

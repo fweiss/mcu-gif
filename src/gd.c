@@ -214,6 +214,12 @@ void gd_read_logical_screen_descriptor(gd_main_t *main, gd_info_t *info) {
     info->height = gd_unpack_word(&buf[8-6]);
     info->globalColorTableFlag = buf[10-6] & GLOBAL_COLOR_TABLE_FLAG;
     info->globalColorTableSize = 1 << ((buf[10-6] & GLOBAL_COLOR_TABLE_SIZE) + 1);
+    // todo no dupe
+    main->info.width = gd_unpack_word(&buf[0]);
+    main->info.height = gd_unpack_word(&buf[8-6]);
+    main->info.globalColorTableFlag = buf[10-6] & GLOBAL_COLOR_TABLE_FLAG;
+    main->info.globalColorTableSize = 1 << ((buf[10-6] & GLOBAL_COLOR_TABLE_SIZE) + 1);
+
     main->next_block_type = GD_BLOCK_GLOBAL_COLOR_TABLE;
 }
 
@@ -237,6 +243,9 @@ void gd_read_header(gd_main_t *main, gd_info_t *info) {
 }
 
 void gd_read_global_color_table(gd_main_t *main, uint8_t *color_table) {
+    // todo handle chunks
+    main->read(main->fd, color_table, main->info.globalColorTableSize);
+    // todo peek
     main->next_block_type = GD_BLOCK_GRAPHIC_CONTROL_EXTENSION;
 }
 
