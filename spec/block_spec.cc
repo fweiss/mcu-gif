@@ -28,8 +28,8 @@ auto block_spec = describe("block read", [] {
     });
     describe("header", [&] {
         before("all", [&] {
-            const vector<uint8_t> h({        'G', 'I', 'F', '8', '9', 'a',});
-            f_open_memory(h.data(), h.size());
+            FFILEV(header);
+
             gd_read_header(&main, &info);
         });
         it("next block type", [&] {
@@ -39,19 +39,6 @@ auto block_spec = describe("block read", [] {
     describe("logical screen descriptor", [&] {
         before("all", [&] {
             FFILEV(header + logical_screen_descriptor);
-            // f_open_memory(header + logical_screen_descriptor);
-
-            // std::vector<uint8_t> result {};
-            // result.reserve(header.size() + logical_screen_descriptor.size());
-            // result.insert(result.cend(), header.cbegin(), header.cend());
-            // result.insert(result.cend(), logical_screen_descriptor.cbegin(), logical_screen_descriptor.cend());
-
-            // f_open_memory(result);
-
-            // std::cout << "=== hello ";
-            // for (int i=0; i < result.size(); i++)
-            //     std::cout << "'" << std::hex << (int)result[i] << "' ";
-            // std::cout << "\n";
 
             gd_read_header2(&main);
             gd_read_logical_screen_descriptor(&main, &info);
@@ -71,16 +58,7 @@ auto block_spec = describe("block read", [] {
     describe("global color table", [&] {
         static uint8_t gct[12];
         before("all", [&] {
-            // vector<uint8_t> x = header + logical_screen_descriptor + global_color_table;
-
-            // std::vector<uint8_t> result {};
-            // result.reserve(header.size() + rhs.size());
-            // result.insert(result.cend(), header.cbegin(), header.cend());
-            // result.insert(result.cend(), rhs.cbegin(), rhs.cend());
-
             FFILEV(header + logical_screen_descriptor + global_color_table);
-            // std::vector<uint8_t> x = header + logical_screen_descriptor + global_color_table;
-            f_print_memory();
 
             gd_read_header2(&main);
             gd_read_logical_screen_descriptor(&main, &info);

@@ -28,8 +28,6 @@ extern void f_open_memory(const vector<uint8_t> &data) {
 }
 
 extern void f_print_memory() {
-        printf("= %d\n", *f_read_data);
-
     std::cout << "=== hello " << std::hex;
     // for (auto uint8_t& c : x)
     for (int i=0; i < f_read_data_length; i++)
@@ -40,13 +38,6 @@ extern void f_print_memory() {
 // a little DSL to concatenate vectors
 // provides for constructing test files out of blocks
 // doesn't have to be efficient
-//  vector<uint8_t> operator+(const vector<uint8_t> &a, const vector<uint8_t> &b) {
-//     vector<uint8_t> r = a;
-//     r.insert(r.end(), b.begin(), b.end());
-//     // printf("concat %d %d %d\n", (int)a.size(), (int)b.size(), (int)r.size());
-//     return r;
-// }
-
 std::vector<uint8_t> operator+(const std::vector<uint8_t>& lhs, const std::vector<uint8_t>& rhs)
 {
     if (lhs.empty()) return rhs;
