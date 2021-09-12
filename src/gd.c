@@ -193,7 +193,7 @@ void gd_image_block_read(gd_main_t *main, gd_image_block_t *image_block) {
 }
 
 void gd_init(gd_main_t *main) {
-    main->next_block_type = GD_BLOCK_INITIAL;
+    main->next_block_type = GD_BLOCK_HEADER;
 }
 
 void gd_read_header2(gd_main_t *main) {
@@ -202,7 +202,6 @@ void gd_read_header2(gd_main_t *main) {
     main->read(main->fd, buf, sizeof(buf));
     main->next_block_type = GD_BLOCK_LOGICAL_SCREEN_DESCRIPTOR;
 }
-
 
 void gd_read_logical_screen_descriptor(gd_main_t *main, gd_info_t *info) {
     const uint8_t GLOBAL_COLOR_TABLE_FLAG = 0x80;
@@ -220,9 +219,11 @@ void gd_read_logical_screen_descriptor(gd_main_t *main, gd_info_t *info) {
     main->info.globalColorTableFlag = buf[10-6] & GLOBAL_COLOR_TABLE_FLAG;
     main->info.globalColorTableSize = 1 << ((buf[10-6] & GLOBAL_COLOR_TABLE_SIZE) + 1);
 
+    // todo based on flag and peek
     main->next_block_type = GD_BLOCK_GLOBAL_COLOR_TABLE;
 }
 
+// this is the old one that reads a bunch of blocks
 void gd_read_header(gd_main_t *main, gd_info_t *info) {
     const size_t header_length = 6;
     const size_t logical_screen_descriptor_length = 7;

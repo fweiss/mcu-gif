@@ -86,3 +86,35 @@ void drawGif(SDL_Renderer *renderer) {
     }
 }
 
+// exmaple of how it should work
+// based on gd returning the next block type read from the file
+void sketch() {
+    gd_main_t main;
+    gd_info_t info;
+
+    gd_init(&main);
+    uint8_t *gct = 0;
+
+    while (1) {
+        switch (main.next_block_type) {
+            case GD_BLOCK_INITIAL: // no longer uaed
+            case GD_BLOCK_HEADER:
+                gd_read_header2(&main);
+                break;
+            case GD_BLOCK_LOGICAL_SCREEN_DESCRIPTOR:
+                gd_read_logical_screen_descriptor(&main, &info);
+                break;
+            case GD_BLOCK_GLOBAL_COLOR_TABLE:
+                // alloc
+                gd_read_global_color_table(&main, gct);
+                // check status
+                break;
+            case GD_BLOCK_GRAPHIC_CONTROL_EXTENSION:
+                // gd_read_grpahic_control_extension(&main)
+                break;
+            // case GD_BLOCK_IMAGE_DESCRIPTOR
+            // case GD_BLOCK_IMAGE:
+        }
+    }
+}
+

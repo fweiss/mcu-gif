@@ -57,7 +57,7 @@ describe("file next block type", [] {
     it("initial block", [] {
         gd_init(&main);
         gd_block_type_t type = gd_next_block_type(&main);
-        expect(type).to(eq(GD_BLOCK_INITIAL));
+        expect(type).to(eq(GD_BLOCK_HEADER));
     });
     it("global color table", [] {
         vector<uint8_t> file = header + logical_screen_descriptor;

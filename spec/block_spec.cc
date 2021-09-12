@@ -2,6 +2,12 @@
 
 namespace simple {
 
+/**
+ * All the block read commands return specific data to the client.
+ * These are happy path tests. See
+ * - file_read_spec for next_ block_type
+ * - ?? for status errors
+ */
 auto block_spec = describe("block read", [] {
     // NB these have to be static
     // todo common const data fixture
@@ -25,6 +31,8 @@ auto block_spec = describe("block read", [] {
         // todo seg fault when main not initilized
         main.read = f_read;
         gd_init(&main);
+        // fixme ccspec enum
+        expect((int)gd_next_block_type(&main)).to(eq((int)GD_BLOCK_HEADER));
     });
     describe("header", [&] {
         before("all", [&] {

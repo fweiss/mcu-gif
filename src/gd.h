@@ -11,10 +11,11 @@ typedef SSIZE_T ssize_t;
 typedef uint8_t gd_index_t;
 
 typedef enum {
-    GD_BLOCK_INITIAL = 0,
-    GD_BLOCK_LOGICAL_SCREEN_DESCRIPTOR = 3,
-    GD_BLOCK_GLOBAL_COLOR_TABLE = 1,
-    GD_BLOCK_GRAPHIC_CONTROL_EXTENSION = 2,
+    GD_BLOCK_INITIAL = 0, // not sure if this is used
+    GD_BLOCK_HEADER = 1,
+    GD_BLOCK_LOGICAL_SCREEN_DESCRIPTOR = 2,
+    GD_BLOCK_GLOBAL_COLOR_TABLE = 3,
+    GD_BLOCK_GRAPHIC_CONTROL_EXTENSION = 4,
 } gd_block_type_t;
 
 typedef struct {
