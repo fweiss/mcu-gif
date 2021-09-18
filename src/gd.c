@@ -250,7 +250,18 @@ void gd_read_global_color_table(gd_main_t *main, uint8_t *color_table) {
     main->next_block_type = GD_BLOCK_GRAPHIC_CONTROL_EXTENSION;
 }
 
-void gd_read_image(gd_main_t *main, gd_index_t *output, size_t capacity) {
+void gd_read_graphic_control_extension(gd_main_t *main) {
+    uint8_t buf[8];
+    main->read(main->fd, buf, sizeof(buf));
+    // todo peek
+    main->next_block_type = GD_BLOCK_IMAGE_DESCRIPTOR;
+}
+
+void gd_read_image_descriptor(gd_main_t *main) {
+
+}
+
+void gd_read_image_data(gd_main_t *main, gd_index_t *output, size_t capacity) {
     gd_image_block_t image_block;
     image_block.output = output;
     image_block.outputLength = capacity;

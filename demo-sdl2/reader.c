@@ -58,7 +58,7 @@ void drawGif(SDL_Renderer *renderer) {
 //            gd_read_global_color_table(&main, colors);
 //            gd read_graphic_control_extension(&main);
 //            gd_read_image_descriptor(&main);
-    gd_read_image(&main, pix, sizeof(pix));
+    gd_read_image_data(&main, pix, sizeof(pix));
 //            gd_read_trailer(&main);
 
 
@@ -86,6 +86,10 @@ void drawGif(SDL_Renderer *renderer) {
     }
 }
 
+void renderPixels(uint8_t *pixels) {
+
+}
+
 // exmaple of how it should work
 // based on gd returning the next block type read from the file
 void sketch() {
@@ -95,9 +99,13 @@ void sketch() {
     gd_init(&main);
     uint8_t *gct = 0;
 
+    const uint16_t pixels_size = 100;
+    uint8_t pixels[100];
+
     while (1) {
         switch (main.next_block_type) {
             case GD_BLOCK_INITIAL: // no longer uaed
+                break;
             case GD_BLOCK_HEADER:
                 gd_read_header2(&main);
                 break;
@@ -110,11 +118,15 @@ void sketch() {
                 // check status
                 break;
             case GD_BLOCK_GRAPHIC_CONTROL_EXTENSION:
-                // gd_read_grpahic_control_extension(&main)
+                gd_read_graphic_control_extension(&main);
                 break;
-            // case GD_BLOCK_IMAGE_DESCRIPTOR
-            // case GD_BLOCK_IMAGE:
+            case GD_BLOCK_IMAGE_DESCRIPTOR:
+                gd_read_image_descriptor(&main);
+                break;
+            case GD_BLOCK_IMAGE_DATA:
+                gd_read_image_data(&main, pixels, pixels_size);
+                renderPixels(pixels);
+                break;
         }
     }
 }
-

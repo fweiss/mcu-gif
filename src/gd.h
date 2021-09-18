@@ -16,6 +16,8 @@ typedef enum {
     GD_BLOCK_LOGICAL_SCREEN_DESCRIPTOR = 2,
     GD_BLOCK_GLOBAL_COLOR_TABLE = 3,
     GD_BLOCK_GRAPHIC_CONTROL_EXTENSION = 4,
+    GD_BLOCK_IMAGE_DESCRIPTOR = 5,
+    GD_BLOCK_IMAGE_DATA = 6,
 } gd_block_type_t;
 
 typedef struct {
@@ -47,4 +49,6 @@ void gd_read_header(gd_main_t *main, gd_info_t *info);
 void gd_read_header2(gd_main_t *main);
 void gd_read_logical_screen_descriptor(gd_main_t *main, gd_info_t *info);
 void gd_read_global_color_table(gd_main_t *main, uint8_t *color_table);
-void gd_read_image(gd_main_t *main, gd_index_t *output, size_t capacity);
+void gd_read_graphic_control_extension(gd_main_t *main);
+void gd_read_image_descriptor(gd_main_t *main);
+void gd_read_image_data(gd_main_t *main, gd_index_t *output, size_t capacity);

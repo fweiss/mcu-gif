@@ -79,7 +79,7 @@ describe("for 10x10 red-blue-white", [] {
 //            gd_read_global_color_table(&main, colors);
 //            gd read_graphic_control_extension(&main);
 //            gd_read_image_descriptor(&main);
-            gd_read_image(&main, output, sizeof(output));
+            gd_read_image_data(&main, output, sizeof(output));
 //            gd_read_trailer(&main);
         });
         it("pixel[5] 2", [] {
