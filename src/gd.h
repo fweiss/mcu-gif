@@ -21,6 +21,12 @@ typedef enum {
 } gd_block_type_t;
 
 typedef struct {
+    uint8_t r;
+    uint8_t g;
+    uint8_t b;
+} gd_color_t;
+
+typedef struct {
     uint16_t width;
     uint16_t height;
     uint8_t globalColorTableFlag;
@@ -48,7 +54,7 @@ gd_block_type_t gd_next_block_type(gd_main_t *main);
 void gd_read_header(gd_main_t *main, gd_info_t *info);
 void gd_read_header2(gd_main_t *main);
 void gd_read_logical_screen_descriptor(gd_main_t *main, gd_info_t *info);
-void gd_read_global_color_table(gd_main_t *main, uint8_t *color_table);
+void gd_read_global_color_table(gd_main_t *main, gd_color_t *color_table);
 void gd_read_graphic_control_extension(gd_main_t *main);
 void gd_read_image_descriptor(gd_main_t *main);
 void gd_read_image_data(gd_main_t *main, gd_index_t *output, size_t capacity);

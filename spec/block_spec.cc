@@ -73,13 +73,13 @@ auto block_spec = describe("block read", [] {
         });
     });
     describe("global color table", [&] {
-        static uint8_t *gct;
+        static gd_color_t *gct;
         before("all", [&] {
             FFILEV(header + logical_screen_descriptor + global_color_table);
 
             gd_read_header2(&main);
             gd_read_logical_screen_descriptor(&main, &info);
-            gct = (uint8_t*)malloc(info.globalColorTableSize * 3);
+            gct = (gd_color_t*)malloc(info.globalColorTableSize * sizeof(gct[0]));
             gd_read_global_color_table(&main, gct);
         });
         after("all", [&] {
@@ -89,7 +89,7 @@ auto block_spec = describe("block read", [] {
             }
         });
         it("has color", [&] {
-            expect((int)gct[0]).to(eq((int)0xff));
+            expect(gct[0].r).to(eq(0xff));
         });
     });
     describe("graphic control extension", [] {
@@ -101,14 +101,14 @@ auto block_spec = describe("block read", [] {
 
     });
     describe("image data", [] {
-        static uint8_t *gct;
+        static gd_color_t *gct;
         before("all", [] {
             FFILEV(header + logical_screen_descriptor + global_color_table
              + graphic_control_extension + image_descriptor + image_data);
 
             gd_read_header2(&main);
             gd_read_logical_screen_descriptor(&main, &info);
-            gct = (uint8_t*)malloc(info.globalColorTableSize * 3);
+            gct = (gd_color_t*)malloc(info.globalColorTableSize * sizeof(gct[0]));
             gd_read_global_color_table(&main, gct);
             gd_read_graphic_control_extension(&main);
             gd_read_image_descriptor(&main);

@@ -76,7 +76,7 @@ describe("file next block type", [] {
         FFILE(file.data());
 
         main.read = f_read;
-        uint8_t gct[4 * 3];
+        gd_color_t gct[4 * sizeof(gd_color_t)];
 
         gd_init(&main);
         gd_read_header(&main, &info);

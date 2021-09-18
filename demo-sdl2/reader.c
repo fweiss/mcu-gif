@@ -42,6 +42,8 @@ void reader() {
 }
 */
 
+void renderPixels(SDL_Renderer *renderer, uint8_t *pixels, gd_color_t *colorTable);
+
 void drawGif(SDL_Renderer *renderer) {
     static gd_index_t pix[100] = {0};
 
@@ -62,7 +64,41 @@ void drawGif(SDL_Renderer *renderer) {
 //            gd_read_trailer(&main);
 
 
-    static uint32_t pct[4] = { 0xffffffff, 0xff000000, 0x0000ffff, 0x000000ff };
+    static gd_color_t pct[4] = { 
+        { 0xff, 0xff, 0xff },
+        { 0xff, 0x00, 0x00 },
+        { 0x00, 0x00, 0xff },
+        { 0x00, 0x00, 0x00 },
+    };
+
+    renderPixels(renderer, pix, pct);
+
+    // static uint32_t pct[4] = { 0xffffffff, 0xff000000, 0x0000ffff, 0x000000ff };
+
+    // SDL_Rect rect;
+    // rect.x = 50;
+    // rect.y = 50;
+    // rect.w = 10;
+    // rect.h = 10;
+
+    // SDL_RenderClear(renderer);
+    // for (uint8_t y=0; y<10; y++) {
+    //     for (uint8_t x=0; x<10; x++) {
+    //         rect.x = x * 10 + 100;
+    //         rect.y = y * 10 + 100;
+    //         uint16_t i = y * 10 + x;
+    //         uint32_t c = pct[pix[i]];
+    //         uint8_t r = (c >> 24) & 0xff;;
+    //         uint8_t g = (c >> 16) & 0xff;
+    //         uint8_t b = (c >> 8) & 0xff;
+    //         uint8_t a = c & 0xff;
+    //         SDL_SetRenderDrawColor(renderer, r, g, b, a);
+    //         SDL_RenderFillRect(renderer, &rect);
+    //     }
+    // }
+}
+
+void renderPixels(SDL_Renderer *renderer, uint8_t *pixels, gd_color_t *colorTable) {
     SDL_Rect rect;
     rect.x = 50;
     rect.y = 50;
@@ -75,29 +111,26 @@ void drawGif(SDL_Renderer *renderer) {
             rect.x = x * 10 + 100;
             rect.y = y * 10 + 100;
             uint16_t i = y * 10 + x;
-            uint32_t c = pct[pix[i]];
-            uint8_t r = (c >> 24) & 0xff;;
-            uint8_t g = (c >> 16) & 0xff;
-            uint8_t b = (c >> 8) & 0xff;
-            uint8_t a = c & 0xff;
+            gd_color_t c = colorTable[pixels[i]];
+            uint8_t r = c.r;
+            uint8_t g = c.g;
+            uint8_t b = c.b;
+            uint8_t a = 0xff;
             SDL_SetRenderDrawColor(renderer, r, g, b, a);
             SDL_RenderFillRect(renderer, &rect);
         }
     }
 }
 
-void renderPixels(uint8_t *pixels) {
-
-}
-
 // exmaple of how it should work
 // based on gd returning the next block type read from the file
 void sketch() {
+    SDL_Renderer *renderer = NULL;
     gd_main_t main;
     gd_info_t info;
 
     gd_init(&main);
-    uint8_t *gct = 0;
+    gd_color_t *gct = 0;
 
     const uint16_t pixels_size = 100;
     uint8_t pixels[100];
@@ -125,7 +158,7 @@ void sketch() {
                 break;
             case GD_BLOCK_IMAGE_DATA:
                 gd_read_image_data(&main, pixels, pixels_size);
-                renderPixels(pixels);
+                renderPixels(renderer, pixels, gct);
                 break;
         }
     }

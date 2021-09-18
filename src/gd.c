@@ -243,8 +243,9 @@ void gd_read_header(gd_main_t *main, gd_info_t *info) {
     main->next_block_type = GD_BLOCK_GLOBAL_COLOR_TABLE;
 }
 
-void gd_read_global_color_table(gd_main_t *main, uint8_t *color_table) {
+void gd_read_global_color_table(gd_main_t *main, gd_color_t *color_table) {
     // todo handle chunks
+    uint8_t *ctp = (uint8_t*)color_table;
     main->read(main->fd, color_table, main->info.globalColorTableSize);
     // todo peek
     main->next_block_type = GD_BLOCK_GRAPHIC_CONTROL_EXTENSION;
