@@ -246,12 +246,12 @@ void gd_read_header(gd_main_t *main, gd_info_t *info) {
 void gd_read_global_color_table(gd_main_t *main, gd_color_t *color_table) {
     // todo handle chunks
     uint8_t *ctp = (uint8_t*)color_table;
-    main->read(main->fd, color_table, main->info.globalColorTableSize);
+    main->read(main->fd, color_table, main->info.globalColorTableSize * sizeof(gd_color_t));
     // todo peek
     main->next_block_type = GD_BLOCK_GRAPHIC_CONTROL_EXTENSION;
 }
 
-void gd_read_graphic_control_extension(gd_main_t *main) {
+void gd_read_graphic_control_extension(gd_main_t *main, gd_graphic_control_extension_t *gce) {
     uint8_t buf[8];
     main->read(main->fd, buf, sizeof(buf));
     // todo peek
@@ -259,7 +259,10 @@ void gd_read_graphic_control_extension(gd_main_t *main) {
 }
 
 void gd_read_image_descriptor(gd_main_t *main) {
+    uint8_t buf[10];
+    main->read(main->fd, buf, sizeof(buf));
 
+    main->next_block_type = GD_BLOCK_IMAGE_DATA;
 }
 
 void gd_read_image_data(gd_main_t *main, gd_index_t *output, size_t capacity) {
@@ -267,6 +270,8 @@ void gd_read_image_data(gd_main_t *main, gd_index_t *output, size_t capacity) {
     image_block.output = output;
     image_block.outputLength = capacity;
     gd_image_block_read(main, &image_block);
+    // to do peek
+    main->next_block_type = GD_BLOCK_TRAILER;
 }
 
 gd_block_type_t gd_next_block_type(gd_main_t * main) {

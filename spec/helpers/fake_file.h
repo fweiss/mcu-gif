@@ -15,6 +15,7 @@ extern void f_open_memory(const uint8_t *data, long size);
 extern void f_open_memory(const vector<uint8_t> &data);
 extern void f_print_memory();
 extern ssize_t f_read(int fd, void *buf, size_t count);
+extern size_t f_read_get_pos();
 
 #define FFILE(init) (f_open_memory(init, sizeof(init)))
 // memory errors when trying to pass expression directly to function

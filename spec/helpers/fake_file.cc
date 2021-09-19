@@ -27,6 +27,10 @@ extern void f_open_memory(const vector<uint8_t> &data) {
     f_read_pos = 0;
 }
 
+extern size_t f_read_get_pos() {
+    return f_read_pos;
+}
+
 extern void f_print_memory() {
     std::cout << "=== hello " << std::hex;
     // for (auto uint8_t& c : x)

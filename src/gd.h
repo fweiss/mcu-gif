@@ -18,6 +18,7 @@ typedef enum {
     GD_BLOCK_GRAPHIC_CONTROL_EXTENSION = 4,
     GD_BLOCK_IMAGE_DESCRIPTOR = 5,
     GD_BLOCK_IMAGE_DATA = 6,
+    GD_BLOCK_TRAILER = 7,
 } gd_block_type_t;
 
 typedef struct {
@@ -32,6 +33,10 @@ typedef struct {
     uint8_t globalColorTableFlag;
     uint8_t globalColorTableSize;
 } gd_info_t;
+
+typedef struct {
+    uint8_t disposal_method;
+} gd_graphic_control_extension_t;
 
 typedef struct {
     uint32_t *colorTable;
@@ -55,6 +60,6 @@ void gd_read_header(gd_main_t *main, gd_info_t *info);
 void gd_read_header2(gd_main_t *main);
 void gd_read_logical_screen_descriptor(gd_main_t *main, gd_info_t *info);
 void gd_read_global_color_table(gd_main_t *main, gd_color_t *color_table);
-void gd_read_graphic_control_extension(gd_main_t *main);
+void gd_read_graphic_control_extension(gd_main_t *main, gd_graphic_control_extension_t *gce);
 void gd_read_image_descriptor(gd_main_t *main);
 void gd_read_image_data(gd_main_t *main, gd_index_t *output, size_t capacity);

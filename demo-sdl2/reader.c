@@ -43,8 +43,13 @@ void reader() {
 */
 
 void renderPixels(SDL_Renderer *renderer, uint8_t *pixels, gd_color_t *colorTable);
+void sketch(SDL_Renderer *renderer);
 
 void drawGif(SDL_Renderer *renderer) {
+    sketch(renderer);
+}
+
+void drawGifx(SDL_Renderer *renderer) {
     static gd_index_t pix[100] = {0};
 
     int fd = open("samples/sample_1.gif", O_RDONLY);
@@ -98,7 +103,7 @@ void drawGif(SDL_Renderer *renderer) {
     // }
 }
 
-void renderPixels(SDL_Renderer *renderer, uint8_t *pixels, gd_color_t *colorTable) {
+void renderPixels(SDL_Renderer *renderer, gd_index_t *pixels, gd_color_t *colorTable) {
     SDL_Rect rect;
     rect.x = 50;
     rect.y = 50;
@@ -124,19 +129,26 @@ void renderPixels(SDL_Renderer *renderer, uint8_t *pixels, gd_color_t *colorTabl
 
 // exmaple of how it should work
 // based on gd returning the next block type read from the file
-void sketch() {
-    SDL_Renderer *renderer = NULL;
+void sketch(SDL_Renderer *renderer) {
     gd_main_t main;
     gd_info_t info;
 
+    int fd = open("samples/sample_1.gif", O_RDONLY);
+    main.read = read;
+    main.fd = fd;
+
     gd_init(&main);
-    gd_color_t *gct = 0;
+    static gd_color_t gct[4];
 
     const uint16_t pixels_size = 100;
-    uint8_t pixels[100];
+    static gd_index_t pixels[100];
+    gd_graphic_control_extension_t gce;
 
-    while (1) {
-        switch (main.next_block_type) {
+    int blockLimit = 100;
+    for ( ; blockLimit>0; blockLimit--) {
+        gd_block_type_t nextBlockType = gd_next_block_type(&main);
+        printf("next %d\n", nextBlockType);
+        switch (nextBlockType) {
             case GD_BLOCK_INITIAL: // no longer uaed
                 break;
             case GD_BLOCK_HEADER:
@@ -151,15 +163,23 @@ void sketch() {
                 // check status
                 break;
             case GD_BLOCK_GRAPHIC_CONTROL_EXTENSION:
-                gd_read_graphic_control_extension(&main);
+                gd_read_graphic_control_extension(&main, &gce);
                 break;
             case GD_BLOCK_IMAGE_DESCRIPTOR:
                 gd_read_image_descriptor(&main);
                 break;
             case GD_BLOCK_IMAGE_DATA:
                 gd_read_image_data(&main, pixels, pixels_size);
+                printf("pixel %d\n", pixels[0]);
                 renderPixels(renderer, pixels, gct);
                 break;
+            case GD_BLOCK_TRAILER:
+                printf("end of gif parsing\n");
+                blockLimit = 0;
+                break;
         }
+    }
+    if (blockLimit == 0) {
+        printf("block limit expired");
     }
 }
