@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "xlocale": "cpp",
-        "typeinfo": "cpp"
+        "typeinfo": "cpp",
+        "vector": "cpp"
     }
 }

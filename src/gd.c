@@ -220,7 +220,24 @@ void gd_read_logical_screen_descriptor(gd_main_t *main, gd_info_t *info) {
     main->info.globalColorTableSize = 1 << ((buf[10-6] & GLOBAL_COLOR_TABLE_SIZE) + 1);
 
     // todo based on flag and peek
-    main->next_block_type = GD_BLOCK_GLOBAL_COLOR_TABLE;
+    if (main->info.globalColorTableFlag) {
+        main->next_block_type = GD_BLOCK_GLOBAL_COLOR_TABLE;
+    } else {
+        main->next_block_type = GD_BLOCK_GRAPHIC_CONTROL_EXTENSION;
+        // todo check for eof
+        // cannot peek with open(), need fopen()
+        // uint8_t block_id = main->peek(main->fd);
+        // if (block_id == 0x21) {
+        //     // 21,F9 = graphics control extansion
+        //     // 21,01 = plain_text_extension
+        //     // 21,FF = application extension
+        //     // 21,fe = comment extension
+        //     // maybe peek, then read 2 bytes, then parser skips those 2 bytes.
+        //     main->next_block_type = GD_BLOCK_GRAPHIC_CONTROL_EXTENSION;
+        // } else  if (block_id == 0x2c) {
+        //     main->next_block_type = GD_BLOCK_IMAGE_DESCRIPTOR;
+        // }
+    }
 }
 
 // this is the old one that reads a bunch of blocks
