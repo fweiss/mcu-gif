@@ -84,7 +84,7 @@ describe("read block", [] {
     before("all", [] {
         memset(&main, 0, sizeof(main));
         memset(&info, 0, sizeof(info));
-        main.read = f_read;
+        main.read = ff_read;
     });
     it("initial block", [] {
         gd_init(&main);
@@ -97,18 +97,18 @@ describe("read block", [] {
             gd_read_header2(&main);
         });
         it("bytes", [&] {
-            expect((int)f_read_get_pos()).to(eq((int)6));
+            expect((int)ff_read_get_pos()).to(eq((int)6));
         });
     });
     describe("logical screen descriptor", [&] {
         static gd_info_t info;
         before("all", [&] {
             FFILEV(logical_screen_descriptor + trailer);
-            main.read = f_read;
+            main.read = ff_read;
             gd_read_logical_screen_descriptor(&main, &info);
         });
         it("bytes", [&] {
-            expect((int)f_read_get_pos()).to(eq((int)7));
+            expect((int)ff_read_get_pos()).to(eq((int)7));
         });
         it("global color table flag", [&] {
             expect(info.globalColorTableFlag).to(be_truthy);
@@ -121,11 +121,11 @@ describe("read block", [] {
         static gd_color_t gct[4];
         before("all", [&] {
             FFILEV(global_color_table + trailer);
-            main.read = f_read;
+            main.read = ff_read;
             gd_read_global_color_table(&main, gct);
         });
         it("bytes", [&] {
-            expect((int)f_read_get_pos()).to(eq((int)12));
+            expect((int)ff_read_get_pos()).to(eq((int)12));
         });
         it("gct[0].r", [&] {
             expect((int)gct[0].r).to(eq((int)0xff));
@@ -142,24 +142,24 @@ describe("read block", [] {
         before("all", [&] {
             vector<uint8_t> file = graphic_control_extension + trailer;
             FFILE(file.data());
-            main.read = f_read;
+            main.read = ff_read;
 
             gd_read_graphic_control_extension(&main, &gce);
         });
         it("bytes", [&] {
-            expect((int)f_read_get_pos()).to(eq((int)8));
+            expect((int)ff_read_get_pos()).to(eq((int)8));
         });
     });
     describe("image descriptor", [&] {
         before("all", [&] {
             vector<uint8_t> file = image_descriptor + trailer;
             FFILEV(file);
-            main.read = f_read;
+            main.read = ff_read;
 
             gd_read_image_descriptor(&main);
         });
         it("bytes", [&] {
-            expect((int)f_read_get_pos()).to(eq((int)10));
+            expect((int)ff_read_get_pos()).to(eq((int)10));
         });
     });
     describe("image data", [&] {
@@ -170,13 +170,13 @@ describe("read block", [] {
         before("all", [&] {
             vector<uint8_t> file = image_data + trailer;
             FFILEV(file);
-            main.read = f_read;
+            main.read = ff_read;
 
             gd_read_image_data(&main, pixels, 100);
         });
         it("bytes", [&] {
             // last 0x00 not read?
-            expect((int)f_read_get_pos()).to(eq((int)25-1));
+            expect((int)ff_read_get_pos()).to(eq((int)25-1));
         });
         it("next block type", [&] {
             expect((int)gd_next_block_type(&main)).to(eq((int)GD_BLOCK_TRAILER));

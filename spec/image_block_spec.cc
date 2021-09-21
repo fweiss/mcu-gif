@@ -28,7 +28,7 @@ describe("image data block", [] {
     static gd_index_t output[outputSize];
 
     static gd_main_t main;
-    main.read = f_read;
+    main.read = ff_read;
     static gd_image_block_t image_block;
     image_block.output = output;
 
