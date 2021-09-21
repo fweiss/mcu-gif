@@ -39,7 +39,7 @@ describe("for 10x10 red-blue-white", [] {
             FFILE(header_logical_screen_descriptor);
             main.fread = &ff_read;
             gd_init(&main);
-            gd_read_header2(&main);
+            gd_read_header(&main);
             gd_read_logical_screen_descriptor(&main, &info);
         });
 
@@ -79,7 +79,7 @@ describe("for 10x10 red-blue-white", [] {
 
             // we know the order of calls needed here
             gd_init(&main);
-            gd_read_header2(&main);
+            gd_read_header(&main);
             gd_read_logical_screen_descriptor(&main, &info);
             gd_read_global_color_table(&main, gct);
             gd_read_graphic_control_extension(&main, &gce);

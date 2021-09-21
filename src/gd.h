@@ -58,8 +58,7 @@ typedef struct {
 gd_block_type_t gd_next_block_type(gd_main_t *main);
 
 void gd_init(gd_main_t *main);
-void gd_read_headerx(gd_main_t *main, gd_info_t *info);
-void gd_read_header2(gd_main_t *main);
+void gd_read_header(gd_main_t *main);
 void gd_read_logical_screen_descriptor(gd_main_t *main, gd_info_t *info);
 void gd_read_global_color_table(gd_main_t *main, gd_color_t *color_table);
 void gd_read_graphic_control_extension(gd_main_t *main, gd_graphic_control_extension_t *gce);

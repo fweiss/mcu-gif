@@ -49,7 +49,7 @@ auto block_spec = describe("block read", [] {
         before("all", [&] {
             FFILEV(header);
 
-            gd_read_header2(&main);
+            gd_read_header(&main);
         });
         // see read_block_spec
         // it("next block type", [&] {
@@ -60,7 +60,7 @@ auto block_spec = describe("block read", [] {
         before("all", [&] {
             FFILEV(header + logical_screen_descriptor);
 
-            gd_read_header2(&main);
+            gd_read_header(&main);
             gd_read_logical_screen_descriptor(&main, &info);
         });
         it("width", [&] {
@@ -80,7 +80,7 @@ auto block_spec = describe("block read", [] {
         before("all", [&] {
             FFILEV(header + logical_screen_descriptor + global_color_table);
 
-            gd_read_header2(&main);
+            gd_read_header(&main);
             gd_read_logical_screen_descriptor(&main, &info);
             gct = (gd_color_t*)malloc(info.globalColorTableSize * sizeof(gct[0]));
             gd_read_global_color_table(&main, gct);
@@ -104,7 +104,7 @@ auto block_spec = describe("block read", [] {
         before("all", [&] {
             FFILEV(header + logical_screen_descriptor + global_color_table + graphic_control_extension);
 
-            gd_read_header2(&main);
+            gd_read_header(&main);
             gd_read_logical_screen_descriptor(&main, &info);
             gd_read_global_color_table(&main, gct);
             gd_read_graphic_control_extension(&main, &gce);
@@ -120,7 +120,7 @@ auto block_spec = describe("block read", [] {
             FFILEV(header + logical_screen_descriptor + global_color_table
              + graphic_control_extension + image_descriptor);
 
-            gd_read_header2(&main);
+            gd_read_header(&main);
             gd_read_logical_screen_descriptor(&main, &info);
             gd_read_global_color_table(&main, gct);
             gd_read_graphic_control_extension(&main, &gce);
@@ -141,7 +141,7 @@ auto block_spec = describe("block read", [] {
             FFILEV(header + logical_screen_descriptor + global_color_table
              + graphic_control_extension + image_descriptor + image_data);
 
-            gd_read_header2(&main);
+            gd_read_header(&main);
             gd_read_logical_screen_descriptor(&main, &info);
             gct = (gd_color_t*)malloc(info.globalColorTableSize * sizeof(gct[0]));
             gd_read_global_color_table(&main, gct);

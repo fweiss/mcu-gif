@@ -94,7 +94,7 @@ describe("read block", [] {
     describe("header", [&] {
         before("all", [&] {
             FFILEV(header + trailer);
-            gd_read_header2(&main);
+            gd_read_header(&main);
         });
         it("bytes", [&] {
             expect((int)ff_read_get_pos()).to(eq((int)6));
@@ -189,7 +189,7 @@ describe("read block", [] {
         describe("after header", [&] {
             it("logical screen descriptor", [&] {
                 FFILEV(header + logical_screen_descriptor);
-                gd_read_header2(&main);
+                gd_read_header(&main);
                 expect((int)gd_next_block_type(&main)).to(eq((int)GD_BLOCK_LOGICAL_SCREEN_DESCRIPTOR));
             });
         });

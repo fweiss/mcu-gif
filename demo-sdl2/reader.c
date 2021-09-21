@@ -67,7 +67,7 @@ void sketch(SDL_Renderer *renderer) {
             case GD_BLOCK_INITIAL: // no longer uaed
                 break;
             case GD_BLOCK_HEADER:
-                gd_read_header2(&main);
+                gd_read_header(&main);
                 break;
             case GD_BLOCK_LOGICAL_SCREEN_DESCRIPTOR:
                 gd_read_logical_screen_descriptor(&main, &info);
