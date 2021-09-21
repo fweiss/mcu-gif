@@ -178,14 +178,14 @@ static void gd_expand_codes_init(gd_expand_codes_t *expand_codes, gd_index_t *ou
 void gd_image_block_read(gd_main_t *main, gd_image_block_t *image_block) {
     gd_expand_codes_init(&image_block->expand_codes, image_block->output);
 
-    long count = main->read(main->fd, &image_block->minumumCodeSize, 1);
+    long count = GD_READ(&image_block->minumumCodeSize, 1);
 
     image_block->outputLength = 0;
 
     uint8_t subblockSize;
-    main->read(main->fd, &subblockSize, 1);
+    GD_READ(&subblockSize, 1);
     static uint8_t subblock[255];
-    count = main->read(main->fd, subblock, subblockSize);
+    count = GD_READ(subblock, subblockSize);
 
     gd_image_subblock_decode(image_block, subblock, subblockSize);
 
@@ -199,7 +199,7 @@ void gd_init(gd_main_t *main) {
 void gd_read_header2(gd_main_t *main) {
     const size_t header_length = 6;
     uint8_t buf[header_length];
-    main->read(main->fd, buf, sizeof(buf));
+    GD_READ(buf, sizeof(buf));
     main->next_block_type = GD_BLOCK_LOGICAL_SCREEN_DESCRIPTOR;
 }
 
@@ -207,7 +207,7 @@ void gd_read_logical_screen_descriptor(gd_main_t *main, gd_info_t *info) {
     const uint8_t GLOBAL_COLOR_TABLE_FLAG = 0x80;
     const uint8_t GLOBAL_COLOR_TABLE_SIZE = 0x03;
     uint8_t buf[7];
-    const int count = main->read(main->fd, buf, sizeof(buf));
+    const int count = GD_READ(buf, sizeof(buf));
     // todo check count
     info->width = gd_unpack_word(&buf[0]);
     info->height = gd_unpack_word(&buf[8-6]);
@@ -251,33 +251,33 @@ void gd_read_header(gd_main_t *main, gd_info_t *info) {
     // uint8_t buf[header_length + logical_screen_descriptor_length + global_color_table_length + graphic_control_extension_length + image_descriptor_length];
     uint8_t buf[6+7+12+8+10];
 
-    main->read(main->fd, buf, header_length);
+    GD_READ(buf, header_length);
 //    main->read(main->fd, buf, logical_screen_descriptor_length);
     gd_read_logical_screen_descriptor(main, info);
-    main->read(main->fd, buf, global_color_table_length);
-    main->read(main->fd, buf, graphic_control_extension_length);
-    main->read(main->fd, buf, image_descriptor_length);
+    GD_READ(buf, global_color_table_length);
+    GD_READ(buf, graphic_control_extension_length);
+    GD_READ(buf, image_descriptor_length);
     main->next_block_type = GD_BLOCK_GLOBAL_COLOR_TABLE;
 }
 
 void gd_read_global_color_table(gd_main_t *main, gd_color_t *color_table) {
     // todo handle chunks
     uint8_t *ctp = (uint8_t*)color_table;
-    main->read(main->fd, color_table, main->info.globalColorTableSize * sizeof(gd_color_t));
+    GD_READ(color_table, main->info.globalColorTableSize * sizeof(gd_color_t));
     // todo peek
     main->next_block_type = GD_BLOCK_GRAPHIC_CONTROL_EXTENSION;
 }
 
 void gd_read_graphic_control_extension(gd_main_t *main, gd_graphic_control_extension_t *gce) {
     uint8_t buf[8];
-    main->read(main->fd, buf, sizeof(buf));
+    GD_READ(buf, sizeof(buf));
     // todo peek
     main->next_block_type = GD_BLOCK_IMAGE_DESCRIPTOR;
 }
 
 void gd_read_image_descriptor(gd_main_t *main) {
     uint8_t buf[10];
-    main->read(main->fd, buf, sizeof(buf));
+    GD_READ(buf, sizeof(buf));
 
     main->next_block_type = GD_BLOCK_IMAGE_DATA;
 }

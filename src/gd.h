@@ -47,8 +47,8 @@ typedef struct {
 } gd_decode_t;
 
 typedef struct {
-    ssize_t (*read)(int, void*, size_t);
-    int fd;
+    void* fp; // actually opaque FILE
+    ssize_t (*fread)(void* ptr, size_t size, size_t count, void* stream);
     gd_info_t info;
     gd_block_type_t next_block_type;
 } gd_main_t;
@@ -66,3 +66,6 @@ void gd_read_global_color_table(gd_main_t *main, gd_color_t *color_table);
 void gd_read_graphic_control_extension(gd_main_t *main, gd_graphic_control_extension_t *gce);
 void gd_read_image_descriptor(gd_main_t *main);
 void gd_read_image_data(gd_main_t *main, gd_index_t *output, size_t capacity);
+
+// temp hack
+#define GD_READ(dp, ds) main->fread(dp, 1, ds, main->fp)

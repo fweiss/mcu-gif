@@ -37,7 +37,7 @@ describe("for 10x10 red-blue-white", [] {
 
         before("each", [&] {
             FFILE(header_logical_screen_descriptor);
-            main.read = ff_read;
+            main.fread = &ff_read;
             gd_init(&main);
             gd_read_header(&main, &info);
         });
@@ -71,7 +71,7 @@ describe("for 10x10 red-blue-white", [] {
         before("each", [] {
             FFILE(sample1);
             gd_main_t main;
-            main.read = ff_read;
+            main.fread = ff_read;
             gd_info_t info;
 
             gd_init(&main);

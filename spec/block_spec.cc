@@ -40,7 +40,7 @@ auto block_spec = describe("block read", [] {
 
     before("all", [&] {
         // todo seg fault when main not initilized
-        main.read = ff_read;
+        main.fread = ff_read;
         gd_init(&main);
         // fixme ccspec enum
         expect((int)gd_next_block_type(&main)).to(eq((int)GD_BLOCK_HEADER));

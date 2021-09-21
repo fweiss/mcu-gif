@@ -84,7 +84,7 @@ describe("read block", [] {
     before("all", [] {
         memset(&main, 0, sizeof(main));
         memset(&info, 0, sizeof(info));
-        main.read = ff_read;
+        main.fread = ff_read;
     });
     it("initial block", [] {
         gd_init(&main);
@@ -104,7 +104,7 @@ describe("read block", [] {
         static gd_info_t info;
         before("all", [&] {
             FFILEV(logical_screen_descriptor + trailer);
-            main.read = ff_read;
+            main.fread = ff_read;
             gd_read_logical_screen_descriptor(&main, &info);
         });
         it("bytes", [&] {
@@ -121,7 +121,7 @@ describe("read block", [] {
         static gd_color_t gct[4];
         before("all", [&] {
             FFILEV(global_color_table + trailer);
-            main.read = ff_read;
+            main.fread = ff_read;
             gd_read_global_color_table(&main, gct);
         });
         it("bytes", [&] {
@@ -142,7 +142,7 @@ describe("read block", [] {
         before("all", [&] {
             vector<uint8_t> file = graphic_control_extension + trailer;
             FFILE(file.data());
-            main.read = ff_read;
+            main.fread = ff_read;
 
             gd_read_graphic_control_extension(&main, &gce);
         });
@@ -154,7 +154,7 @@ describe("read block", [] {
         before("all", [&] {
             vector<uint8_t> file = image_descriptor + trailer;
             FFILEV(file);
-            main.read = ff_read;
+            main.fread = ff_read;
 
             gd_read_image_descriptor(&main);
         });
@@ -170,7 +170,7 @@ describe("read block", [] {
         before("all", [&] {
             vector<uint8_t> file = image_data + trailer;
             FFILEV(file);
-            main.read = ff_read;
+            main.fread = ff_read;
 
             gd_read_image_data(&main, pixels, 100);
         });

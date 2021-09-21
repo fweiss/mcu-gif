@@ -44,9 +44,13 @@ void sketch(SDL_Renderer *renderer) {
     gd_main_t main;
     gd_info_t info;
 
-    int fd = open("samples/sample_1.gif", O_RDONLY);
-    main.read = read;
-    main.fd = fd;
+    // int fd = open("samples/sample_1.gif", O_RDONLY);
+    // main.read = read;
+    // main.fd = fd;
+
+    FILE* fp = fopen("samples/sample_1.gif", "rb");
+    main.fp = fp;
+    main.fread = fread;
 
     gd_init(&main);
     static gd_color_t gct[4];

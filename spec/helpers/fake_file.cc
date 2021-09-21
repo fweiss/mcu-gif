@@ -7,7 +7,7 @@ static const uint8_t *f_read_data = 0;
 static size_t f_read_data_length = 0;
 static size_t f_read_pos = 0;
 
-ssize_t ff_read(int fd, void *buf, size_t count) {
+ssize_t ff_read(void *buf, size_t rep, size_t count, void* fp) {
 //    printf("read %d %p %ld: %lx\n", fd, buf, count, f_read_pos);
     size_t available = std::min(count, f_read_data_length - f_read_pos);
     memcpy(buf, &f_read_data[f_read_pos], available);

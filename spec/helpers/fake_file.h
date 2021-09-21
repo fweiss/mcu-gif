@@ -14,7 +14,7 @@ typedef SSIZE_T ssize_t;
 extern void ff_open_memory(const uint8_t *data, long size);
 extern void ff_open_memory(const vector<uint8_t> &data);
 extern void ff_print_memory();
-extern ssize_t ff_read(int fd, void *buf, size_t count);
+extern ssize_t ff_read(void *buf, size_t rep, size_t count, void* fp);
 extern size_t ff_read_get_pos();
 
 #define FFILE(init) (ff_open_memory(init, sizeof(init)))
