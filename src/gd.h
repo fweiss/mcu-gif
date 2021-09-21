@@ -68,4 +68,4 @@ void gd_read_image_descriptor(gd_main_t *main);
 void gd_read_image_data(gd_main_t *main, gd_index_t *output, size_t capacity);
 
 // temp hack
-#define GD_READ(dp, ds) main->fread(dp, 1, ds, main->fp)
+#define GD_READ(dp, ds) (main->fread((dp), 1, (ds), main->fp))
