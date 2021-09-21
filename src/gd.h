@@ -8,7 +8,30 @@
 typedef SSIZE_T ssize_t;
 #endif
 
+typedef struct {
+    uint8_t r;
+    uint8_t g;
+    uint8_t b;
+} gd_color_t;
+
 typedef uint8_t gd_index_t;
+
+typedef struct {
+    uint16_t width;
+    uint16_t height;
+    uint8_t globalColorTableFlag;
+    uint8_t globalColorTableSize;
+} gd_info_t;
+
+typedef struct {
+    uint8_t disposal_method;
+} gd_graphic_control_extension_t;
+
+// todo internal?
+typedef struct {
+    uint32_t *colorTable;
+    uint8_t *imageData;
+} gd_decode_t;
 
 typedef enum {
     GD_BLOCK_INITIAL = 0, // not sure if this is used
@@ -25,40 +48,15 @@ typedef enum {
 } gd_block_type_t;
 
 typedef struct {
-    uint8_t r;
-    uint8_t g;
-    uint8_t b;
-} gd_color_t;
-
-typedef struct {
-    uint16_t width;
-    uint16_t height;
-    uint8_t globalColorTableFlag;
-    uint8_t globalColorTableSize;
-} gd_info_t;
-
-typedef struct {
-    uint8_t disposal_method;
-} gd_graphic_control_extension_t;
-
-typedef struct {
-    uint32_t *colorTable;
-    uint8_t *imageData;
-} gd_decode_t;
-
-typedef struct {
     void* fp; // actually opaque FILE
     ssize_t (*fread)(void* ptr, size_t size, size_t count, void* stream);
     gd_info_t info;
     gd_block_type_t next_block_type;
 } gd_main_t;
 
-// deprecated
-void gd_open(gd_info_t *info);
-
-void gd_init(gd_main_t *main);
 gd_block_type_t gd_next_block_type(gd_main_t *main);
 
+void gd_init(gd_main_t *main);
 void gd_read_header(gd_main_t *main, gd_info_t *info);
 void gd_read_header2(gd_main_t *main);
 void gd_read_logical_screen_descriptor(gd_main_t *main, gd_info_t *info);
@@ -67,5 +65,5 @@ void gd_read_graphic_control_extension(gd_main_t *main, gd_graphic_control_exten
 void gd_read_image_descriptor(gd_main_t *main);
 void gd_read_image_data(gd_main_t *main, gd_index_t *output, size_t capacity);
 
-// temp hack
+// abstract file read
 #define GD_READ(dp, ds) (main->fread((dp), 1, (ds), main->fp))

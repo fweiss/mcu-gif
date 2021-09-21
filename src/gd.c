@@ -175,25 +175,16 @@ static void gd_expand_codes_init(gd_expand_codes_t *expand_codes, gd_index_t *ou
     expand_codes->compressStatus = 0;
 }
 
-void gd_image_block_read(gd_main_t *main, gd_image_block_t *image_block) {
-    gd_expand_codes_init(&image_block->expand_codes, image_block->output);
-
-    long count = GD_READ(&image_block->minumumCodeSize, 1);
-
-    image_block->outputLength = 0;
-
-    uint8_t subblockSize;
-    GD_READ(&subblockSize, 1);
-    static uint8_t subblock[255];
-    count = GD_READ(subblock, subblockSize);
-
-    gd_image_subblock_decode(image_block, subblock, subblockSize);
-
-    image_block->outputLength = image_block->expand_codes.outputLength;
-}
+/********************/
+/***  PUBLIC API  ***/
+/********************/
 
 void gd_init(gd_main_t *main) {
     main->next_block_type = GD_BLOCK_HEADER;
+}
+
+gd_block_type_t gd_next_block_type(gd_main_t * main) {
+    return main->next_block_type;
 }
 
 void gd_read_header2(gd_main_t *main) {
@@ -201,6 +192,26 @@ void gd_read_header2(gd_main_t *main) {
     uint8_t buf[header_length];
     GD_READ(buf, sizeof(buf));
     main->next_block_type = GD_BLOCK_LOGICAL_SCREEN_DESCRIPTOR;
+}
+
+// this is the old one that reads a bunch of blocks
+void gd_read_header(gd_main_t *main, gd_info_t *info) {
+    const size_t header_length = 6;
+    const size_t logical_screen_descriptor_length = 7;
+    const size_t global_color_table_length = 12;
+    const size_t graphic_control_extension_length = 8;
+    const size_t image_descriptor_length = 10;
+    // MSVC C2057, C99 does not allow this kind of constant expression
+    // uint8_t buf[header_length + logical_screen_descriptor_length + global_color_table_length + graphic_control_extension_length + image_descriptor_length];
+    uint8_t buf[6+7+12+8+10];
+
+    GD_READ(buf, header_length);
+//    main->read(main->fd, buf, logical_screen_descriptor_length);
+    gd_read_logical_screen_descriptor(main, info);
+    GD_READ(buf, global_color_table_length);
+    GD_READ(buf, graphic_control_extension_length);
+    GD_READ(buf, image_descriptor_length);
+    main->next_block_type = GD_BLOCK_GLOBAL_COLOR_TABLE;
 }
 
 void gd_read_logical_screen_descriptor(gd_main_t *main, gd_info_t *info) {
@@ -240,26 +251,6 @@ void gd_read_logical_screen_descriptor(gd_main_t *main, gd_info_t *info) {
     }
 }
 
-// this is the old one that reads a bunch of blocks
-void gd_read_header(gd_main_t *main, gd_info_t *info) {
-    const size_t header_length = 6;
-    const size_t logical_screen_descriptor_length = 7;
-    const size_t global_color_table_length = 12;
-    const size_t graphic_control_extension_length = 8;
-    const size_t image_descriptor_length = 10;
-    // MSVC C2057, C99 does not allow this kind of constant expression
-    // uint8_t buf[header_length + logical_screen_descriptor_length + global_color_table_length + graphic_control_extension_length + image_descriptor_length];
-    uint8_t buf[6+7+12+8+10];
-
-    GD_READ(buf, header_length);
-//    main->read(main->fd, buf, logical_screen_descriptor_length);
-    gd_read_logical_screen_descriptor(main, info);
-    GD_READ(buf, global_color_table_length);
-    GD_READ(buf, graphic_control_extension_length);
-    GD_READ(buf, image_descriptor_length);
-    main->next_block_type = GD_BLOCK_GLOBAL_COLOR_TABLE;
-}
-
 void gd_read_global_color_table(gd_main_t *main, gd_color_t *color_table) {
     // todo handle chunks
     uint8_t *ctp = (uint8_t*)color_table;
@@ -282,6 +273,23 @@ void gd_read_image_descriptor(gd_main_t *main) {
     main->next_block_type = GD_BLOCK_IMAGE_DATA;
 }
 
+void gd_image_block_read(gd_main_t *main, gd_image_block_t *image_block) {
+    gd_expand_codes_init(&image_block->expand_codes, image_block->output);
+
+    long count = GD_READ(&image_block->minumumCodeSize, 1);
+
+    image_block->outputLength = 0;
+
+    uint8_t subblockSize;
+    GD_READ(&subblockSize, 1);
+    static uint8_t subblock[255];
+    count = GD_READ(subblock, subblockSize);
+
+    gd_image_subblock_decode(image_block, subblock, subblockSize);
+
+    image_block->outputLength = image_block->expand_codes.outputLength;
+}
+
 void gd_read_image_data(gd_main_t *main, gd_index_t *output, size_t capacity) {
     gd_image_block_t image_block;
     image_block.output = output;
@@ -290,9 +298,3 @@ void gd_read_image_data(gd_main_t *main, gd_index_t *output, size_t capacity) {
     // to do peek
     main->next_block_type = GD_BLOCK_TRAILER;
 }
-
-gd_block_type_t gd_next_block_type(gd_main_t * main) {
-    return main->next_block_type;
-}
-
-
