@@ -39,7 +39,8 @@ describe("for 10x10 red-blue-white", [] {
             FFILE(header_logical_screen_descriptor);
             main.fread = &ff_read;
             gd_init(&main);
-            gd_read_header(&main, &info);
+            gd_read_header2(&main);
+            gd_read_logical_screen_descriptor(&main, &info);
         });
 
         it("width", [&] {
@@ -73,14 +74,18 @@ describe("for 10x10 red-blue-white", [] {
             gd_main_t main;
             main.fread = ff_read;
             gd_info_t info;
+            gd_color_t gct[4];
+            gd_graphic_control_extension_t gce;
 
+            // we know the order of calls needed here
             gd_init(&main);
-            gd_read_header(&main, &info);
-//            gd_read_global_color_table(&main, colors);
-//            gd read_graphic_control_extension(&main);
-//            gd_read_image_descriptor(&main);
+            gd_read_header2(&main);
+            gd_read_logical_screen_descriptor(&main, &info);
+            gd_read_global_color_table(&main, gct);
+            gd_read_graphic_control_extension(&main, &gce);
+            gd_read_image_descriptor(&main);
             gd_read_image_data(&main, output, sizeof(output));
-//            gd_read_trailer(&main);
+            gd_read_trailer(&main);
         });
         it("pixel[5] 2", [] {
             expect(output[5]).to(eq(2));

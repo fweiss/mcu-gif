@@ -49,11 +49,12 @@ auto block_spec = describe("block read", [] {
         before("all", [&] {
             FFILEV(header);
 
-            gd_read_header(&main, &info);
+            gd_read_header2(&main);
         });
-        it("next block type", [&] {
-            expect(gd_next_block_type(&main)).to(eq(GD_BLOCK_GLOBAL_COLOR_TABLE));
-        });
+        // see read_block_spec
+        // it("next block type", [&] {
+        //     expect((int)gd_next_block_type(&main)).to(eq((int)GD_BLOCK_GLOBAL_COLOR_TABLE));
+        // });
     });
     describe("logical screen descriptor", [&] {
         before("all", [&] {

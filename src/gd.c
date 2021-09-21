@@ -195,7 +195,7 @@ void gd_read_header2(gd_main_t *main) {
 }
 
 // this is the old one that reads a bunch of blocks
-void gd_read_header(gd_main_t *main, gd_info_t *info) {
+void gd_read_headerx(gd_main_t *main, gd_info_t *info) {
     const size_t header_length = 6;
     const size_t logical_screen_descriptor_length = 7;
     const size_t global_color_table_length = 12;
@@ -298,3 +298,10 @@ void gd_read_image_data(gd_main_t *main, gd_index_t *output, size_t capacity) {
     // to do peek
     main->next_block_type = GD_BLOCK_TRAILER;
 }
+
+void gd_read_trailer(gd_main_t *main) {
+    uint8_t buf[1];
+    GD_READ(buf, sizeof(buf));
+    main->next_block_type = GD_BLOCK_LOGICAL_EOF;
+}
+
