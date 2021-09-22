@@ -58,6 +58,9 @@ static const vector<uint8_t> graphic_control_extension({
 static const vector<uint8_t> image_descriptor({
     0x2C, 0x00, 0x00, 0x00, 0x00, 0x0A, 0x00, 0x0A, 0x00, 0x00,
 });
+static const vector<uint8_t> image_data({
+    0x02, 0x16, 0x8C, 0x2D, 0x99, 0x87, 0x2A, 0x1C, 0xDC, 0x33, 0xA0, 0x02, 0x75, 0xEC, 0x95, 0xFA, 0xA8, 0xDE, 0x60, 0x8C, 0x04, 0x91, 0x4C, 0x01, 0x00,
+});
 static const vector<uint8_t> plain_text_extension({
     0x21, 0x01, 0x0C, 0x00, 0x00, 0x00, 0x00, 0x64, 0x00, 0x64, 0x00, 0x14, 0x14, 0x01, 0x00, 0x0B, 0x68, 0x65, 0x6C, 0x6C, 0x6F, 0x20, 0x77, 0x6F, 0x72, 0x6C, 0x64, 0x00,
 });
@@ -110,14 +113,21 @@ describe("read block", [] {
         it("bytes", [&] {
             expect((int)ff_read_get_pos()).to(eq((int)7));
         });
+        it("width", [&] {
+            expect(info.width).to(eq(10));
+        });
+        it("height", [&] {
+            expect(info.height).to(eq(10));
+        });
         it("global color table flag", [&] {
             expect(info.globalColorTableFlag).to(be_truthy);
         });
         it("global color table size", [&] {
-            expect((int)info.globalColorTableSize).to(eq((int)4));
+            expect(info.globalColorTableSize).to(be == 4);
         });
     });
     describe("global color table", [&] {
+        // could also try dynamic
         static gd_color_t gct[4];
         before("all", [&] {
             FFILEV(global_color_table + trailer);
@@ -150,6 +160,9 @@ describe("read block", [] {
             expect((int)ff_read_get_pos()).to(eq((int)8));
         });
     });
+    describe("local color table", [] {
+
+    });
     describe("image descriptor", [&] {
         before("all", [&] {
             vector<uint8_t> file = image_descriptor + trailer;
@@ -163,9 +176,6 @@ describe("read block", [] {
         });
     });
     describe("image data", [&] {
-        static const vector<uint8_t> image_data({
-            0x02, 0x16, 0x8C, 0x2D, 0x99, 0x87, 0x2A, 0x1C, 0xDC, 0x33, 0xA0, 0x02, 0x75, 0xEC, 0x95, 0xFA, 0xA8, 0xDE, 0x60, 0x8C, 0x04, 0x91, 0x4C, 0x01, 0x00,
-        });
         static gd_index_t pixels[100];
         before("all", [&] {
             vector<uint8_t> file = image_data + trailer;
@@ -240,12 +250,19 @@ describe("read block", [] {
         });
         describe("after graphic control extension", [&] {
             static gd_graphic_control_extension_t gce;
-            it("graphic control extension", [&] {
+            it("image description", [&] {
                 FFILEV(graphic_control_extension + image_descriptor);
                 gd_read_graphic_control_extension(&main, &gce);
                 expect((int)gd_next_block_type(&main)).to(eq((int)GD_BLOCK_IMAGE_DESCRIPTOR));
             });
-         });
+        });
+        describe("after image descriptor", [&] {
+            it("image data", [&] {
+                FFILEV(image_descriptor + image_data);
+                gd_read_image_descriptor(&main);
+                expect((int)gd_next_block_type(&main)).to(eq((int)GD_BLOCK_IMAGE_DATA));
+            });
+        });
     });
 });
 
