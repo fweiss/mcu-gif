@@ -195,6 +195,18 @@ describe("read block", [] {
             expect((int)pixels[0]).to(eq((int)1));
         });
     });
+    describe("plain text extension", [] {
+
+    });
+    describe("application extension", [] {
+
+    });
+    describe("comment extension", [] {
+
+    });
+    describe("trailer", [] {
+
+    });
     describe("next block type", [&] {
         describe("after header", [&] {
             it("logical screen descriptor", [&] {
@@ -261,6 +273,14 @@ describe("read block", [] {
                 FFILEV(image_descriptor + image_data);
                 gd_read_image_descriptor(&main);
                 expect((int)gd_next_block_type(&main)).to(eq((int)GD_BLOCK_IMAGE_DATA));
+            });
+        });
+        describe("after image data", [&] {
+            static gd_index_t pixels[100];
+            it("trailer", [&] {
+                FFILEV(image_data + trailer);
+                gd_read_image_data(&main, pixels, 100);
+                expect((int)gd_next_block_type(&main)).to(eq((int)GD_BLOCK_TRAILER));
             });
         });
     });

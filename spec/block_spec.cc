@@ -33,7 +33,10 @@ auto block_spec = describe("block read", [] {
     static const vector<uint8_t> image_descriptor({
         0x2C, 0x00, 0x00, 0x00, 0x00, 0x0A, 0x00, 0x0A, 0x00, 0x00,
     });
-    static const vector<uint8_t> image_data({});
+    static const vector<uint8_t> image_data({
+            0x02, 0x16, 0x8C, 0x2D, 0x99, 0x87, 0x2A, 0x1C, 0xDC, 0x33, 0xA0, 0x02, 0x75, 0xEC, 0x95, 0xFA, 0xA8, 0xDE, 0x60, 0x8C, 0x04, 0x91, 0x4C, 0x01, 0x00,
+
+    });
 
     static gd_main_t main;
     static gd_info_t info;
@@ -45,7 +48,7 @@ auto block_spec = describe("block read", [] {
         // fixme ccspec enum
         expect((int)gd_next_block_type(&main)).to(eq((int)GD_BLOCK_HEADER));
     });
-    describe("image data", [] {
+    describe("image data", [&] {
         static gd_color_t *gct;
         static gd_graphic_control_extension_t gce;
         static gd_index_t pixels[100];
@@ -59,7 +62,12 @@ auto block_spec = describe("block read", [] {
             gd_read_global_color_table(&main, gct);
             gd_read_graphic_control_extension(&main, &gce);
             gd_read_image_descriptor(&main);
+            printf("before image data %d\n", gd_next_block_type(&main));
+            // uint8_t b;
+            // main.fread(&b, 1, 1, 0);
+            // printf("buf %d\n", b);
             gd_read_image_data(&main, pixels, sizeof(pixels));
+            printf("after image data %d\n", gd_next_block_type(&main));
         });
         after("all", [&] {
             if (gct) {
@@ -68,23 +76,11 @@ auto block_spec = describe("block read", [] {
             }
         });
         it("a pixel", [&] {
-            expect(pixels[0]).to(eq(0x0000));
+            expect((int)pixels[0]).to(be == 0x0000);
         });
         it("next block", [] {
             expect((int)gd_next_block_type(&main)).to(eq((int)GD_BLOCK_TRAILER));
         });
-    });
-    describe("plain text extension", [] {
-
-    });
-    describe("application extension", [] {
-
-    });
-    describe("comment extension", [] {
-
-    });
-    describe("trailer", [] {
-
     });
 });
 
