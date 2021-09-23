@@ -91,6 +91,11 @@ void sketch(SDL_Renderer *renderer) {
                 printf("end of gif parsing\n");
                 blockLimit = 0;
                 break;
+            case GD_BLOCK_COMMENT_EXTENSION:
+            case GD_BLOCK_PLAIN_TEXT_EXTENSION:
+            case GD_BLOCK_APPLICATION_EXTENSION:
+                // ignored
+                break;
         }
     }
     if (blockLimit == 0) {
