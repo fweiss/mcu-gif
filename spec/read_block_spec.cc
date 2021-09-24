@@ -19,15 +19,6 @@ extern "C" {
 
 #include "helpers/fake_file.h"
 
-// a little DSL to concatenate vectors
-// provides for constructing test files out of blocks
-// doesn't have to be efficient
-// vector<uint8_t> operator+(const vector<uint8_t> &a, const vector<uint8_t> &b) {
-//     vector<uint8_t> r = a;
-//     r.insert(r.end(), b.begin(), b.end());
-//     return r;
-// }
-
 static const vector<uint8_t> header({ 'G', 'I', 'F', '8', '9', 'a' });
 static const vector<uint8_t> logical_screen_descriptor({
     0x0A, 0x00, // width
@@ -76,8 +67,6 @@ static const vector<uint8_t> trailer({
 
 namespace simple {
 
-    // um this is a lot like block_spec
-
 auto read_block_spec =
 describe("read block", [] {
 
@@ -107,7 +96,6 @@ describe("read block", [] {
         static gd_info_t info;
         before("all", [&] {
             FFILEV(logical_screen_descriptor + trailer);
-            main.fread = ff_read;
             gd_read_logical_screen_descriptor(&main, &info);
         });
         it("bytes", [&] {
@@ -131,7 +119,6 @@ describe("read block", [] {
         static gd_color_t gct[4];
         before("all", [&] {
             FFILEV(global_color_table + trailer);
-            main.fread = ff_read;
             gd_read_global_color_table(&main, gct);
         });
         it("bytes", [&] {
@@ -150,9 +137,7 @@ describe("read block", [] {
     describe("graphic control extension", [&] {
         gd_graphic_control_extension_t gce;
         before("all", [&] {
-            vector<uint8_t> file = graphic_control_extension + trailer;
-            FFILE(file.data());
-            main.fread = ff_read;
+            FFILEV(graphic_control_extension + trailer);
 
             gd_read_graphic_control_extension(&main, &gce);
         });
@@ -165,9 +150,7 @@ describe("read block", [] {
     });
     describe("image descriptor", [&] {
         before("all", [&] {
-            vector<uint8_t> file = image_descriptor + trailer;
-            FFILEV(file);
-            main.fread = ff_read;
+            FFILEV(image_descriptor + trailer);
 
             gd_read_image_descriptor(&main);
         });
@@ -178,18 +161,12 @@ describe("read block", [] {
     describe("image data", [&] {
         static gd_index_t pixels[100];
         before("all", [&] {
-            vector<uint8_t> file = image_data + trailer;
-            FFILEV(file);
-            main.fread = ff_read;
-
+            FFILEV(image_data + trailer);
             gd_read_image_data(&main, pixels, 100);
         });
         it("bytes", [&] {
-            // last 0x00 not read?
+            // fixme last 0x00 not read?
             expect((int)ff_read_get_pos()).to(eq((int)25-1));
-        });
-        it("next block type", [&] {
-            expect((int)gd_next_block_type(&main)).to(eq((int)GD_BLOCK_TRAILER));
         });
         it("pixel[0]", [&] {
             expect((int)pixels[0]).to(eq((int)1));
