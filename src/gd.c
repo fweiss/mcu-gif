@@ -198,8 +198,7 @@ void gd_read_logical_screen_descriptor(gd_main_t *main, gd_info_t *info) {
     const uint8_t GLOBAL_COLOR_TABLE_FLAG = 0x80;
     const uint8_t GLOBAL_COLOR_TABLE_SIZE = 0x03;
     uint8_t buf[7];
-    const int count = GD_READ(buf, sizeof(buf));
-    // todo check count
+    GD_READ(buf, sizeof(buf)); // todo check count   
     info->width = gd_unpack_word(&buf[0]);
     info->height = gd_unpack_word(&buf[8-6]);
     info->globalColorTableFlag = buf[10-6] & GLOBAL_COLOR_TABLE_FLAG;
@@ -233,8 +232,7 @@ void gd_read_logical_screen_descriptor(gd_main_t *main, gd_info_t *info) {
 
 void gd_read_global_color_table(gd_main_t *main, gd_color_t *color_table) {
     // todo handle chunks
-    uint8_t *ctp = (uint8_t*)color_table;
-    GD_READ(color_table, main->info.globalColorTableSize * sizeof(gd_color_t));
+    GD_READ((uint8_t*)color_table, main->info.globalColorTableSize * sizeof(gd_color_t));
     // todo peek
     main->next_block_type = GD_BLOCK_GRAPHIC_CONTROL_EXTENSION;
 }
