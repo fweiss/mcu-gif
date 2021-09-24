@@ -4,12 +4,13 @@ SDL2_DIR = /Library/Frameworks/SDL2.framework
 
 CC := clang
 
-CFLAGS :=  -ggdb3 -O0 --std=c99 -Wall -L. -lm -I$(SDL2_DIR)/Headers $(SDL2_DIR)/SDL2 -I../src
+# todo separate/abstract path list
+CFLAGS :=  -ggdb3 -O0 --std=c99 -Wall -I$(SDL2_DIR)/Headers $(SDL2_DIR)/SDL2 -I../src -lmain -L../build/src
 
 HDRS := 
 
 # add source files here
-SRCS := main.c reader.c ../src/gd.c
+SRCS := main.c reader.c
 
 INCLUDES = 
 
