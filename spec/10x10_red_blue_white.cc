@@ -76,6 +76,7 @@ describe("for 10x10 red-blue-white", [] {
             gd_info_t info;
             gd_color_t gct[4];
             gd_graphic_control_extension_t gce;
+            gd_image_descriptor_t imd;
 
             // we know the order of calls needed here
             gd_init(&main);
@@ -83,7 +84,7 @@ describe("for 10x10 red-blue-white", [] {
             gd_read_logical_screen_descriptor(&main, &info);
             gd_read_global_color_table(&main, gct);
             gd_read_graphic_control_extension(&main, &gce);
-            gd_read_image_descriptor(&main);
+            gd_read_image_descriptor(&main, &imd);
             gd_read_image_data(&main, output, sizeof(output));
             gd_read_trailer(&main);
         });

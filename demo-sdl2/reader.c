@@ -42,7 +42,12 @@ void renderPixels(SDL_Renderer *renderer, gd_index_t *pixels, gd_color_t *colorT
 // based on gd returning the next block type read from the file
 void sketch(SDL_Renderer *renderer) {
     gd_main_t main;
-    gd_info_t info;
+    gd_info_t info;    
+    gd_graphic_control_extension_t gce;
+    gd_image_descriptor_t imd;
+    // allocated dynamically
+    gd_color_t* gct = 0;
+    gd_index_t* pixels = 0;
 
     FILE* fp = fopen("samples/sample_1.gif", "rb");
     main.fp = fp;
@@ -50,11 +55,6 @@ void sketch(SDL_Renderer *renderer) {
     main.fread = (void*)fread;
 
     gd_init(&main);
-    static gd_color_t gct[4];
-
-    const uint16_t pixels_size = 100;
-    static gd_index_t pixels[100];
-    gd_graphic_control_extension_t gce;
 
     int blockLimit = 100;
     for ( ; blockLimit>0; blockLimit--) {
@@ -70,7 +70,7 @@ void sketch(SDL_Renderer *renderer) {
                 gd_read_logical_screen_descriptor(&main, &info);
                 break;
             case GD_BLOCK_GLOBAL_COLOR_TABLE:
-                // alloc
+                gct = (gd_color_t*)calloc(info.globalColorTableSize, sizeof(gd_color_t));
                 gd_read_global_color_table(&main, gct);
                 // check status
                 break;
@@ -78,10 +78,11 @@ void sketch(SDL_Renderer *renderer) {
                 gd_read_graphic_control_extension(&main, &gce);
                 break;
             case GD_BLOCK_IMAGE_DESCRIPTOR:
-                gd_read_image_descriptor(&main);
+                gd_read_image_descriptor(&main, &imd);
                 break;
             case GD_BLOCK_IMAGE_DATA:
-                gd_read_image_data(&main, pixels, pixels_size);
+                pixels = (gd_index_t*)calloc(imd.image_size, sizeof(gd_index_t));
+                gd_read_image_data(&main, pixels, imd.image_size);
                 renderPixels(renderer, pixels, gct);
                 break;
             case GD_BLOCK_TRAILER:
@@ -98,5 +99,13 @@ void sketch(SDL_Renderer *renderer) {
     }
     if (blockLimit == 0) {
         printf("block limit expired");
+    }
+    if (gct) {
+        free(gct);
+        gct = 0;
+    }
+    if (pixels) {
+        free(pixels);
+        pixels = 0;
     }
 }

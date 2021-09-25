@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 #include <string.h>
+#include <stdbool.h>
 
 #if defined(_MSC_VER)
 #include <BaseTsd.h>
@@ -26,6 +27,18 @@ typedef struct {
 typedef struct {
     uint8_t disposal_method;
 } gd_graphic_control_extension_t;
+
+typedef struct {
+    uint16_t image_left;
+    uint16_t image_top;
+    uint16_t image_width;
+    uint16_t image_height;
+    size_t image_size;                // convenience
+    uint16_t local_color_table_size;
+    bool local_color_table;
+    bool interlace;
+    bool sort;
+} gd_image_descriptor_t;
 
 // todo internal?
 typedef struct {
@@ -62,7 +75,7 @@ void gd_read_header(gd_main_t *main);
 void gd_read_logical_screen_descriptor(gd_main_t *main, gd_info_t *info);
 void gd_read_global_color_table(gd_main_t *main, gd_color_t *color_table);
 void gd_read_graphic_control_extension(gd_main_t *main, gd_graphic_control_extension_t *gce);
-void gd_read_image_descriptor(gd_main_t *main);
+void gd_read_image_descriptor(gd_main_t *main, gd_image_descriptor_t* imd);
 void gd_read_image_data(gd_main_t *main, gd_index_t *output, size_t capacity);
 void gd_read_trailer(gd_main_t *main);
 
