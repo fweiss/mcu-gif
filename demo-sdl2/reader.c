@@ -44,13 +44,10 @@ void sketch(SDL_Renderer *renderer) {
     gd_main_t main;
     gd_info_t info;
 
-    // int fd = open("samples/sample_1.gif", O_RDONLY);
-    // main.read = read;
-    // main.fd = fd;
-
     FILE* fp = fopen("samples/sample_1.gif", "rb");
     main.fp = fp;
-    main.fread = fread;
+    // signature mismatch, should be opaque (no FILE)
+    main.fread = (void*)fread;
 
     gd_init(&main);
     static gd_color_t gct[4];
@@ -94,6 +91,7 @@ void sketch(SDL_Renderer *renderer) {
             case GD_BLOCK_COMMENT_EXTENSION:
             case GD_BLOCK_PLAIN_TEXT_EXTENSION:
             case GD_BLOCK_APPLICATION_EXTENSION:
+            case GD_BLOCK_LOGICAL_EOF:
                 // ignored
                 break;
         }
