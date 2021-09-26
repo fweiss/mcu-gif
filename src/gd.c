@@ -247,10 +247,11 @@ void gd_read_graphic_control_extension(gd_main_t *main, gd_graphic_control_exten
 void gd_read_image_descriptor(gd_main_t *main, gd_image_descriptor_t* imd) {
     uint8_t buf[10];
     GD_READ(buf, sizeof(buf));
+    imd->image_left = gd_unpack_word(&buf[1+0]);
+    imd->image_top = gd_unpack_word(&buf[1+2]);
     imd->image_width = gd_unpack_word(&buf[1+4]);
     imd->image_height = gd_unpack_word(&buf[1+6]);
     imd->image_size = imd->image_width * imd->image_height;
-
     main->next_block_type = GD_BLOCK_IMAGE_DATA;
 }
 

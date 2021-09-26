@@ -172,7 +172,16 @@ describe("read block", [] {
             expect((int)ff_read_get_pos()).to(eq((int)10));
         });
         it("image left", [] {
+            expect(imd.image_left).to(be == 0);
+        });
+        it("image top", [] {
+            expect(imd.image_top).to(be == 0);
+        });
+        it("image width", [] {
             expect(imd.image_width).to(be == 10);
+        });
+        it("image height", [] {
+            expect(imd.image_height).to(be == 10);
         });
         it("image size", [] {
             expect(imd.image_size).to(be == 100);

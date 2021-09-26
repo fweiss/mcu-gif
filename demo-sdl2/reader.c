@@ -8,14 +8,21 @@
 
 #include "gd.h"
 
-void renderPixels(SDL_Renderer *renderer, uint8_t *pixels, gd_color_t *colorTable);
+typedef struct {
+    uint16_t width;
+    uint16_t height;
+    gd_color_t* colors;
+    gd_index_t* pixels;
+} frame_info_t;
+
+void renderPixels(SDL_Renderer *renderer, frame_info_t* frame_info);
 void sketch(SDL_Renderer *renderer);
 
 void drawGif(SDL_Renderer *renderer) {
     sketch(renderer);
 }
 
-void renderPixels(SDL_Renderer *renderer, gd_index_t *pixels, gd_color_t *colorTable) {
+void renderPixels(SDL_Renderer *renderer, frame_info_t* frame_info) {
     SDL_Rect rect;
     rect.x = 50;
     rect.y = 50;
@@ -23,12 +30,12 @@ void renderPixels(SDL_Renderer *renderer, gd_index_t *pixels, gd_color_t *colorT
     rect.h = 10;
 
     SDL_RenderClear(renderer);
-    for (uint8_t y=0; y<10; y++) {
-        for (uint8_t x=0; x<10; x++) {
+    for (uint8_t y=0; y<frame_info->height; y++) {
+        for (uint8_t x=0; x<frame_info->width; x++) {
             rect.x = x * 10 + 100;
             rect.y = y * 10 + 100;
             uint16_t i = y * 10 + x;
-            gd_color_t c = colorTable[pixels[i]];
+            gd_color_t c = frame_info->colors[frame_info->pixels[i]];
             uint8_t r = c.r;
             uint8_t g = c.g;
             uint8_t b = c.b;
@@ -48,6 +55,7 @@ void sketch(SDL_Renderer *renderer) {
     // allocated dynamically
     gd_color_t* gct = 0;
     gd_index_t* pixels = 0;
+    frame_info_t frame_info;
 
     FILE* fp = fopen("samples/sample_1.gif", "rb");
     // FILE* fp = fopen("samples/128px-Dancing.gif", "rb");
@@ -84,7 +92,11 @@ void sketch(SDL_Renderer *renderer) {
             case GD_BLOCK_IMAGE_DATA:
                 pixels = (gd_index_t*)calloc(imd.image_size, sizeof(gd_index_t));
                 gd_read_image_data(&main, pixels, imd.image_size);
-                renderPixels(renderer, pixels, gct);
+                frame_info.width = imd.image_width;
+                frame_info.height = imd.image_height;
+                frame_info.colors = gct;
+                frame_info.pixels = pixels;
+                renderPixels(renderer, &frame_info);
                 break;
             case GD_BLOCK_TRAILER:
                 printf("end of gif parsing\n");
