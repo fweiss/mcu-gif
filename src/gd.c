@@ -180,6 +180,7 @@ static void gd_expand_codes_init(gd_expand_codes_t *expand_codes, gd_index_t *ou
 /********************/
 
 void gd_init(gd_main_t *main) {
+    main->err = GD_X_OK;
     main->next_block_type = GD_BLOCK_HEADER;
 }
 
@@ -196,9 +197,10 @@ void gd_read_header(gd_main_t *main) {
 
 void gd_read_logical_screen_descriptor(gd_main_t *main, gd_info_t *info) {
     const uint8_t GLOBAL_COLOR_TABLE_FLAG = 0x80;
-    const uint8_t GLOBAL_COLOR_TABLE_SIZE = 0x03;
+    const uint8_t GLOBAL_COLOR_TABLE_SIZE = 0x07;
     uint8_t buf[7];
-    GD_READ(buf, sizeof(buf)); // todo check count   
+    GD_READ(buf, sizeof(buf)); // todo check count
+    printf("lsd[4]: %d\n", buf[4]); 
     info->width = gd_unpack_word(&buf[0]);
     info->height = gd_unpack_word(&buf[8-6]);
     info->globalColorTableFlag = buf[10-6] & GLOBAL_COLOR_TABLE_FLAG;
@@ -228,11 +230,18 @@ void gd_read_logical_screen_descriptor(gd_main_t *main, gd_info_t *info) {
         //     main->next_block_type = GD_BLOCK_IMAGE_DESCRIPTOR;
         // }
     }
+    printf("done\n");
 }
 
 void gd_read_global_color_table(gd_main_t *main, gd_color_t *color_table) {
     // todo handle chunks
-    GD_READ((uint8_t*)color_table, main->info.globalColorTableSize * sizeof(gd_color_t));
+    size_t x = main->info.globalColorTableSize * sizeof(gd_color_t);
+    printf("gct: %d\n", main->info.globalColorTableSize * sizeof(gd_color_t));
+    size_t count = GD_READ((uint8_t*)color_table, main->info.globalColorTableSize * sizeof(gd_color_t));
+    if (count != x) {
+        main->err = GD_ERR_EOF;
+        return;
+    }
     // todo peek
     main->next_block_type = GD_BLOCK_GRAPHIC_CONTROL_EXTENSION;
 }
@@ -240,6 +249,10 @@ void gd_read_global_color_table(gd_main_t *main, gd_color_t *color_table) {
 void gd_read_graphic_control_extension(gd_main_t *main, gd_graphic_control_extension_t *gce) {
     uint8_t buf[8];
     GD_READ(buf, sizeof(buf));
+    if (buf[0] != 0x21 || buf[1] != 0xF9) {
+        main->err = GD_ERR_BLOCK_PREFIX;
+        return;
+    }
     // todo peek
     main->next_block_type = GD_BLOCK_IMAGE_DESCRIPTOR;
 }

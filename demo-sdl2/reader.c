@@ -57,14 +57,14 @@ void sketch(SDL_Renderer *renderer) {
     gd_index_t* pixels = 0;
     frame_info_t frame_info;
 
-    FILE* fp = fopen("samples/sample_1.gif", "rb");
-    // FILE* fp = fopen("samples/128px-Dancing.gif", "rb");
+    // FILE* fp = fopen("samples/sample_1.gif", "rb");
+    FILE* fp = fopen("samples/128px-Dancing.gif", "rb");
     main.fp = fp;
     // signature mismatch, should be opaque (no FILE)
     main.fread = (void*)fread;
 
     gd_init(&main);
-
+printf("init %d\n", main.err);
     int blockLimit = 100;
     for ( ; blockLimit>0; blockLimit--) {
         gd_block_type_t nextBlockType = gd_next_block_type(&main);
@@ -77,6 +77,7 @@ void sketch(SDL_Renderer *renderer) {
                 break;
             case GD_BLOCK_LOGICAL_SCREEN_DESCRIPTOR:
                 gd_read_logical_screen_descriptor(&main, &info);
+                printf("lsd gct flag: %d gct size: %d\n", info.globalColorTableFlag, info.globalColorTableSize);
                 break;
             case GD_BLOCK_GLOBAL_COLOR_TABLE:
                 gct = (gd_color_t*)calloc(info.globalColorTableSize, sizeof(gd_color_t));
@@ -88,6 +89,7 @@ void sketch(SDL_Renderer *renderer) {
                 break;
             case GD_BLOCK_IMAGE_DESCRIPTOR:
                 gd_read_image_descriptor(&main, &imd);
+                printf("imd %d %d\n", imd.image_width, imd.image_height);
                 break;
             case GD_BLOCK_IMAGE_DATA:
                 pixels = (gd_index_t*)calloc(imd.image_size, sizeof(gd_index_t));
@@ -108,6 +110,10 @@ void sketch(SDL_Renderer *renderer) {
             case GD_BLOCK_LOGICAL_EOF:
                 // ignored
                 break;
+        }
+        if (main.err != GD_X_OK) {
+            printf("aborted: err: %d\n", main.err);
+            break;
         }
     }
     if (blockLimit == 0) {

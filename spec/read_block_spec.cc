@@ -106,25 +106,56 @@ describe("read block", [] {
         });
     });
     describe("logical screen descriptor", [&] {
-        static gd_info_t info;
-        before("all", [&] {
-            FFILEV(logical_screen_descriptor + trailer);
-            gd_read_logical_screen_descriptor(&main, &info);
+        describe("nominal", [&] {
+            static gd_info_t info;
+            before("all", [&] {
+                FFILEV(logical_screen_descriptor + trailer);
+                gd_read_logical_screen_descriptor(&main, &info);
+            });
+            it("bytes", [&] {
+                expect((int)ff_read_get_pos()).to(eq((int)7));
+            });
+            it("width", [&] {
+                expect(info.width).to(eq(10));
+            });
+            it("height", [&] {
+                expect(info.height).to(eq(10));
+            });
+            it("global color table flag", [&] {
+                expect(info.globalColorTableFlag).to(be_truthy);
+            });
+            it("global color table size", [&] {
+                expect(info.globalColorTableSize).to(be == 4);
+            });
         });
-        it("bytes", [&] {
-            expect((int)ff_read_get_pos()).to(eq((int)7));
-        });
-        it("width", [&] {
-            expect(info.width).to(eq(10));
-        });
-        it("height", [&] {
-            expect(info.height).to(eq(10));
-        });
-        it("global color table flag", [&] {
-            expect(info.globalColorTableFlag).to(be_truthy);
-        });
-        it("global color table size", [&] {
-            expect(info.globalColorTableSize).to(be == 4);
+        describe("maximal", [&] {
+            static gd_info_t info;
+            before("all", [&] {
+                const vector<uint8_t> file({
+                    0xFF, 0xFF, // width
+                    0xFF, 0xFF, // height
+                    0x97, // color map info
+                    0xFF, // background color index
+                    0x00 // aspect ratio
+                });
+                FFILEV(file);
+                gd_read_logical_screen_descriptor(&main, &info);
+            });
+            it("bytes", [&] {
+                expect((int)ff_read_get_pos()).to(eq((int)7));
+            });
+            it("width", [&] {
+                expect(info.width).to(eq(65535));
+            });
+            it("height", [&] {
+                expect(info.height).to(eq(65535));
+            });
+            it("global color table flag", [&] {
+                expect(info.globalColorTableFlag).to(be_truthy);
+            });
+            it("global color table size", [&] {
+                expect((int)info.globalColorTableSize).to(be == (int)256);
+            });
         });
     });
     describe("global color table", [&] {
@@ -133,6 +164,9 @@ describe("read block", [] {
         before("all", [&] {
             FFILEV(global_color_table + trailer);
             gd_read_global_color_table(&main, gct);
+        });
+        it("no err", [&] {
+            expect(main.err).to(be == GD_X_OK);
         });
         it("bytes", [&] {
             expect((int)ff_read_get_pos()).to(eq((int)12));

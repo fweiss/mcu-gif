@@ -21,7 +21,7 @@ typedef struct {
     uint16_t width;
     uint16_t height;
     uint8_t globalColorTableFlag;
-    uint8_t globalColorTableSize;
+    uint16_t globalColorTableSize; // needs to handle 256
 } gd_info_t;
 
 typedef struct {
@@ -61,10 +61,17 @@ typedef enum {
     GD_BLOCK_LOGICAL_EOF = 11,
 } gd_block_type_t;
 
+typedef enum {
+    GD_X_OK = 0, // conflict internal.h
+    GD_ERR_BLOCK_PREFIX = 1,    // unexpected beginbing of block
+    GD_ERR_EOF = 2,             // premature end of file reached
+} gd_err_t;
+
 typedef struct {
     void* fp; // actually opaque FILE
     ssize_t (*fread)(void* ptr, size_t size, size_t count, void* stream);
     gd_info_t info;
+    gd_err_t err;
     gd_block_type_t next_block_type;
 } gd_main_t;
 
