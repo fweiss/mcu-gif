@@ -163,7 +163,7 @@ describe("read block", [] {
         static gd_color_t gct[4];
         before("all", [&] {
             FFILEV(global_color_table + trailer);
-            gd_read_global_color_table(&main, gct);
+            gd_read_global_color_table(&main, gct, 4);
         });
         it("no err", [&] {
             expect(main.err).to(be == GD_X_OK);
@@ -295,7 +295,7 @@ describe("read block", [] {
             static gd_color_t gct[4];
             it("graphic control extension", [&] {
                 FFILEV(global_color_table + graphic_control_extension);
-                gd_read_global_color_table(&main, gct);
+                gd_read_global_color_table(&main, gct, 4);
                 expect((int)gd_next_block_type(&main)).to(eq((int)GD_BLOCK_GRAPHIC_CONTROL_EXTENSION));
             });
             // image descriptor, plain text extension, application extension, comment extension

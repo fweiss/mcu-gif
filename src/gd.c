@@ -233,12 +233,15 @@ void gd_read_logical_screen_descriptor(gd_main_t *main, gd_info_t *info) {
     printf("done\n");
 }
 
-void gd_read_global_color_table(gd_main_t *main, gd_color_t *color_table) {
+// expect the client to get the proper count from info
+// alternative is to remember it from the logical screen descriptor
+void gd_read_global_color_table(gd_main_t *main, gd_color_t *color_table, size_t count) {
     // todo handle chunks
-    size_t x = main->info.globalColorTableSize * sizeof(gd_color_t);
-    printf("gct: %d\n", main->info.globalColorTableSize * sizeof(gd_color_t));
-    size_t count = GD_READ((uint8_t*)color_table, main->info.globalColorTableSize * sizeof(gd_color_t));
-    if (count != x) {
+    // size_t x = main->info.globalColorTableSize * sizeof(gd_color_t);
+    size_t want = count * sizeof(gd_color_t);
+    printf("gct: %d\n", want);
+    size_t got = GD_READ((uint8_t*)color_table, want);
+    if (got != want) {
         main->err = GD_ERR_EOF;
         return;
     }

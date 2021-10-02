@@ -82,7 +82,7 @@ describe("for 10x10 red-blue-white", [] {
             gd_init(&main);
             gd_read_header(&main);
             gd_read_logical_screen_descriptor(&main, &info);
-            gd_read_global_color_table(&main, gct);
+            gd_read_global_color_table(&main, gct, info.globalColorTableSize);
             gd_read_graphic_control_extension(&main, &gce);
             gd_read_image_descriptor(&main, &imd);
             gd_read_image_data(&main, output, sizeof(output));

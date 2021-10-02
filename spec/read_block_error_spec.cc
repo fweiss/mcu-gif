@@ -110,13 +110,14 @@ describe("read block error", [] {
             vector<uint8_t> short_global_color_table({ 0x00, 0x00 });
             FFILEV(logical_screen_descriptor + short_global_color_table);
             gd_read_logical_screen_descriptor(&main, &info);
-            gd_read_global_color_table(&main, gct);
+            gd_read_global_color_table(&main, gct, info.globalColorTableSize);
             expect((int)main.err).to(be == (int)GD_ERR_EOF);
         });
     });
     describe("graphic control extension", [] {
         gd_graphic_control_extension_t gce;
         it("block prefix", [&] {
+            // correct would be 21F9
             vector<uint8_t> file({ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 });
             FFILEV(file);
             gd_read_graphic_control_extension(&main, &gce);

@@ -81,7 +81,7 @@ printf("init %d\n", main.err);
                 break;
             case GD_BLOCK_GLOBAL_COLOR_TABLE:
                 gct = (gd_color_t*)calloc(info.globalColorTableSize, sizeof(gd_color_t));
-                gd_read_global_color_table(&main, gct);
+                gd_read_global_color_table(&main, gct, info.globalColorTableSize);
                 // check status
                 break;
             case GD_BLOCK_GRAPHIC_CONTROL_EXTENSION:
