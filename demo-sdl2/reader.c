@@ -13,6 +13,7 @@ typedef struct {
     uint16_t height;
     gd_color_t* colors;
     gd_index_t* pixels;
+    size_t zoom;
 } frame_info_t;
 
 void renderPixels(SDL_Renderer *renderer, frame_info_t* frame_info);
@@ -26,15 +27,15 @@ void renderPixels(SDL_Renderer *renderer, frame_info_t* frame_info) {
     SDL_Rect rect;
     rect.x = 50;
     rect.y = 50;
-    rect.w = 10;
-    rect.h = 10;
+    rect.w = frame_info->zoom;
+    rect.h = frame_info->zoom;
 
     SDL_RenderClear(renderer);
     for (uint8_t y=0; y<frame_info->height; y++) {
         for (uint8_t x=0; x<frame_info->width; x++) {
-            rect.x = x * 10 + 100;
-            rect.y = y * 10 + 100;
-            uint16_t i = y * 10 + x;
+            rect.x = x * frame_info->zoom + 100;
+            rect.y = y * frame_info->zoom + 100;
+            uint16_t i = y * frame_info->width + x;
             gd_color_t c = frame_info->colors[frame_info->pixels[i]];
             uint8_t r = c.r;
             uint8_t g = c.g;
@@ -92,12 +93,14 @@ printf("init %d\n", main.err);
                 printf("imd %d %d\n", imd.image_width, imd.image_height);
                 break;
             case GD_BLOCK_IMAGE_DATA:
+                printf("pixels: %d\n", imd.image_size);
                 pixels = (gd_index_t*)calloc(imd.image_size, sizeof(gd_index_t));
                 gd_read_image_data(&main, pixels, imd.image_size);
                 frame_info.width = imd.image_width;
                 frame_info.height = imd.image_height;
                 frame_info.colors = gct;
                 frame_info.pixels = pixels;
+                frame_info.zoom = 10;
                 renderPixels(renderer, &frame_info);
                 break;
             case GD_BLOCK_TRAILER:
