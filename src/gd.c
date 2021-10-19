@@ -14,6 +14,10 @@ void gd_code_size(gd_image_block_t *block, uint8_t codeSize) {
     block->codeMask = (one << codeSize) - 1;
 }
 
+/**
+ * Initialize the string table with 0..3 and reserve 5..6 for 
+ * special control codes 4 and 5
+ */
 void gd_string_table_init(gd_string_table_t *table) {
     static gd_string_table_entry_t entries[64];
     static gd_index_t strings[512];
@@ -33,6 +37,13 @@ void gd_string_table_init(gd_string_table_t *table) {
     }
 }
 
+/**
+ * Lookup the string for the given code.
+ * If the code is greater than the string table length, return 0,
+ * which really should be an error.
+ * @return the string
+ * @error returned string with length 0 if the code is not in the string table
+ */
 gd_string_t gd_string_table_at(gd_string_table_t *table, uint16_t code) {
     static gd_string_t string;
     if (code < table->length) {
@@ -45,6 +56,12 @@ gd_string_t gd_string_table_at(gd_string_table_t *table, uint16_t code) {
     return string;
 }
 
+/**
+ * Add the given string to the string table.
+ * Assume that this is not a duplicate.
+ * @return the the new code for this string
+ * @error if the string table is full
+ */
 uint16_t gd_string_table_add(gd_string_table_t *table, gd_string_t *string) {
     const bool entries_has_space= table->length < table->capacity;
     const bool strings_has_space = table->strings_length + string->length < table->strings_capacity;
@@ -64,6 +81,9 @@ uint16_t gd_string_table_add(gd_string_table_t *table, gd_string_t *string) {
     }
 }
 /**
+ * Decompress an upacked code onto an index stream.
+ * @param extract an unpacked code
+ * 
  * Gist of the algorithm
  * C = found string
  * A = added string
@@ -104,6 +124,7 @@ void gd_image_expand_code(gd_expand_codes_t *expand, uint16_t extract) {
     // skip insert on initial code
     if (expand->prior_string.length > 0) {
         gd_string_table_add(&expand->string_table, &new_string);
+        // check string_table.status
     }
 
     // propagate prior string
@@ -200,7 +221,6 @@ void gd_read_logical_screen_descriptor(gd_main_t *main, gd_info_t *info) {
     const uint8_t GLOBAL_COLOR_TABLE_SIZE = 0x07;
     uint8_t buf[7];
     GD_READ(buf, sizeof(buf)); // todo check count
-    printf("lsd[4]: %d\n", buf[4]); 
     info->width = gd_unpack_word(&buf[0]);
     info->height = gd_unpack_word(&buf[8-6]);
     info->globalColorTableFlag = buf[10-6] & GLOBAL_COLOR_TABLE_FLAG;
@@ -230,7 +250,6 @@ void gd_read_logical_screen_descriptor(gd_main_t *main, gd_info_t *info) {
         //     main->next_block_type = GD_BLOCK_IMAGE_DESCRIPTOR;
         // }
     }
-    printf("done\n");
 }
 
 // expect the client to get the proper count from info
@@ -239,7 +258,6 @@ void gd_read_global_color_table(gd_main_t *main, gd_color_t *color_table, size_t
     // todo handle chunks
     // size_t x = main->info.globalColorTableSize * sizeof(gd_color_t);
     size_t want = count * sizeof(gd_color_t);
-    printf("gct: %d\n", want);
     size_t got = GD_READ((uint8_t*)color_table, want);
     if (got != want) {
         main->err = GD_ERR_EOF;

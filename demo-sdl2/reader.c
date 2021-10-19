@@ -58,8 +58,8 @@ void sketch(SDL_Renderer *renderer) {
     gd_index_t* pixels = 0;
     frame_info_t frame_info;
 
-    // FILE* fp = fopen("samples/sample_1.gif", "rb");
-    FILE* fp = fopen("samples/128px-Dancing.gif", "rb");
+    FILE* fp = fopen("samples/sample_1.gif", "rb");
+    // FILE* fp = fopen("samples/128px-Dancing.gif", "rb");
     main.fp = fp;
     // signature mismatch, should be opaque (no FILE)
     main.fread = (void*)fread;
