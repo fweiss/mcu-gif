@@ -93,7 +93,7 @@ printf("init %d\n", main.err);
                 printf("imd %d %d\n", imd.image_width, imd.image_height);
                 break;
             case GD_BLOCK_IMAGE_DATA:
-                printf("pixels: %d\n", imd.image_size);
+                printf("pixels: %zu\n", imd.image_size);
                 pixels = (gd_index_t*)calloc(imd.image_size, sizeof(gd_index_t));
                 gd_read_image_data(&main, pixels, imd.image_size);
                 frame_info.width = imd.image_width;
