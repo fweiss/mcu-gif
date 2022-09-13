@@ -3,7 +3,7 @@ A GIF decoder for embedded MCUs
 
 The goals of this project are:
 
-- mcu agnostic
+- MCU agnostic
 - file system agnostic
 - developed with TDD
 - usable in C programming language
@@ -11,9 +11,12 @@ The goals of this project are:
 It would be nice to try additional languages. For MCUs, C is the most common.
 
 ## TDD with ccspec
-Starting afresh with ccspec to try out comprehensible tests.
-The GTest reports where just too bland.
-The ccspec framework promises at least a basic rspec test report.
+Initally GTest was used to start development.
+I felt the GTest reports where just too bland.
+They were "flat" and had a bunch of noisy formatting
+I was used to "spec" tests with Jasmine.
+I found the ccspec framework which promised at least a basic rspec test report.
+So I started afresh with ccspec to try out [comprehensible tests](https://fweiss.github.io/test-driven/test-fluency-and-comprehension).
 
 ## Running the ccspec tests
 Since this is a TDD project, we'll start by running the tests.
@@ -28,28 +31,20 @@ You'll need to update the git submodule with:
 ``git submodule update --init --recursive``
 
 ### Build and run the tests
-CMake is used to build the code.
+This is a CMake project, so it follows that workflow.
 
 > See WINDOWS.md for a guide specific to Windows.
 > The following is for MacOS.
 
-Run Cmake in the build directory with:
+Example workflow:
 
-``cmake ..``
-
-Compile the code:
-
-``make install``
-
-> There's a bug in ccspec: "cannot open include file 'ccspec/core/example.h'". In submodules/ccspec/src/CMakeLists.txt,
-> in the target_include_directories command,
-> replace CMAKE_SOURCE_DIR with CMAKE_CURRENT_SOURCE_DIR.
-> and add '../' before include.
-
-### Run the tests
-The following command will run the tests and display the test report:
-
-``bin/start``
+```
+make build
+cd build
+cmake ..
+make install
+spec/start
+```
 
 > Notice the nested structure of the test report.
 
@@ -113,9 +108,9 @@ Several portable GUI frameworks were investigated:
 RSpec is a great model for developing software using TDD.
 I think ccpec provide a solid implementation for C/C++.
 
-https://github.com/zhangsu/ccspec
+https://github.com/fweiss/ccspec
 
-https://github.com/zhangsu/ccspec-example
+https://github.com/fweiss/ccspec-example
 
 ## Unit testing with gtest (deprecated)
 This project was originally developed with TDD using gtest.
