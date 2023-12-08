@@ -39,7 +39,7 @@ This is a CMake project, so it follows that workflow.
 Example workflow:
 
 ```
-make build
+mkdir build
 cd build
 cmake ..
 make install
@@ -85,10 +85,21 @@ Copy SDL2.framework to either:
 - your home directory (such as ~/Library/)
 - a global directory (such as /Library/Frameworks)
 
+There are some permissions that need to be enabled on MacOS.
+First is in security, second is at launch.
+
+> Use global - there's some absolute path wired into the library.
+
+> Use version 2.0.22
+> Latest has a problem with the Headers needing SDL2 subdirectory.
+
 ### Building and running the visual test
-- cd to ``demo-sdl2``
-- run ``make``
-- run ``./main``
+Example workflow:
+```
+cd demo-sdl2
+make
+./main
+```
 
 You should see a window open, displaying a GIF.
 
