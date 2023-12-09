@@ -17,10 +17,12 @@ typedef struct {
 } frame_info_t;
 
 void renderPixels(SDL_Renderer *renderer, frame_info_t* frame_info);
-void sketch(SDL_Renderer *renderer);
+void sketch(const char* filename, SDL_Renderer *renderer);
 
 void drawGif(SDL_Renderer *renderer) {
-    sketch(renderer);
+    // const char* filename = "samples/sample_1.gif";
+    const char* filename = "samples/128px-Dancing.gif";
+    sketch(filename,renderer);
 }
 
 void renderPixels(SDL_Renderer *renderer, frame_info_t* frame_info) {
@@ -48,7 +50,7 @@ void renderPixels(SDL_Renderer *renderer, frame_info_t* frame_info) {
 }
 
 // based on gd returning the next block type read from the file
-void sketch(SDL_Renderer *renderer) {
+void sketch(const char* filename, SDL_Renderer *renderer) {
     gd_main_t main;
     gd_info_t info;    
     gd_graphic_control_extension_t gce;
@@ -58,7 +60,11 @@ void sketch(SDL_Renderer *renderer) {
     gd_index_t* pixels = 0;
     frame_info_t frame_info;
 
-    FILE* fp = fopen("samples/sample_1.gif", "rb");
+    FILE* fp = fopen(filename, "rb");
+    if (fp == NULL) {
+        printf("error open file '%s'\n", filename);
+        return;
+    }
     // FILE* fp = fopen("samples/128px-Dancing.gif", "rb");
     main.fp = fp;
     // signature mismatch, should be opaque (no FILE)

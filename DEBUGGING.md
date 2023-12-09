@@ -1,3 +1,11 @@
+# Debugging
+Notes and instructions for debugging:
+- both spec tests and demo-sdl
+- both MacOS and Windows
+
+## MacOS and lldb
+Currently some info in the main README.md
+
 ## Windows
 Modified several CMakeList.txt file for use with MSVC Command line tools
 
