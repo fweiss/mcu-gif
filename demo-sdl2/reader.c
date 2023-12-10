@@ -18,6 +18,7 @@ typedef struct {
 
 void renderPixels(SDL_Renderer *renderer, frame_info_t* frame_info);
 void sketch(const char* filename, SDL_Renderer *renderer);
+const char * const rgbstr(gd_color_t color);
 
 void drawGif(SDL_Renderer *renderer) {
     // const char* filename = "samples/sample_1.gif";
@@ -101,21 +102,23 @@ void sketch(const char* filename, SDL_Renderer *renderer) {
                 break;
             case GD_BLOCK_IMAGE_DATA:
                 printf("pixels: %zu\n", imd.image_size);
+                // fixme memory leak
                 pixels = (gd_index_t*)calloc(imd.image_size, sizeof(gd_index_t));
                 const gd_index_t fill = 0x45;
                 memset(pixels, fill, imd.image_size);
                 gd_read_image_data(&main, pixels, imd.image_size);
-                printf("pixels output: %d\n", main.pixelOutputProgress);
+                printf("pixels output: %zu\n", main.pixelOutputProgress);
                 frame_info.width = imd.image_width;
                 frame_info.height = imd.image_height;
                 frame_info.colors = gct;
                 frame_info.pixels = pixels;
-                frame_info.zoom = 4;
+                frame_info.zoom = 40;
                 renderPixels(renderer, &frame_info);
                 break;
             case GD_BLOCK_TRAILER:
                 printf("end of gif parsing\n");
                 blockLimit = 0;
+                printf("pixel[0] index: %d color: %s\n", frame_info.pixels[0], rgbstr(frame_info.colors[frame_info.pixels[0]]));
                 break;
             case GD_BLOCK_COMMENT_EXTENSION:
             case GD_BLOCK_PLAIN_TEXT_EXTENSION:
@@ -140,4 +143,11 @@ void sketch(const char* filename, SDL_Renderer *renderer) {
         free(pixels);
         pixels = 0;
     }
+}
+
+const char * const rgbstr(gd_color_t color) {
+    const int digits = 3; // max "255"
+    static char buffer[(digits+1)*3];
+    snprintf(buffer, sizeof(buffer), "%d,%d,%d", color.r, color.g, color.b);
+    return buffer; // OK static
 }

@@ -9,6 +9,13 @@ Currently some info in the main README.md
 ## Windows
 Modified several CMakeList.txt file for use with MSVC Command line tools
 
+## Image
+On MacOS, use Digital Color Meter to compare colors displayed in Preview
+with those displayed in demo-sdl2.
+
+## 128px-Dancing.gif
+First pixel should be rgb(58,86,148) but was rgb(0,0,153)
+
 ## BeTruthy
 
 ``error LNK2001: unresolved external symbol "class ccspec::matchers::BeTruthy const & const ccspec::matchers::be_truthy" (?be_truthy@matchers@ccspec@@3ABVBeTruthy@12@B)``
