@@ -66,10 +66,10 @@ Handy commands:
 - array: ``parray 100 pixels``
 
 ## Read image call graph
-gd_read_image_data()
-  gd_image_bblock_read()
-    gd_expand_codes_init()
-    gd_image_subblock_decode() // unpack block to codes
+gd_read_image_data(&main, pixels, imd.image_size)
+  gd_image_block_read(main, &image_block)
+    gd_expand_codes_init(&image_block->expand_codes, image_block->output)
+    gd_image_subblock_decode(image_block, subblock, subblockSize) // unpack block to codes
       gd_image_expand_code() // decompress code to indexes
         gd_string_table_init()
         gd_string_table_at()

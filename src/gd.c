@@ -304,6 +304,7 @@ void gd_image_block_read(gd_main_t *main, gd_image_block_t *image_block) {
     gd_image_subblock_decode(image_block, subblock, subblockSize);
 
     image_block->outputLength = image_block->expand_codes.outputLength;
+    main->pixelOutputProgress= image_block->outputLength;
 }
 
 void gd_read_image_data(gd_main_t *main, gd_index_t *output, size_t capacity) {

@@ -35,8 +35,8 @@ void renderPixels(SDL_Renderer *renderer, frame_info_t* frame_info) {
     SDL_RenderClear(renderer);
     for (uint8_t y=0; y<frame_info->height; y++) {
         for (uint8_t x=0; x<frame_info->width; x++) {
-            rect.x = x * frame_info->zoom + 100;
-            rect.y = y * frame_info->zoom + 100;
+            rect.x = x * frame_info->zoom + 80;
+            rect.y = y * frame_info->zoom + 80;
             uint16_t i = y * frame_info->width + x;
             gd_color_t c = frame_info->colors[frame_info->pixels[i]];
             uint8_t r = c.r;
@@ -71,7 +71,8 @@ void sketch(const char* filename, SDL_Renderer *renderer) {
     main.fread = (void*)fread;
 
     gd_init(&main);
-printf("init %d\n", main.err);
+    main.pixelOutputProgress = 777; // debug
+    printf("gd init %d\n", main.err);
     int blockLimit = 100;
     for ( ; blockLimit>0; blockLimit--) {
         gd_block_type_t nextBlockType = gd_next_block_type(&main);
@@ -96,17 +97,20 @@ printf("init %d\n", main.err);
                 break;
             case GD_BLOCK_IMAGE_DESCRIPTOR:
                 gd_read_image_descriptor(&main, &imd);
-                printf("imd %d %d\n", imd.image_width, imd.image_height);
+                printf("image descriptor %d %d\n", imd.image_width, imd.image_height);
                 break;
             case GD_BLOCK_IMAGE_DATA:
                 printf("pixels: %zu\n", imd.image_size);
                 pixels = (gd_index_t*)calloc(imd.image_size, sizeof(gd_index_t));
+                const gd_index_t fill = 0x45;
+                memset(pixels, fill, imd.image_size);
                 gd_read_image_data(&main, pixels, imd.image_size);
+                printf("pixels output: %d\n", main.pixelOutputProgress);
                 frame_info.width = imd.image_width;
                 frame_info.height = imd.image_height;
                 frame_info.colors = gct;
                 frame_info.pixels = pixels;
-                frame_info.zoom = 10;
+                frame_info.zoom = 4;
                 renderPixels(renderer, &frame_info);
                 break;
             case GD_BLOCK_TRAILER:

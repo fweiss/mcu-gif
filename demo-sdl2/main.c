@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
     SDL_Renderer *renderer = NULL;
 
     const int windowWidth = 640;
-    const int windowHeight = 480;
+    const int windowHeight = 640;
     window = SDL_CreateWindow("Hello World!", 
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 
         windowWidth, windowHeight, 

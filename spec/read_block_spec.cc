@@ -54,6 +54,7 @@ static const vector<uint8_t> image_descriptor({
     0x0A, 0x00, // height
     0x00,       // flags
 });
+// from the 10x10
 static const vector<uint8_t> image_data({
     0x02, 0x16, 0x8C, 0x2D, 0x99, 0x87, 0x2A, 0x1C, 0xDC, 0x33, 0xA0, 0x02, 0x75, 0xEC, 0x95, 0xFA, 0xA8, 0xDE, 0x60, 0x8C, 0x04, 0x91, 0x4C, 0x01, 0x00,
 });
@@ -227,12 +228,19 @@ describe("read block", [] {
             FFILEV(image_data + trailer);
             gd_read_image_data(&main, pixels, 100);
         });
-        it("bytes", [&] {
-            // fixme last 0x00 not read?
-            expect((int)ff_read_get_pos()).to(eq((int)25-1));
+        describe("reads", [&] {
+            it("bytes", [&] {
+                // fixme last 0x00 not read?
+                expect((int)ff_read_get_pos()).to(eq((int)25-1));
+            });
         });
-        it("pixel[0]", [&] {
-            expect((int)pixels[0]).to(eq((int)1));
+        describe("outputs", [&] {
+            it("pixels", [&] {
+                expect((int)main.pixelOutputProgress).to(eq(100));
+            });
+            it("pixel[0]", [&] {
+                expect((int)pixels[0]).to(eq((int)1));
+            });
         });
     });
     describe("plain text extension", [] {

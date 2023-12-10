@@ -71,6 +71,7 @@ typedef struct {
     void* fp; // actually opaque FILE
     ssize_t (*fread)(void* ptr, size_t size, size_t count, void* stream);
     gd_info_t info;
+    size_t pixelOutputProgress;
     gd_err_t err;
     gd_block_type_t next_block_type;
 } gd_main_t;
