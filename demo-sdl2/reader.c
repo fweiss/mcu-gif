@@ -19,6 +19,7 @@ typedef struct {
 void renderPixels(SDL_Renderer *renderer, frame_info_t* frame_info);
 void sketch(const char* filename, SDL_Renderer *renderer);
 const char * const rgbstr(gd_color_t color);
+void dumpGlobalColorTable(gd_color_t* table, size_t size);
 
 void drawGif(SDL_Renderer *renderer) {
     // const char* filename = "samples/sample_1.gif";
@@ -86,7 +87,7 @@ void sketch(const char* filename, SDL_Renderer *renderer) {
                 break;
             case GD_BLOCK_LOGICAL_SCREEN_DESCRIPTOR:
                 gd_read_logical_screen_descriptor(&main, &info);
-                printf("lsd gct flag: %d gct size: %d\n", info.globalColorTableFlag, info.globalColorTableSize);
+                printf("logical screen descripor: gct flag: %d global color table size: %d\n", info.globalColorTableFlag, info.globalColorTableSize);
                 break;
             case GD_BLOCK_GLOBAL_COLOR_TABLE:
                 gct = (gd_color_t*)calloc(info.globalColorTableSize, sizeof(gd_color_t));
@@ -119,6 +120,7 @@ void sketch(const char* filename, SDL_Renderer *renderer) {
                 printf("end of gif parsing\n");
                 blockLimit = 0;
                 printf("pixel[0] index: %d color: %s\n", frame_info.pixels[0], rgbstr(frame_info.colors[frame_info.pixels[0]]));
+                dumpGlobalColorTable(gct, info.globalColorTableSize);
                 break;
             case GD_BLOCK_COMMENT_EXTENSION:
             case GD_BLOCK_PLAIN_TEXT_EXTENSION:
@@ -150,4 +152,9 @@ const char * const rgbstr(gd_color_t color) {
     static char buffer[(digits+1)*3];
     snprintf(buffer, sizeof(buffer), "%d,%d,%d", color.r, color.g, color.b);
     return buffer; // OK static
+}
+void dumpGlobalColorTable(gd_color_t* table, size_t size) {
+    for (int i=0; i<size; i++) {
+        printf("[%d] %s\n", i, rgbstr(table[i]));
+    }
 }

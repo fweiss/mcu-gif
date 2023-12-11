@@ -61,9 +61,12 @@ Handy commands:
 - add debug info to binaries: ``cmake -DCMAKE_BUILD_TYPE=Debug ..``
 - Set a breakpoint: ``br set -f gd-test.cpp -l 148``
 - Run to breakpoint: ``r``
+- step over: ``n``
 - stack trace: ``thread backtrace``
 - local variables: ``frame variable``
 - array: ``parray 100 pixels``
+
+Hex dump of gif file. Use vi with command ``:%!xxd``
 
 ## Read image call graph
 gd_read_image_data(&main, pixels, imd.image_size)
