@@ -110,6 +110,12 @@ describe("expand image indexes", [] {
         });
     });
 
+    describe("code size large", [&] {
+        it("initialize code table", [&] {
+            gd_image_expand_code(&expand, 256);
+        });
+    });
+
     describe("full example", [&] {
         before("each", [&] {
 //            expand_codes_stream({ 4, 1, 6, 6, 2, 9, 9, 7, 8, 10, 2, 12, 1, 14, 15, 6, 0, 21, 0, 10, 7, 22, 23, 18, 26, 7, 10, 29, 13, 24, 12, 18, 16, 36, 12, 5});

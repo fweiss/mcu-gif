@@ -18,12 +18,15 @@ void gd_code_size(gd_image_block_t *block, uint8_t codeSize) {
  * Initialize the string table with 0..3 and reserve 5..6 for 
  * special control codes 4 and 5
  */
-void gd_string_table_init(gd_string_table_t *table) {
+void gd_string_table_init(gd_string_table_t *table, uint8_t minCodeSize) {
     static gd_string_table_entry_t entries[64];
     static gd_index_t strings[512];
 
+    // hmm, codeSize appears to be +1
+    const uint16_t initializedSize = (1 << minCodeSize);
+
     table->entries = entries;
-    table->length = 6;
+    table->length = initializedSize + 2;
     table->capacity = 64;
     table->strings = strings;
     table->strings_length = 4;
@@ -95,9 +98,10 @@ uint16_t gd_string_table_add(gd_string_table_t *table, gd_string_t *string) {
  *   Output: P+P[0], add P+P[0], Next prior: P+P[0]
  */
 void gd_image_expand_code(gd_expand_codes_t *expand, uint16_t extract) {
+    // fixme depends on code size
     if (extract == 0x0004) {
         expand->compressStatus = 1;
-        gd_string_table_init(&expand->string_table);
+        gd_string_table_init(&expand->string_table, expand->codeSize -1 );
         expand->prior_string.length = 0;
         return;
     } else if (extract == 0x0005) {
@@ -150,8 +154,8 @@ void gd_image_expand_code(gd_expand_codes_t *expand, uint16_t extract) {
 // given an "image data subblock", unpack it to a "code stream"
 // then decompress the "code stream" to an "index stream"
 void gd_image_subblock_decode(gd_image_block_t *block, uint8_t *subblock, uint8_t count) {
-    block->codeMask = 0x07; // move into block?
-    block->codeBits = 3;
+    // block->codeMask = 0x07; // move into block?
+    // block->codeBits = 3;
     uint16_t onDeck = 0;
     uint8_t onDeckBits = 0;
     uint16_t extract = 0;
@@ -293,12 +297,15 @@ void gd_image_block_read(gd_main_t *main, gd_image_block_t *image_block) {
     gd_expand_codes_init(&image_block->expand_codes, image_block->output);
 
     long count = GD_READ(&image_block->minumumCodeSize, 1);
+    // todo test limits
+    image_block->codeBits = image_block->minumumCodeSize + 1;
+    image_block->codeMask = (1 << image_block->codeBits) - 1;
 
     image_block->outputLength = 0;
 
     uint8_t subblockSize;
     GD_READ(&subblockSize, 1);
-    static uint8_t subblock[255];
+    static uint8_t subblock[255]; // MAX_SUB_BLOCK_SIZE
     count = GD_READ(subblock, subblockSize);
 
     gd_image_subblock_decode(image_block, subblock, subblockSize);

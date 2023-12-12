@@ -5,6 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "spec debug",
+            "type": "lldb",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/spec/start",
+            "args": [],
+        },  
+        {
             "name": "(lldb) Launch",
             "type": "lldb-vscode",
             "request": "launch",

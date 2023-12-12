@@ -85,6 +85,20 @@ describe("image data block", [] {
                 expect(image_block.output[0]).to(eq(1));
             });
         });
+
+        describe("largest min code size", [&] {
+            before("each", [&] {
+                static uint8_t input[] = { 0x08, 0x03, 0x00, 0x07, 0x00 };
+                FFILE(input);
+                gd_image_block_read(&main, &image_block);
+            });
+            it("output length", [&] {
+                expect(image_block.outputLength).to(eq(1));
+            });
+            it("index[0]", [&] {
+                expect((uint16_t)image_block.output[0]).to(eq(3));
+            });
+        });
     });
 });
 

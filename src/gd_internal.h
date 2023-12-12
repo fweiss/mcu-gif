@@ -21,6 +21,8 @@ typedef enum {
 
 typedef struct {
     gd_status_t status;
+    gd_code_t clearCode;
+    gd_code_t endCode;
     uint16_t capacity;
     uint16_t length;
     gd_string_table_entry_t *entries;
@@ -48,7 +50,7 @@ typedef struct {
     gd_expand_codes_t expand_codes;
 } gd_image_block_t;
 
-void gd_string_table_init(gd_string_table_t *string_table);
+void gd_string_table_init(gd_string_table_t *string_table, uint8_t minCodeSize);
 gd_string_t gd_string_table_at(gd_string_table_t *string_table, uint16_t);
 uint16_t gd_string_table_add(gd_string_table_t *string_table, gd_string_t *string);
 void gd_image_expand_code(gd_expand_codes_t *expand, uint16_t code);
