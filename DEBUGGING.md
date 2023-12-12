@@ -15,6 +15,40 @@ with those displayed in demo-sdl2.
 
 ## 128px-Dancing.gif
 First pixel should be rgb(58,86,148) but was rgb(0,0,153)
+First pixel index is 3 should be 43 rgb(51,85,153) as per GIMP
+51 = 0x33 = 0011 0011
+43 = 0x2b = 0010 1011
+
+suspect gd_image_subblock_decode
+
+0(6): gif header
+6(7) logical screen descriptor
+13(768): global color table
+### graphic control extension
+781/30D(8): 21 
+### first image descriptor
+789/315(10): 2C
+0000 left
+0000 right
+8000 width (LE)
+8000 height (LE)
+00
+
+### first image data block
+799/31f():
+31f: 08 lzw minimum code size (clear = 256/0x00)
+320: ff sub block size (420, 520, 620, ... 2620: 182/b6, 26d6: 00)
+321; 00 5708 4482 a444 8981 0413 2a34 c850
+0000 0000 0101 0111 0000 1000 0100 0100 1000 0010 1010 0100 0100 0100 1000 1001 1000 0001
+aaaa aaaa abbb bbbc cccc cc
+LE:
+0000 0000 1010 1110 0000 0001 0010 0010 0001 0100 0101 0010 0010 0010 0001 1001 0001 1000
+aaaa aaaa abbb bbbb bb
+a=1 0000 0000 256
+b=0 0011 1010  58
+
+21c1 2448 9248 44d2 c460 4487 0a57 6024
+28b0 c9c6 841e 4b7c 0459 8284 4912 2b9a
 
 ## BeTruthy
 
