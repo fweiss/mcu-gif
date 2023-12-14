@@ -20,7 +20,7 @@ static std::string dump(std::vector<uint8_t> p) {
     std::string o;
     for (auto b : p) {
         char buf[3];
-        sprintf(buf, "%02X", b);
+        snprintf(buf, sizeof(buf), "%02X", b);
         o += buf;
         o += ",";
     }
