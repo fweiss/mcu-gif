@@ -4,5 +4,6 @@
         "typeinfo": "cpp",
         "vector": "cpp",
         "__string": "cpp"
-    }
+    },
+    "cmake.configureOnOpen": false
 }

@@ -88,4 +88,5 @@ void gd_read_image_data(gd_main_t *main, gd_index_t *output, size_t capacity);
 void gd_read_trailer(gd_main_t *main);
 
 // abstract file read
+// fixme move to internal?
 #define GD_READ(dp, ds) (main->fread((dp), 1, (ds), main->fp))

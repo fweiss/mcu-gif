@@ -203,19 +203,44 @@ static void gd_expand_codes_init(gd_expand_codes_t *expand_codes, gd_index_t *ou
     expand_codes->compressStatus = 0;
 }
 
-/********************/
-/***  PUBLIC API  ***/
-/********************/
+// internal
+void gd_image_block_read(gd_main_t *main, gd_image_block_t *image_block) {
+    gd_expand_codes_init(&image_block->expand_codes, image_block->output);
 
+    long count = GD_READ(&image_block->minumumCodeSize, 1);
+    // todo test limits
+    image_block->codeBits = image_block->minumumCodeSize + 1;
+    image_block->codeMask = (1 << image_block->codeBits) - 1;
+
+    image_block->outputLength = 0;
+
+    uint8_t subblockSize;
+    GD_READ(&subblockSize, 1);
+    static uint8_t subblock[255]; // MAX_SUB_BLOCK_SIZE
+    count = GD_READ(subblock, subblockSize);
+
+    gd_image_subblock_decode(image_block, subblock, subblockSize);
+
+    image_block->outputLength = image_block->expand_codes.outputLength;
+    main->pixelOutputProgress= image_block->outputLength;
+}
+
+/**************************/
+/***  START PUBLIC API  ***/
+/**************************/
+
+// API
 void gd_init(gd_main_t *main) {
     main->err = GD_X_OK;
     main->next_block_type = GD_BLOCK_HEADER;
 }
 
+// API
 gd_block_type_t gd_next_block_type(gd_main_t * main) {
     return main->next_block_type;
 }
 
+// API
 void gd_read_header(gd_main_t *main) {
     const size_t header_length = 6;
     uint8_t buf[header_length];
@@ -223,6 +248,7 @@ void gd_read_header(gd_main_t *main) {
     main->next_block_type = GD_BLOCK_LOGICAL_SCREEN_DESCRIPTOR;
 }
 
+// API
 void gd_read_logical_screen_descriptor(gd_main_t *main, gd_info_t *info) {
     const uint8_t GLOBAL_COLOR_TABLE_FLAG = 0x80;
     const uint8_t GLOBAL_COLOR_TABLE_SIZE = 0x07;
@@ -261,6 +287,7 @@ void gd_read_logical_screen_descriptor(gd_main_t *main, gd_info_t *info) {
 
 // expect the client to get the proper count from info
 // alternative is to remember it from the logical screen descriptor
+// API
 void gd_read_global_color_table(gd_main_t *main, gd_color_t *color_table, size_t count) {
     // todo handle chunks
     // size_t x = main->info.globalColorTableSize * sizeof(gd_color_t);
@@ -274,6 +301,7 @@ void gd_read_global_color_table(gd_main_t *main, gd_color_t *color_table, size_t
     main->next_block_type = GD_BLOCK_GRAPHIC_CONTROL_EXTENSION;
 }
 
+// API
 void gd_read_graphic_control_extension(gd_main_t *main, gd_graphic_control_extension_t *gce) {
     uint8_t buf[8];
     GD_READ(buf, sizeof(buf));
@@ -285,6 +313,7 @@ void gd_read_graphic_control_extension(gd_main_t *main, gd_graphic_control_exten
     main->next_block_type = GD_BLOCK_IMAGE_DESCRIPTOR;
 }
 
+// API
 void gd_read_image_descriptor(gd_main_t *main, gd_image_descriptor_t* imd) {
     uint8_t buf[10];
     GD_READ(buf, sizeof(buf));
@@ -296,27 +325,7 @@ void gd_read_image_descriptor(gd_main_t *main, gd_image_descriptor_t* imd) {
     main->next_block_type = GD_BLOCK_IMAGE_DATA;
 }
 
-void gd_image_block_read(gd_main_t *main, gd_image_block_t *image_block) {
-    gd_expand_codes_init(&image_block->expand_codes, image_block->output);
-
-    long count = GD_READ(&image_block->minumumCodeSize, 1);
-    // todo test limits
-    image_block->codeBits = image_block->minumumCodeSize + 1;
-    image_block->codeMask = (1 << image_block->codeBits) - 1;
-
-    image_block->outputLength = 0;
-
-    uint8_t subblockSize;
-    GD_READ(&subblockSize, 1);
-    static uint8_t subblock[255]; // MAX_SUB_BLOCK_SIZE
-    count = GD_READ(subblock, subblockSize);
-
-    gd_image_subblock_decode(image_block, subblock, subblockSize);
-
-    image_block->outputLength = image_block->expand_codes.outputLength;
-    main->pixelOutputProgress= image_block->outputLength;
-}
-
+// API
 void gd_read_image_data(gd_main_t *main, gd_index_t *output, size_t capacity) {
     gd_image_block_t image_block;
     image_block.output = output;
@@ -326,9 +335,13 @@ void gd_read_image_data(gd_main_t *main, gd_index_t *output, size_t capacity) {
     main->next_block_type = GD_BLOCK_TRAILER;
 }
 
+// API
 void gd_read_trailer(gd_main_t *main) {
     uint8_t buf[1];
     GD_READ(buf, sizeof(buf));
     main->next_block_type = GD_BLOCK_LOGICAL_EOF;
 }
 
+/************************/
+/***  END PUBLIC API  ***/
+/************************/
