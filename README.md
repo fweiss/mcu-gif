@@ -66,7 +66,8 @@ Handy commands:
 - local variables: ``frame variable``
 - array: ``parray 100 pixels``
 
-Hex dump of gif file. Use vi with command ``:%!xxd``
+> Hex dump of gif file. Use vi with command ``:%!xxd``
+>  Or use ``xxd``
 
 ## Read image call graph
 gd_read_image_data(&main, pixels, imd.image_size)

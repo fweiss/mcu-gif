@@ -43,6 +43,12 @@ describe("string table", [] {
                 string = gd_string_table_at(&string_table, 6);
                 expect(string.length).to(eq(0));
             });
+            it("clear code", [&] {
+                expect(string_table.clearCode).to(eq(4));
+            });
+            it("end of info code", [&] {
+                expect(string_table.endCode).to(eq(5));
+            });
         });
 
         describe("add one", [&] {
@@ -89,11 +95,17 @@ describe("string table", [] {
     });
     describe("largest", [&] {
         before("each", [&] {
-            // min code size 7
-            gd_string_table_init(&string_table, 8);
+            const uint8_t minimumCodeSize = 8;
+            gd_string_table_init(&string_table, minimumCodeSize);
         });
         it("has size 256+2", [&] {
                 expect(string_table.length).to(eq(258));
+        });
+        it("clear code", [&] {
+            expect(string_table.clearCode).to(eq(256));
+        });
+        it("end of info code", [&] {
+            expect(string_table.endCode).to(eq(257));
         });
     });
 

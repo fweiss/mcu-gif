@@ -50,6 +50,12 @@ b=0 0011 1010  58
 21c1 2448 9248 44d2 c460 4487 0a57 6024
 28b0 c9c6 841e 4b7c 0459 8284 4912 2b9a
 
+## Access exception in
+in expand_state_spec, near line 60
+this goes away if ``gd_string_table_init(&expand.string_table, 2);``
+is inserted in expand_state_spec.cc in the before each
+but then other errors occur
+
 ## BeTruthy
 
 ``error LNK2001: unresolved external symbol "class ccspec::matchers::BeTruthy const & const ccspec::matchers::be_truthy" (?be_truthy@matchers@ccspec@@3ABVBeTruthy@12@B)``

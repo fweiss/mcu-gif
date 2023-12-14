@@ -31,6 +31,8 @@ void gd_string_table_init(gd_string_table_t *table, uint8_t minCodeSize) {
     table->strings = strings;
     table->strings_length = 4;
     table->strings_capacity = 512;
+    table->clearCode = initializedSize;
+    table->endCode = initializedSize + 1;
 
     for (int i=0; i<4; i++) {
         gd_string_table_entry_t *entry = &table->entries[i];
@@ -100,11 +102,12 @@ uint16_t gd_string_table_add(gd_string_table_t *table, gd_string_t *string) {
 void gd_image_expand_code(gd_expand_codes_t *expand, uint16_t extract) {
     // fixme depends on code size
     if (extract == 0x0004) {
+    // if (extract == expand->string_table.clearCode) {
         expand->compressStatus = 1;
         gd_string_table_init(&expand->string_table, expand->codeSize -1 );
         expand->prior_string.length = 0;
         return;
-    } else if (extract == 0x0005) {
+    } else if (extract == expand->string_table.endCode) {
         expand->compressStatus = 0;
         return;
     }
