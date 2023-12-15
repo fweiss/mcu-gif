@@ -51,7 +51,7 @@ spec/start
 ## Debugging
 Example on MacOS using lldb
 
-In CXXFLAGS, add ``-g -O0``
+> Make sure executable includes debugging info: ``cmake -DCMAKE_BUILD_TYPE=Debug ..``
 
 Start the lldb debugger: ``lldb build/gd-test``
 
@@ -69,7 +69,7 @@ Handy commands:
 > Hex dump of gif file. Use vi with command ``:%!xxd``
 >  Or use ``xxd``
 
-## Read image call graph
+## Read image data call graph
 gd_read_image_data(&main, pixels, imd.image_size)
   gd_image_block_read(main, &image_block)
     gd_expand_codes_init(&image_block->expand_codes, image_block->output)

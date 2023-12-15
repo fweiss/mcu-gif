@@ -107,8 +107,10 @@ void sketch(const char* filename, SDL_Renderer *renderer) {
                 pixels = (gd_index_t*)calloc(imd.image_size, sizeof(gd_index_t));
                 const gd_index_t fill = 0x45;
                 memset(pixels, fill, imd.image_size);
+
                 gd_read_image_data(&main, pixels, imd.image_size);
                 printf("pixels output: %zu\n", main.pixelOutputProgress);
+                
                 frame_info.width = imd.image_width;
                 frame_info.height = imd.image_height;
                 frame_info.colors = gct;
