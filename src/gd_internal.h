@@ -31,6 +31,8 @@ typedef struct {
     gd_index_t *strings;
 } gd_string_table_t;
 
+// this data used for decompressing a LZW sub-block
+// to the index output
 typedef struct {
     uint8_t compressStatus;
     uint8_t codeSize;
@@ -40,6 +42,11 @@ typedef struct {
     uint16_t outputLength;
 } gd_expand_codes_t;
 
+// the data used to process an image block
+// and its constituent image sub-blocks
+// see gd_read_image_data() initiator
+// see gd_image_block_read()
+// see gd_image_subblock_decode() hmm
 typedef struct {
     uint8_t minumumCodeSize;
     uint8_t codeBits;
