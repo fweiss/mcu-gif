@@ -82,13 +82,15 @@ describe("image data block", [] {
                 expect(image_block.outputLength).to(eq(1));
             });
             it("has one index", [&] {
-                expect(image_block.output[0]).to(eq(1));
+                expect((int)image_block.output[0]).to(eq(1));
             });
         });
 
-        describe("largest min code size", [&] {
+        // failing because string min Code size isn't recognized
+        describe("largest min code size 8", [&] {
             before("each", [&] {
-                static uint8_t input[] = { 0x08, 0x03, 0x00, 0x07, 0x00 };
+                // static uint8_t input[] = { 0x08, 0x03, 0x00, 0x07, 0x00 };
+                static uint8_t input[] = { 0x08, 0x04, 0x00, 0x07, 0x04, 0x04, 0x00 };
                 FFILE(input);
                 gd_image_block_read(&main, &image_block);
             });

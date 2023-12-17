@@ -93,14 +93,45 @@ describe("string table", [] {
             });
         });
     });
-    describe("largest", [&] {
+    describe("largest code size 8", [&] {
         before("each", [&] {
             const uint8_t minimumCodeSize = 8;
             gd_string_table_init(&string_table, minimumCodeSize);
         });
         it("has size 256+2", [&] {
-                expect(string_table.length).to(eq(258));
+            expect(string_table.length).to(eq(258));
         });
+        describe("entries", [&] {
+            it("allocated 256+2 entries", [&] {
+                expect((int)string_table.length).to(eq(256+2));
+            });
+        });
+        describe("string", [&] {
+            it("next string pos", [&] {
+                expect((int)string_table.strings_length).to(eq(256));
+            });
+        });
+
+        it("adds code beyond", [&] {
+            expect(string_table.length).to(eq(256+2));
+        });
+        describe("string table entry[255]", [&] {
+            it("has length 1", [&] {
+                gd_string_table_entry_t &entry = string_table.entries[255];
+                expect(entry.length).to(eq(1));
+            });
+            it("has index 255", [&] {
+                gd_string_table_entry_t &entry = string_table.entries[255];
+                gd_index_t *index = &string_table.strings[entry.offset];
+                expect((int)index[0]).to(eq(255));
+            });
+            it("has value 255", [&] {
+                gd_string_table_entry_t entry = string_table.entries[255];
+                expect((int)string_table.strings[entry.offset]).to(eq(255));
+            });
+        });
+
+        // deprecated, should be in gd_expand_t
         it("clear code", [&] {
             expect(string_table.clearCode).to(eq(256));
         });

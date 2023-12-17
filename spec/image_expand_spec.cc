@@ -45,6 +45,7 @@ describe("expand image indexes", [] {
         // N.B. 'output' must be the array, not a pointer
         memset(output, 0, sizeof(output));
         expand.codeSize = 3;
+        expand.clearCode = 4;
         expand.output = output;
         expand.outputLength = 0;
     });
@@ -147,6 +148,27 @@ describe("expand image indexes", [] {
         });
         it("output [99] 1", [&] {
             expect(expand.output[99]).to(eq(1));
+        });
+    });
+
+    describe("minimum code size 8", [&] {
+        before("each", [&] {
+            expand.clearCode = 256; // need to find where this should get initialized
+            expand.codeSize = 9;
+            
+            // 2 -> 64 1 -> 0, 128 -> 128, 511 -> 1
+            uint16_t codes[] = { 256, 255, 257};
+            for (auto code : codes) {
+                // note this takes an unpacked code
+                gd_image_expand_code(&expand, code);
+            }
+        });
+        it("output length", [&] {
+            expect(expand.outputLength).to(eq(1));
+        });
+        it("output value", [&] {
+            gd_expand_codes_t &xx = expand;
+            expect((int)xx.output[0]).to(eq(255));
         });
     });
 

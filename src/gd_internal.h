@@ -31,11 +31,16 @@ typedef struct {
     gd_index_t *strings;
 } gd_string_table_t;
 
-// this data used for decompressing a LZW sub-block
-// to the index output
+// this data is used for decompressing codes from a LZW sub-block,
+// expanding each unpacked code to zero or more indexes
+// this may require re-initializing the code table (when clearCode is encountered)
+// note that this resets the codeSize
+// it has the state of the string table (aka code table)
+// it has the state of the output index stream
 typedef struct {
     uint8_t compressStatus;
     uint8_t codeSize;
+    uint16_t clearCode;
     gd_string_table_t string_table;
     gd_string_t prior_string;
     gd_index_t *output;
@@ -47,14 +52,16 @@ typedef struct {
 // see gd_read_image_data() initiator
 // see gd_image_block_read()
 // see gd_image_subblock_decode() hmm
+// one challenge of the nested structs is an attempt
+// to limit the data a function can access
 typedef struct {
-    uint8_t minumumCodeSize;
-    uint8_t codeBits;
-    uint16_t codeMask;
-    gd_index_t *output;
+    uint8_t minumumCodeSize;        // comes directly from the image block
+    uint8_t codeBits;               // the current number of bits in the code
+    uint16_t codeMask;              // mask for the bits in the code, derived from codeBits
+    gd_index_t *output;             // the indexes expanded form th4 codes
     uint16_t outputLength;
     uint8_t compressStatus;
-    gd_expand_codes_t expand_codes;
+    gd_expand_codes_t expand_codes; // ?? narrowed for the 
 } gd_image_block_t;
 
 void gd_string_table_init(gd_string_table_t *string_table, uint8_t minCodeSize);

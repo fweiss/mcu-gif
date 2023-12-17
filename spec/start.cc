@@ -27,7 +27,10 @@ namespace simple {
 
 int main() {
     ExampleGroup* example_groups[] = {
+
         simple::helpers_spec,
+
+        // bottom up order
         simple::string_table_spec,
         simple::expand_state_spec,
         simple::image_expand_spec,

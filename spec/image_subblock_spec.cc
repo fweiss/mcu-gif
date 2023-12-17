@@ -41,6 +41,7 @@ describe("image subblock with", [] {
         block.outputLength = 0;
 
         block.expand_codes.codeSize = 3;
+        block.expand_codes.clearCode = 4;
         block.expand_codes.output = output;
         block.expand_codes.outputLength = 0;
         block.expand_codes.compressStatus = 0;
