@@ -20,6 +20,7 @@ void renderPixels(SDL_Renderer *renderer, frame_info_t* frame_info);
 void sketch(const char* filename, SDL_Renderer *renderer);
 const char * const rgbstr(gd_color_t color);
 void dumpGlobalColorTable(gd_color_t* table, size_t size);
+void dumpPixel(frame_info_t *frame_info, uint16_t p);
 
 void drawGif(SDL_Renderer *renderer) {
     // const char* filename = "samples/sample_1.gif";
@@ -122,6 +123,10 @@ void sketch(const char* filename, SDL_Renderer *renderer) {
                 printf("end of gif parsing\n");
                 blockLimit = 0;
                 printf("pixel[0] index: %d color: %s\n", frame_info.pixels[0], rgbstr(frame_info.colors[frame_info.pixels[0]]));
+                dumpPixel(&frame_info, 0);
+                dumpPixel(&frame_info, 1);
+                dumpPixel(&frame_info, 2);
+                dumpPixel(&frame_info, 3);
                 dumpGlobalColorTable(gct, info.globalColorTableSize);
                 break;
             case GD_BLOCK_COMMENT_EXTENSION:
@@ -154,6 +159,9 @@ const char * const rgbstr(gd_color_t color) {
     static char buffer[(digits+1)*3];
     snprintf(buffer, sizeof(buffer), "%d,%d,%d", color.r, color.g, color.b);
     return buffer; // OK static
+}
+void dumpPixel(frame_info_t *frame_info, uint16_t p) {
+    printf("pixel[%d] index: %d color: %s\n", p, frame_info->pixels[p], rgbstr(frame_info->colors[frame_info->pixels[p]]));
 }
 void dumpGlobalColorTable(gd_color_t* table, size_t size) {
     for (int i=0; i<size; i++) {
