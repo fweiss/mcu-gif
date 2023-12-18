@@ -43,6 +43,10 @@ describe("string table", [] {
                 string = gd_string_table_at(&string_table, 6);
                 expect(string.length).to(eq(0));
             });
+            // these need to be known before init of the string table
+            // the clear code in the code stream is used to trigger init
+            // they can be determined at the beginning of an image block
+            // see gd_image_block_read()
             it("clear code", [&] {
                 expect(string_table.clearCode).to(eq(4));
             });

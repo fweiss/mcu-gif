@@ -115,7 +115,7 @@ void sketch(const char* filename, SDL_Renderer *renderer) {
                 frame_info.height = imd.image_height;
                 frame_info.colors = gct;
                 frame_info.pixels = pixels;
-                frame_info.zoom = 40;
+                frame_info.zoom = 4;
                 renderPixels(renderer, &frame_info);
                 break;
             case GD_BLOCK_TRAILER:
