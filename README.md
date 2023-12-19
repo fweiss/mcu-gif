@@ -79,6 +79,39 @@ gd_read_image_data(&main, pixels, imd.image_size)
         gd_string_table_at()
         gd_string_table_add()
 
+### gd_read_image_data()
+- API function
+- init image_block_t with output buffer
+- delegate to gd_image_block_read()
+
+### gd_image_block_read()
+- init gd_expand_codes_t member of gd_image_block_t, copy data
+- read minimum code size
+- init image_block and image_block.expand_codes with code size info
+- read sub block size
+- allocate sub block buffer on stack
+- decode sub block via gd_image_subblock_decode, using image_block
+
+### gd_image_subblock_decode() aka subblock_unpack
+- given a subblock buffer
+- unpacks it to a stream of codes
+- passes the stream of unpacked codes to gd_image_expand_code()
+- needs to know code bits/code mask
+- needs to know shift out
+- needs to know when code size changes
+
+> This was inverted to avoid a callback or state machine.
+> but that may be what makes the structures wonky.
+> Its function is unpack not decode.
+
+### gd_image_expand_code() aka code_expand
+- given an unpacked code
+- adds indices to the output
+- builds the code table
+- needs to know string table
+- needs to know string table size
+- needs to know clear code/end of information code
+
 ## Visual test
 To visually verify the decoder, a small GUI is included. It can be run on the development host.
 

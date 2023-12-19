@@ -12,6 +12,17 @@
             "args": [],
         },  
         {
+            "name": "demo debug",
+            "type": "lldb",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/demo-sdl2",
+            "program": "${workspaceFolder}/demo-sdl2/main",
+            "args": [],
+            "initCommands": [
+                "command source ${workspaceFolder}/.vscode/.lldbinit"
+             ],
+        },  
+        {
             "name": "(lldb) Launch",
             "type": "lldb-vscode",
             "request": "launch",

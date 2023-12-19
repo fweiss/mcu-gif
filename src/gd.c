@@ -178,7 +178,6 @@ void gd_image_subblock_decode(gd_image_block_t *block, uint8_t *subblock, uint8_
             onDeck >>= block->codeBits;
             onDeckBits -= block->codeBits;
 
-//            gd_image_expand_code(block, extract);
             gd_image_expand_code(&block->expand_codes, extract);
             if (block->expand_codes.codeSize != block->codeBits) {
                 gd_code_size(block, block->expand_codes.codeSize);
