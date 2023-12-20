@@ -47,12 +47,13 @@ describe("string table", [] {
             // the clear code in the code stream is used to trigger init
             // they can be determined at the beginning of an image block
             // see gd_image_block_read()
-            it("clear code", [&] {
-                expect(string_table.clearCode).to(eq(4));
-            });
-            it("end of info code", [&] {
-                expect(string_table.endCode).to(eq(5));
-            });
+            // deprecated moved to gd_expand
+            // it("clear code", [&] {
+            //     expect(string_table.clearCode).to(eq(4));
+            // });
+            // it("end of info code", [&] {
+            //     expect(string_table.endCode).to(eq(5));
+            // });
         });
 
         describe("add one", [&] {
@@ -136,12 +137,12 @@ describe("string table", [] {
         });
 
         // deprecated, should be in gd_expand_t
-        it("clear code", [&] {
-            expect(string_table.clearCode).to(eq(256));
-        });
-        it("end of info code", [&] {
-            expect(string_table.endCode).to(eq(257));
-        });
+        // it("clear code", [&] {
+        //     expect(string_table.clearCode).to(eq(256));
+        // });
+        // it("end of info code", [&] {
+        //     expect(string_table.endCode).to(eq(257));
+        // });
     });
 
 

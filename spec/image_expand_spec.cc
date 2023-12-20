@@ -44,8 +44,11 @@ describe("expand image indexes", [] {
     before("each", [] {
         // N.B. 'output' must be the array, not a pointer
         memset(output, 0, sizeof(output));
+
+        // todo extract function
         expand.codeSize = 3;
         expand.clearCode = 4;
+        expand.endCode = 5;
         expand.output = output;
         expand.outputLength = 0;
     });
@@ -154,6 +157,7 @@ describe("expand image indexes", [] {
     describe("minimum code size 8", [&] {
         before("each", [&] {
             expand.clearCode = 256; // need to find where this should get initialized
+            expand.endCode = 257;
             expand.codeSize = 9;
             
             // 2 -> 64 1 -> 0, 128 -> 128, 511 -> 1

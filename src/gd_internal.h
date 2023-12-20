@@ -21,8 +21,11 @@ typedef enum {
 
 typedef struct {
     gd_status_t status;
-    gd_code_t clearCode;
-    gd_code_t endCode;
+
+    // deprecated move to gd_expand_codes_t
+    // gd_code_t clearCode;
+    // gd_code_t endCode;
+
     uint16_t capacity;
     uint16_t length;
     gd_string_table_entry_t *entries;
@@ -41,6 +44,7 @@ typedef struct {
     uint8_t compressStatus;
     uint8_t codeSize;
     uint16_t clearCode;
+    uint16_t endCode;
     gd_string_table_t string_table;
     gd_string_t prior_string;
     gd_index_t *output;

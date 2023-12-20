@@ -97,7 +97,7 @@ gd_read_image_data(&main, pixels, imd.image_size)
 - read image subblock
 - decode sub block via gd_image_subblock_decode, using image_block
 
-### gd_image_subblock_decode() aka subblock_unpack
+### gd_image_subblock_unpack()
 - given gd_image_block
 - given a subblock buffer and size
 - unpacks it to a stream of codes
@@ -110,7 +110,7 @@ gd_read_image_data(&main, pixels, imd.image_size)
 > but that may be what makes the structures wonky.
 > Its function is unpack not decode.
 
-### gd_image_expand_code() aka code_expand
+### gd_image_code_expand()
 - given gd_codes_expand_t with outout and capacity
 - given gd_codes_expand_t with gd_string_table_t
 - given gd_codes_expand_t with codeSize, clearCode, priorString, compressStatus

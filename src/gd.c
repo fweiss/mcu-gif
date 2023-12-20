@@ -31,8 +31,10 @@ void gd_string_table_init(gd_string_table_t *table, uint8_t minCodeSize) {
     table->strings = strings;
     table->strings_length = initializedSize;
     table->strings_capacity = 512;
-    table->clearCode = initializedSize;
-    table->endCode = initializedSize + 1;
+
+    // deprecated, use gd_image_code_t
+    // table->clearCode = initializedSize;
+    // table->endCode = initializedSize + 1;
 
     // for (int i=0; i<4; i++) {
     for (int i=0; i<initializedSize; i++) {
@@ -110,7 +112,8 @@ void gd_image_code_expand(gd_expand_codes_t *expand, uint16_t extract) {
         // gd_string_table_init(&expand->string_table, expand->clearCode*2 );
         expand->prior_string.length = 0;
         return;
-    } else if (extract == expand->string_table.endCode) {
+    // } else if (extract == expand->string_table.endCode) {
+    } else if (extract == expand->endCode) {
         expand->compressStatus = 0;
         return;
     }
@@ -219,7 +222,7 @@ void gd_image_block_read(gd_main_t *main, gd_image_block_t *image_block) {
 
     image_block->expand_codes.codeSize = image_block->codeBits;
     image_block->expand_codes.clearCode = (1 << image_block->minumumCodeSize);
-    // image_block->expand_codes.endCode = image_block->expand_codes.clearCode + 1;
+    image_block->expand_codes.endCode = image_block->expand_codes.clearCode + 1;
 
     image_block->outputLength = 0;
 
