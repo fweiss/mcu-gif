@@ -38,13 +38,13 @@ describe("expand state", [] {
 
         it("code 4 clears", [&] {
             expand.string_table.length = 10;
-            gd_image_expand_code(&expand, 4);
+            gd_image_code_expand(&expand, 4);
             expect(expand.string_table.length).to(eq(6));
         });
     });
     describe("scenario", [] {
         before("each", [] {
-            gd_image_expand_code(&expand, 4);
+            gd_image_code_expand(&expand, 4);
         });
         describe("prior string was ()", [] {
             before("each", [] {
@@ -52,7 +52,7 @@ describe("expand state", [] {
             });
             describe("found 2 (2)", []  {
                 before("each", [] {
-                    gd_image_expand_code(&expand, 2);
+                    gd_image_code_expand(&expand, 2);
                 });
                 it("prior length 1", [] {
                      expect(expand.prior_string.length).to(eq(1));
@@ -73,7 +73,7 @@ describe("expand state", [] {
             });
             describe("found 2 {2}", []  {
                 before("each", [] {
-                    gd_image_expand_code(&expand, 2);
+                    gd_image_code_expand(&expand, 2);
                 });
                 it("prior length 1", [] {
                      expect(expand.prior_string.length).to(eq(1));
@@ -84,7 +84,7 @@ describe("expand state", [] {
             });
             describe("not found 6 ()", [] {
                 before("each", [] {
-                    gd_image_expand_code(&expand, 6);
+                    gd_image_code_expand(&expand, 6);
                 });
                 it("prior length 2", [] {
                      expect(expand.prior_string.length).to(eq(2));
@@ -105,7 +105,7 @@ describe("expand state", [] {
             });
             describe("found 3 (3)", [] {
                 before("each", [] {
-                    gd_image_expand_code(&expand, 3);
+                    gd_image_code_expand(&expand, 3);
                 });
                 it("prior length 1", [] {
                     expect(expand.prior_string.length).to(eq(1));
@@ -122,7 +122,7 @@ describe("expand state", [] {
                     string.value = string_value;
                     // assume this will add code 6
                     gd_string_table_add(&expand.string_table, &string);
-                    gd_image_expand_code(&expand, 6);
+                    gd_image_code_expand(&expand, 6);
                 });
                 it("prior length 2", [] {
                     expect(expand.prior_string.length).to(eq(2));
@@ -136,7 +136,7 @@ describe("expand state", [] {
             });
             describe("not found 7", [] {
                 before("each", [] {
-                    gd_image_expand_code(&expand, 7);
+                    gd_image_code_expand(&expand, 7);
                 });
                 it("prior length 3", [] {
                     expect(expand.prior_string.length).to(eq(3));

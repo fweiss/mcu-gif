@@ -37,7 +37,7 @@ describe("expand image indexes", [] {
     // clever use of lambda instead of define
     auto expand_codes_stream = [&] (std::vector<uint16_t> codes) {
         for (uint16_t code : codes) {
-            gd_image_expand_code(&expand, code);
+            gd_image_code_expand(&expand, code);
         }
     };
 
@@ -79,11 +79,11 @@ describe("expand image indexes", [] {
         });
         describe("code sequence 28 1's", [&] {
             before("each", [&] {
-                gd_image_expand_code(&expand, 4);
+                gd_image_code_expand(&expand, 4);
                 for (int i=0; i<28; i++) {
-                    gd_image_expand_code(&expand, 1);
+                    gd_image_code_expand(&expand, 1);
                 }
-                gd_image_expand_code(&expand, 5);
+                gd_image_code_expand(&expand, 5);
             });
             it("code size", [&] {
                 expect((uint16_t)expand.codeSize).to(eq(6));
@@ -104,7 +104,7 @@ describe("expand image indexes", [] {
 //            expand_codes_stream({ 4, 1, 6, 6, 2, 5 });
             uint16_t codes[] = { 4, 1, 6, 6, 2, 5};
             for (auto code : codes) {
-                gd_image_expand_code(&expand, code);
+                gd_image_code_expand(&expand, code);
             }
 //            expect(expand.string_table.length).to(eq(6));
             expect((uint16_t)expand.codeSize).to(eq(4));
@@ -113,7 +113,7 @@ describe("expand image indexes", [] {
 
     describe("code size large", [&] {
         it("initialize code table", [&] {
-            gd_image_expand_code(&expand, 256);
+            gd_image_code_expand(&expand, 256);
         });
     });
 
@@ -122,7 +122,7 @@ describe("expand image indexes", [] {
 //            expand_codes_stream({ 4, 1, 6, 6, 2, 9, 9, 7, 8, 10, 2, 12, 1, 14, 15, 6, 0, 21, 0, 10, 7, 22, 23, 18, 26, 7, 10, 29, 13, 24, 12, 18, 16, 36, 12, 5});
             uint16_t codes[] = { 4, 1, 6, 6, 2, 9, 9, 7, 8, 10, 2, 12, 1, 14, 15, 6, 0, 21, 0, 10, 7, 22, 23, 18, 26, 7, 10, 29, 13, 24, 12, 18, 16, 36, 12, 5};
             for (auto code : codes) {
-                gd_image_expand_code(&expand, code);
+                gd_image_code_expand(&expand, code);
             }
         });
         it("output count 100", [&] {
@@ -160,7 +160,7 @@ describe("expand image indexes", [] {
             uint16_t codes[] = { 256, 255, 257};
             for (auto code : codes) {
                 // note this takes an unpacked code
-                gd_image_expand_code(&expand, code);
+                gd_image_code_expand(&expand, code);
             }
         });
         it("output length", [&] {

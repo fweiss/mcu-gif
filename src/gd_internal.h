@@ -51,7 +51,7 @@ typedef struct {
 // and its constituent image sub-blocks
 // see gd_read_image_data() initiator
 // see gd_image_block_read()
-// see gd_image_subblock_decode() hmm
+// see gd_image_subblock_unpack() hmm
 // one challenge of the nested structs is an attempt
 // to limit the data a function can access
 typedef struct {
@@ -67,7 +67,7 @@ typedef struct {
 void gd_string_table_init(gd_string_table_t *string_table, uint8_t minCodeSize);
 gd_string_t gd_string_table_at(gd_string_table_t *string_table, uint16_t);
 uint16_t gd_string_table_add(gd_string_table_t *string_table, gd_string_t *string);
-void gd_image_expand_code(gd_expand_codes_t *expand, uint16_t code);
-void gd_image_subblock_decode(gd_image_block_t *block, uint8_t *subblock, uint8_t count);
+void gd_image_code_expand(gd_expand_codes_t *expand, uint16_t code);
+void gd_image_subblock_unpack(gd_image_block_t *block, uint8_t *subblock, uint8_t count);
 void gd_image_block_read(gd_main_t *main, gd_image_block_t *block);
 void gd_code_size(gd_image_block_t *block, uint8_t codeSize);

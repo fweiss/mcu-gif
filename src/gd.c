@@ -100,7 +100,7 @@ uint16_t gd_string_table_add(gd_string_table_t *table, gd_string_t *string) {
  * Not found:
  *   Output: P+P[0], add P+P[0], Next prior: P+P[0]
  */
-void gd_image_expand_code(gd_expand_codes_t *expand, uint16_t extract) {
+void gd_image_code_expand(gd_expand_codes_t *expand, uint16_t extract) {
     // fixme depends on code size
     // if (extract == 0x0004) {
     if (extract == expand->clearCode) {
@@ -158,11 +158,11 @@ void gd_image_expand_code(gd_expand_codes_t *expand, uint16_t extract) {
 }
 
 // given an "image data subblock", unpack its "byte stream" to a "code stream"
-// then decompress the "code stream" to an "index stream" via gd_image_expand_code()
+// then decompress the "code stream" to an "index stream" via gd_image_code_expand()
 // this can occur 0 or more times in an image block
 // it can init the code table, 
 // but the minumumCodeSize is determined by the parent image block
-void gd_image_subblock_decode(gd_image_block_t *block, uint8_t *subblock, uint8_t count) {
+void gd_image_subblock_unpack(gd_image_block_t *block, uint8_t *subblock, uint8_t count) {
     // block->codeMask = 0x07; // move into block?
     // block->codeBits = 3;
     uint16_t onDeck = 0;        // holds the bits coming from the byte stream
@@ -178,7 +178,7 @@ void gd_image_subblock_decode(gd_image_block_t *block, uint8_t *subblock, uint8_
             onDeck >>= block->codeBits;
             onDeckBits -= block->codeBits;
 
-            gd_image_expand_code(&block->expand_codes, extract);
+            gd_image_code_expand(&block->expand_codes, extract);
             if (block->expand_codes.codeSize != block->codeBits) {
                 gd_code_size(block, block->expand_codes.codeSize);
             }
@@ -228,7 +228,7 @@ void gd_image_block_read(gd_main_t *main, gd_image_block_t *image_block) {
     static uint8_t subblock[255]; // MAX_SUB_BLOCK_SIZE
     count = GD_READ(subblock, subblockSize);
 
-    gd_image_subblock_decode(image_block, subblock, subblockSize);
+    gd_image_subblock_unpack(image_block, subblock, subblockSize);
 
     image_block->outputLength = image_block->expand_codes.outputLength;
     main->pixelOutputProgress= image_block->outputLength;

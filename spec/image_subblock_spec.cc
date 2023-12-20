@@ -51,7 +51,7 @@ describe("image subblock with", [] {
 
         before("each", [&] {
             code_stream_t packed = p + 4 + 5;
-            gd_image_subblock_decode(&block, packed.data(), packed.size());
+            gd_image_subblock_unpack(&block, packed.data(), packed.size());
         });
 
         it("output length", [&] { expect(expand_codes.outputLength).to(eq(0)); });
@@ -61,7 +61,7 @@ describe("image subblock with", [] {
 
         before("each", [&] {
             code_stream_t packed = p + 4 + 0 + 5;
-            gd_image_subblock_decode(&block, packed.data(), packed.size());
+            gd_image_subblock_unpack(&block, packed.data(), packed.size());
         });
 
         it("output length", [&] { expect(expand_codes.outputLength).to(eq(1)); });
@@ -73,7 +73,7 @@ describe("image subblock with", [] {
 
         before("each", [&] {
             code_stream_t packed = p + 4 + 1 + 5;
-            gd_image_subblock_decode(&block, packed.data(), packed.size());
+            gd_image_subblock_unpack(&block, packed.data(), packed.size());
         });
 
         it("output length", [&] { expect(expand_codes.outputLength).to(eq(1)); });
@@ -85,7 +85,7 @@ describe("image subblock with", [] {
 
         before("each", [&] {
             code_stream_t packed = p + 4 + 0 + 1 + 5;
-            gd_image_subblock_decode(&block, packed.data(), packed.size());
+            gd_image_subblock_unpack(&block, packed.data(), packed.size());
         });
         it("output length", [&] { expect(expand_codes.outputLength).to(eq(2)); });
         it("[0]", [&] { expect(expand_codes.output[1]).to(eq(0x01)); });
@@ -97,7 +97,7 @@ describe("image subblock with", [] {
             // to require 4 bit codes
             code_stream_t packed = p + 4 + 1 + 6 + 6 + Shift(4) + 2 + 5;
             block.outputLength = 0;
-            gd_image_subblock_decode(&block, packed.data(), packed.size());
+            gd_image_subblock_unpack(&block, packed.data(), packed.size());
             expect(expand_codes.codeSize).to(eq(4));
         });
     });
