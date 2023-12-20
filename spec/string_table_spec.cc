@@ -20,6 +20,20 @@ describe("string table", [] {
     static gd_string_table_t string_table;
     static gd_string_t string;
 
+    // deprecated, shout not be internal static allocation
+    // fixme remove magic constants
+    describe("capacity", [&] {
+        before("each", [&] {
+            gd_string_table_init(&string_table, 2);
+        });
+        it("entries", [&] {
+            expect(string_table.capacity).to(eq(564));
+        });
+        it("strings", [&] {
+            expect(string_table.strings_capacity).to(eq(512));
+        });
+    });
+
     describe("smallest", [&] {
         before("each", [&] {
             gd_string_table_init(&string_table, 2);

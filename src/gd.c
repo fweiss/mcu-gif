@@ -19,24 +19,19 @@ void gd_code_size(gd_image_block_t *block, uint8_t codeSize) {
  * special control codes 4 and 5
  */
 void gd_string_table_init(gd_string_table_t *table, uint8_t minCodeSize) {
+    // fixme let client supply these
     static gd_string_table_entry_t entries[564];
     static gd_index_t strings[512];
 
-    // hmm, codeSize appears to be +1
     const uint16_t initializedSize = (1 << minCodeSize);
 
     table->entries = entries;
     table->length = initializedSize + 2;
-    table->capacity = 64;
+    table->capacity = sizeof(entries) / sizeof(entries[0]); // elements, not bytes
     table->strings = strings;
     table->strings_length = initializedSize;
-    table->strings_capacity = 512;
+    table->strings_capacity = sizeof(strings);
 
-    // deprecated, use gd_image_code_t
-    // table->clearCode = initializedSize;
-    // table->endCode = initializedSize + 1;
-
-    // for (int i=0; i<4; i++) {
     for (int i=0; i<initializedSize; i++) {
         gd_string_table_entry_t *entry = &table->entries[i];
         entry->length = 1;
