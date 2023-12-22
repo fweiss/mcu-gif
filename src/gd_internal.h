@@ -20,7 +20,8 @@ typedef enum {
 } gd_status_t;
 
 typedef struct {
-    gd_status_t status;
+    // gd_status_t status;
+    gd_err_t status; // fixme s/b err
 
     // deprecated move to gd_expand_codes_t
     // gd_code_t clearCode;

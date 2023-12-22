@@ -31,6 +31,7 @@ void gd_string_table_init(gd_string_table_t *table, uint8_t minCodeSize) {
     table->strings = strings;
     table->strings_length = initializedSize;
     table->strings_capacity = sizeof(strings);
+    table->status = GD_X_OK;
 
     for (int i=0; i<initializedSize; i++) {
         gd_string_table_entry_t *entry = &table->entries[i];
@@ -76,10 +77,12 @@ uint16_t gd_string_table_add(gd_string_table_t *table, gd_string_t *string) {
         memcpy((void*)&table->strings[table->strings_length], (void*)string->value, string->length * sizeof(gd_index_t));
         table->strings_length += string->length;
 
-        table->status = GD_OK;
+        table->status = GD_X_OK;
         return code;
     } else {
-        table->status = GD_ERROR;
+        // fixme s/staus/err/
+        // unlikely both?
+        table->status = entries_has_space ? GD_ERR_STRINGS_NO_SPACE : GD_ERR_ENTRIES_NO_SPACE;
         return 0xFFFF;
     }
 }
@@ -132,7 +135,9 @@ void gd_image_code_expand(gd_expand_codes_t *expand, uint16_t extract) {
     // skip insert on initial code
     if (expand->prior_string.length > 0) {
         gd_string_table_add(&expand->string_table, &new_string);
-        // check string_table.status
+        if (expand->string_table.status != GD_OK) {
+            return;
+        }
     }
 
     // propagate prior string
@@ -230,6 +235,8 @@ void gd_image_block_read(gd_main_t *main, gd_image_block_t *image_block) {
 
     image_block->outputLength = image_block->expand_codes.outputLength;
     main->pixelOutputProgress= image_block->outputLength;
+    main->err = image_block->expand_codes.string_table.status;
+    // main->err = GD_ERR_STRINGS_NO_SPACE;
 }
 
 /**************************/
@@ -337,6 +344,7 @@ void gd_read_image_data(gd_main_t *main, gd_index_t *output, size_t capacity) {
     gd_image_block_t image_block;
     image_block.output = output;
     image_block.outputLength = capacity;
+    image_block.expand_codes.string_table.status = GD_ERR_NO_INIT;
     gd_image_block_read(main, &image_block);
     // to do peek
     main->next_block_type = GD_BLOCK_TRAILER;

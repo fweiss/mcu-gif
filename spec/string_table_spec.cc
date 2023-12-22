@@ -32,10 +32,14 @@ describe("string table", [] {
         it("strings", [&] {
             expect(string_table.strings_capacity).to(eq(512));
         });
+        it("init err", [&] {
+            expect(string_table.status).to(eq(GD_X_OK));
+        });
     });
 
     describe("smallest", [&] {
         before("each", [&] {
+            string_table.status = GD_ERR_NO_INIT;
             gd_string_table_init(&string_table, 2);
         });
 
@@ -57,17 +61,9 @@ describe("string table", [] {
                 string = gd_string_table_at(&string_table, 6);
                 expect(string.length).to(eq(0));
             });
-            // these need to be known before init of the string table
-            // the clear code in the code stream is used to trigger init
-            // they can be determined at the beginning of an image block
-            // see gd_image_block_read()
-            // deprecated moved to gd_expand
-            // it("clear code", [&] {
-            //     expect(string_table.clearCode).to(eq(4));
-            // });
-            // it("end of info code", [&] {
-            //     expect(string_table.endCode).to(eq(5));
-            // });
+            it("err ok", [&] {
+                expect((int)string_table.status).to(eq(GD_X_OK));
+            });
         });
 
         describe("add one", [&] {
@@ -81,12 +77,12 @@ describe("string table", [] {
                     string_table.capacity = 6;
                     uint16_t code = gd_string_table_add(&string_table, &string);
         //            expect(code).to(eq(0xFFFF));
-                    expect((uint16_t)string_table.status).to(eq((uint16_t)GD_ERROR));
+                    expect((uint16_t)string_table.status).to(eq((uint16_t)GD_ERR_ENTRIES_NO_SPACE));
                 });
                 it("strings", [&] {
                     string_table.strings_capacity = 2;
                     uint16_t code = gd_string_table_add(&string_table, &string);
-                    expect((uint16_t)string_table.status).to(eq((uint16_t)GD_ERROR));
+                    expect((uint16_t)string_table.status).to(eq((uint16_t)GD_ERR_STRINGS_NO_SPACE));
                 });
             });
             it("return new code", [&] {

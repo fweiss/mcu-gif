@@ -18,6 +18,7 @@ extern "C" {
 }
 
 #include "helpers/fake_file.h"
+#include "helpers/pack.h"
 
 static const vector<uint8_t> header({ 'G', 'I', 'F', '8', '9', 'a' });
 static const vector<uint8_t> logical_screen_descriptor({
@@ -124,6 +125,40 @@ describe("read block error", [] {
             expect((int)main.err).to(be == (int)GD_ERR_BLOCK_PREFIX);
         });
     });
+    describe("string table error", [&] {
+        // FIXME hangs if file not initialized
+        // gd_string_table_add
+        // would be nice to set string_table.strings_capacity
+        // but that's currently hard wired
+        it("entries has space", [&] {
+        });
+        #if 0
+        it("strings has space", [&] {
+        
+            Pack pk;
+            pk.reset();
+            vector<uint8_t> prefix({ 0x02, 200 });
+            Pack packed = pk + 4 + 1;
+            // for (int i=0; i<4; i++) { // works < 5
+            //     packed + 0xff;
+            // }
+            packed + 0x05;
+
+            FFILEV(prefix + packed);
+
+            static gd_index_t pixels[10];
+            // gd_read_image_data - main.err
+            // gd_read_image_data - main.err
+            // gd_image_block_read - image_block.expand_codes.string_table
+            // gd_image_subblock_unpack
+            // gd_image_code_expand - expand.string-table
+            // gd_string_table_add - string_table.err
+            gd_read_image_data(&main, pixels, sizeof(pixels));
+            expect((int)main.err).to(eq(GD_ERR_STRINGS_NO_SPACE));
+        });
+        #endif
+    });
+
 });
 
 } // namespace

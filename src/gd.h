@@ -65,6 +65,9 @@ typedef enum {
     GD_X_OK = 0, // conflict internal.h
     GD_ERR_BLOCK_PREFIX = 1,    // unexpected beginbing of block
     GD_ERR_EOF = 2,             // premature end of file reached
+    GD_ERR_STRINGS_NO_SPACE,
+    GD_ERR_ENTRIES_NO_SPACE,
+    GD_ERR_NO_INIT,
 } gd_err_t;
 
 typedef struct {
