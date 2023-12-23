@@ -109,6 +109,23 @@ void sketch(const char* filename, SDL_Renderer *renderer) {
                 const gd_index_t fill = 0x45;
                 memset(pixels, fill, imd.image_size);
 
+                // at this point we'd like to be able to re/allocate space for:
+                // - global color table
+                // - code buffer - optional, current stack allocation is ok
+                // - string table entries and strings
+                // also a helper function to estimate size for given image descriptor
+
+                // gd_alloc_output(gd_info *info, void *mem, const size_t len)
+                // gd_alloc_string_table_entries()
+                // gd_alloc_string_table_strings()
+
+                // maybe via gd_info, which already knows global color table size
+
+                // consumer of gct: GD_BLOCK_GLOBAL_COLOR_TABLE, gd_read_global_color_table
+                // consumer of output: GD_BLOCK_IMAGE_DATA, gd_read_image_data
+                // conumser of entries: 
+
+
                 gd_read_image_data(&main, pixels, imd.image_size);
                 printf("pixels output: %zu\n", main.pixelOutputProgress);
                 if (main.err != GD_X_OK) {
@@ -128,11 +145,11 @@ void sketch(const char* filename, SDL_Renderer *renderer) {
                 printf("end of gif parsing\n");
                 blockLimit = 0;
                 printf("pixel[0] index: %d color: %s\n", frame_info.pixels[0], rgbstr(frame_info.colors[frame_info.pixels[0]]));
-                dumpPixel(&frame_info, 0);
-                dumpPixel(&frame_info, 1);
-                dumpPixel(&frame_info, 2);
-                dumpPixel(&frame_info, 3);
-                dumpGlobalColorTable(gct, info.globalColorTableSize);
+                // dumpPixel(&frame_info, 0);
+                // dumpPixel(&frame_info, 1);
+                // dumpPixel(&frame_info, 2);
+                // dumpPixel(&frame_info, 3);
+                // dumpGlobalColorTable(gct, info.globalColorTableSize);
                 break;
             case GD_BLOCK_COMMENT_EXTENSION:
             case GD_BLOCK_PLAIN_TEXT_EXTENSION:

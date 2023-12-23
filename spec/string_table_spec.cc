@@ -8,6 +8,7 @@ using ccspec::core::before;
 using ccspec::core::it;
 using ccspec::expect;
 using ccspec::matchers::eq;
+using ccspec::matchers::be;
 
 extern "C" {
 	#include "gd_internal.h"
@@ -30,7 +31,7 @@ describe("string table", [] {
             expect(string_table.capacity).to(eq(564));
         });
         it("strings", [&] {
-            expect(string_table.strings_capacity).to(eq(512));
+            expect(string_table.strings_capacity).to(be > 512);
         });
         it("init err", [&] {
             expect(string_table.status).to(eq(GD_X_OK));

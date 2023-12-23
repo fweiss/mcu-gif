@@ -20,8 +20,10 @@ void gd_code_size(gd_image_block_t *block, uint8_t codeSize) {
  */
 void gd_string_table_init(gd_string_table_t *table, uint8_t minCodeSize) {
     // fixme let client supply these
-    static gd_string_table_entry_t entries[564];
-    static gd_index_t strings[512];
+    const size_t entriesCapacity = 564;
+    static gd_string_table_entry_t entries[entriesCapacity];
+    const size_t stringsCapacity = 512*10;
+    static gd_index_t strings[stringsCapacity];
 
     const uint16_t initializedSize = (1 << minCodeSize);
 
@@ -236,7 +238,6 @@ void gd_image_block_read(gd_main_t *main, gd_image_block_t *image_block) {
     image_block->outputLength = image_block->expand_codes.outputLength;
     main->pixelOutputProgress= image_block->outputLength;
     main->err = image_block->expand_codes.string_table.status;
-    // main->err = GD_ERR_STRINGS_NO_SPACE;
 }
 
 /**************************/
