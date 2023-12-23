@@ -15,7 +15,7 @@ using ccspec::core::ExampleGroup;
 
 namespace simple {
     extern ExampleGroup* spec_10x10_red_blue_white;
-    extern ExampleGroup* image_block_spec;
+    extern ExampleGroup* image_data_block_spec;
     extern ExampleGroup* helpers_spec;
     extern ExampleGroup* image_subblock_spec;
     extern ExampleGroup* image_expand_spec;
@@ -35,7 +35,7 @@ int main() {
         simple::expand_state_spec,
         simple::image_expand_spec,
         simple::image_subblock_spec,
-        simple::image_block_spec,
+        simple::image_data_block_spec,
         simple::spec_10x10_red_blue_white,
         simple::read_block_spec,
         simple::read_block_error_spec,
