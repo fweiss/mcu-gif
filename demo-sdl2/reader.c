@@ -111,6 +111,11 @@ void sketch(const char* filename, SDL_Renderer *renderer) {
 
                 gd_read_image_data(&main, pixels, imd.image_size);
                 printf("pixels output: %zu\n", main.pixelOutputProgress);
+                if (main.err != GD_X_OK) {
+                    printf("read image data failed: err: %d\n", (int)main.err);
+                    // todo clean up?
+                    return;
+                }
                 
                 frame_info.width = imd.image_width;
                 frame_info.height = imd.image_height;
