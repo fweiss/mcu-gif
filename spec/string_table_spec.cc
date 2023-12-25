@@ -28,7 +28,7 @@ describe("string table", [] {
             gd_string_table_init(&string_table, 2);
         });
         it("entries", [&] {
-            expect(string_table.capacity).to(eq(564));
+            expect(string_table.capacity).to(be > 564);
         });
         it("strings", [&] {
             expect(string_table.strings_capacity).to(be > 512);

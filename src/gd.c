@@ -20,9 +20,9 @@ void gd_code_size(gd_image_block_t *block, uint8_t codeSize) {
  */
 void gd_string_table_init(gd_string_table_t *table, uint8_t minCodeSize) {
     // fixme let client supply these
-    const size_t entriesCapacity = 564;
+    const size_t entriesCapacity = 564 * 16;
     static gd_string_table_entry_t entries[entriesCapacity];
-    const size_t stringsCapacity = 512*10;
+    const size_t stringsCapacity = 512 * 1000;
     static gd_index_t strings[stringsCapacity];
 
     const uint16_t initializedSize = (1 << minCodeSize);
