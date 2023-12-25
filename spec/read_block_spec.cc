@@ -230,8 +230,7 @@ describe("read block", [] {
         });
         describe("reads", [&] {
             it("bytes", [&] {
-                // fixme last 0x00 not read?
-                expect((int)ff_read_get_pos()).to(eq((int)25-1));
+                expect((int)ff_read_get_pos()).to(eq((int)25));
             });
         });
         describe("outputs", [&] {

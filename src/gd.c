@@ -228,16 +228,21 @@ void gd_image_block_read(gd_main_t *main, gd_image_block_t *image_block) {
 
     image_block->outputLength = 0;
 
-    uint8_t subblockSize;
-    GD_READ(&subblockSize, 1);
-    static uint8_t subblock[255]; // MAX_SUB_BLOCK_SIZE
-    count = GD_READ(subblock, subblockSize);
+    for (int wdt=0; wdt<5000; wdt++) {
+        uint8_t subblockSize;
+        GD_READ(&subblockSize, 1);
+        if (subblockSize == 0) {
+            return;
+        }
+        static uint8_t subblock[255]; // MAX_SUB_BLOCK_SIZE
+        count = GD_READ(subblock, subblockSize);
 
-    gd_image_subblock_unpack(image_block, subblock, subblockSize);
+        gd_image_subblock_unpack(image_block, subblock, subblockSize);
 
-    image_block->outputLength = image_block->expand_codes.outputLength;
-    main->pixelOutputProgress= image_block->outputLength;
-    main->err = image_block->expand_codes.string_table.status;
+        image_block->outputLength = image_block->expand_codes.outputLength;
+        main->pixelOutputProgress= image_block->outputLength;
+        main->err = image_block->expand_codes.string_table.status;
+    }
 }
 
 /**************************/
