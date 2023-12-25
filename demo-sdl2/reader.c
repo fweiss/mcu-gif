@@ -163,6 +163,9 @@ void sketch(const char* filename, SDL_Renderer *renderer) {
             break;
         }
     }
+
+    printf("bytes read from file: %d\n", ftell(fp));
+    
     if (blockLimit == 0) {
         printf("block limit expired");
     }
