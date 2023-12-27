@@ -121,12 +121,11 @@ describe("image data block", [] {
 
         before("each", [&] {
             p.reset();
-            // this works as one block of length 9
+            // this works as one block of length 4
             vector<uint8_t> zinger = p + 4 + 1 + 6 + 6 + Shift(4) + 2 + 9 + 9 + 7 + 5;
 
             // and spilt in blocks
-            vector<uint8_t> blocks[2];
-            const size_t split = 9 / 2;
+            const size_t split = 2;
             vector<uint8_t> split0(zinger.begin(), zinger.begin() + split);
             vector<uint8_t> split1(zinger.begin() + split, zinger.end());
 

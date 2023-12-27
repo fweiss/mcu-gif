@@ -168,40 +168,40 @@ void gd_image_code_expand(gd_expand_codes_t *expand, uint16_t extract) {
 // it can init the code table, 
 // but the minumumCodeSize is determined by the parent image block
 void gd_image_subblock_unpack(gd_image_block_t *block, uint8_t *subblock, uint8_t count) {
-    // block->codeMask = 0x07; // move into block?
-    // block->codeBits = 3;
-    uint16_t onDeck = 0;        // holds the bits coming from the byte stream
-    uint8_t onDeckBits = 0;
-    uint16_t extract = 0;       // the fully assmbled code
-    uint8_t topBits = 0;
-    uint16_t top;               // the partially assmebled code 
+    // uint16_t onDeck = 0;        // holds the bits coming from the byte stream
+    // uint8_t onDeckBits = 0;
+    // uint16_t extract = 0;       // the fully assmbled code
+    // uint8_t topBits = 0;
+    // uint16_t top;               // the partially assmebled code 
+
+    gd_expand_codes_t * const expand = &block->expand_codes;
 
     for (int i=0; ; ) {
         // shift out of on deck
-        while (onDeckBits >= block->codeBits) {
-            extract = onDeck & block->codeMask;
-            onDeck >>= block->codeBits;
-            onDeckBits -= block->codeBits;
+        while (expand->onDeckBits >= block->codeBits) {
+            expand->extract = expand->onDeck & block->codeMask;
+            expand->onDeck >>= block->codeBits;
+            expand->onDeckBits -= block->codeBits;
 
-            gd_image_code_expand(&block->expand_codes, extract);
+            gd_image_code_expand(&block->expand_codes, expand->extract);
             if (block->expand_codes.codeSize != block->codeBits) {
                 gd_code_size(block, block->expand_codes.codeSize);
             }
         }
         // shift into on deck
-        if (topBits > 0) {
-            uint8_t shiftBits = (topBits > 16 - onDeckBits) ? (16 - onDeckBits) : topBits;
-            onDeck |= top << onDeckBits;
-            onDeckBits += shiftBits;
-            topBits -= shiftBits;
+        if (expand->topBits > 0) {
+            uint8_t shiftBits = (expand->topBits > 16 - expand->onDeckBits) ? (16 - expand->onDeckBits) : expand->topBits;
+            expand->onDeck |= expand->top << expand->onDeckBits;
+            expand->onDeckBits += shiftBits;
+            expand->topBits -= shiftBits;
         }
         // shift into top
-        if (topBits == 0 && onDeckBits < block->codeBits) { // lazy fetch
+        if (expand->topBits == 0 && expand->onDeckBits < block->codeBits) { // lazy fetch
             if (i == count) {
                 break;
             }
-            top = subblock[i++];
-            topBits = 8;
+            expand->top = subblock[i++];
+            expand->topBits = 8;
         }
     }
 }
@@ -227,6 +227,12 @@ void gd_image_block_read(gd_main_t *main, gd_image_block_t *image_block) {
     image_block->expand_codes.endCode = image_block->expand_codes.clearCode + 1;
 
     image_block->outputLength = 0;
+
+    // initialize unpack
+    image_block->expand_codes.onDeck = 0;        // holds the bits coming from the byte stream
+    image_block->expand_codes.onDeckBits = 0;
+    image_block->expand_codes.extract = 0;       // the fully assmbled code
+    image_block->expand_codes.topBits = 0;
 
     for (int wdt=0; wdt<5000; wdt++) {
         uint8_t subblockSize;

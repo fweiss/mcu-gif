@@ -50,6 +50,14 @@ typedef struct {
     gd_string_t prior_string;
     gd_index_t *output;
     uint16_t outputLength;
+
+    // unpack state variables, needed for subblocks
+    uint16_t onDeck;            // holds the bits coming from the byte stream
+    uint8_t onDeckBits;
+    uint16_t extract;           // the fully assmbled code
+    uint8_t topBits;
+    uint16_t top;               // the partially assmebled code 
+
 } gd_expand_codes_t;
 
 // the data used to process an image block

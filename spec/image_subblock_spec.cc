@@ -47,6 +47,13 @@ describe("image subblock with", [] {
         block.expand_codes.output = output;
         block.expand_codes.outputLength = 0;
         block.expand_codes.compressStatus = 0;
+
+        // unpack state machine
+        block.expand_codes.onDeck = 0;        // holds the bits coming from the byte stream
+        block.expand_codes.onDeckBits = 0;
+        block.expand_codes.extract = 0;       // the fully assmbled code
+        block.expand_codes.topBits = 0;
+
     });
 
     describe("codes 4 + 5", [&] {
