@@ -15,8 +15,9 @@ void gd_code_size(gd_image_block_t *block, uint8_t codeSize) {
 }
 
 /**
- * Initialize the string table with 0..3 and reserve 5..6 for 
- * special control codes 4 and 5
+ * Initialize the string table with 0..2^n-1
+ * and reserve 2^n and 2^n+1 for 
+ * special control codes
  */
 void gd_string_table_init(gd_string_table_t *table, uint8_t minCodeSize) {
     // fixme let client supply these
@@ -103,16 +104,12 @@ uint16_t gd_string_table_add(gd_string_table_t *table, gd_string_t *string) {
  *   Output: P+P[0], add P+P[0], Next prior: P+P[0]
  */
 void gd_image_code_expand(gd_expand_codes_t *expand, uint16_t extract) {
-    // fixme depends on code size
-    // if (extract == 0x0004) {
     if (extract == expand->clearCode) {
         expand->compressStatus = 1;
         // table init same as clearcode, but codebits is 2 x
         gd_string_table_init(&expand->string_table, expand->codeSize -1 );
-        // gd_string_table_init(&expand->string_table, expand->clearCode*2 );
         expand->prior_string.length = 0;
         return;
-    // } else if (extract == expand->string_table.endCode) {
     } else if (extract == expand->endCode) {
         expand->compressStatus = 0;
         return;
@@ -149,13 +146,6 @@ void gd_image_code_expand(gd_expand_codes_t *expand, uint16_t extract) {
     memcpy(&expand->output[expand->outputLength], expand->prior_string.value, expand->prior_string.length * sizeof(gd_index_t));
     expand->outputLength += expand->prior_string.length;
 
-//    if (expand->string_table.length == 8) {
-//        expand->codeSize = 4;
-//    } else if (expand->string_table.length == 16) {
-//        expand->codeSize = 5;
-//    } else if (expand->string_table.length == 32) {
-//        expand->codeSize = 6;
-//    }
     // does code not fit in code size bits?
     if (expand->string_table.length >> expand->codeSize) {
         expand->codeSize++;
@@ -168,11 +158,6 @@ void gd_image_code_expand(gd_expand_codes_t *expand, uint16_t extract) {
 // it can init the code table, 
 // but the minumumCodeSize is determined by the parent image block
 void gd_image_subblock_unpack(gd_image_block_t *block, uint8_t *subblock, uint8_t count) {
-    // uint16_t onDeck = 0;        // holds the bits coming from the byte stream
-    // uint8_t onDeckBits = 0;
-    // uint16_t extract = 0;       // the fully assmbled code
-    // uint8_t topBits = 0;
-    // uint16_t top;               // the partially assmebled code 
 
     gd_expand_codes_t * const expand = &block->expand_codes;
 
