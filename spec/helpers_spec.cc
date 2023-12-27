@@ -14,6 +14,8 @@ using ccspec::matchers::be_truthy;
 
 #include <string>
 #include <cstdio>
+#include <vector>
+using std::vector;
 
 // for comparing vectors, until ccspec has a diff reporter
 static std::string dump(std::vector<uint8_t> p) {
@@ -123,6 +125,42 @@ describe("helpers", [] {
             it("output", [&] {
                 expect(dump(packed)).to(eq("8C,4D,B2,00,"));
             });
+        });
+    });
+    /*
+    lsb:
+     4      
+    .... .100
+    1
+    ..00 1100
+    6
+    1000 1100 .... ...1
+    6
+    1000 1100 .... 1101
+    2
+    1000 1100 0010 1101
+    9/4
+    1000 1100 0010 1101 .... 1001
+    9
+    1000 1100 0010 1101 1001 1001
+    7
+    1000 1100 0010 1101 1001 1001 .... 0111
+    5
+    1000 1100 0010 1101 1001 1001 0101 0111
+    = 8C 2D 99 57
+    */
+    describe("for subblock", [&] {
+        static vector<uint8_t> v;
+        before("each", [&] {
+            Pack p;
+            p.reset();
+            v = p + 4 + 1 + 6 + 6 + Shift(4) + 2 + 9 + 9 + 7 + 5;
+        });
+        it("packed size", [&] {
+            expect(v.size()).to(eq(4));
+        });
+        it("packed bytes", [&] {
+            expect(dump(v)).to(eq("8C,2D,99,57,"));
         });
     });
 });
