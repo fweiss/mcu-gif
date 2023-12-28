@@ -23,6 +23,7 @@ namespace simple {
     extern ExampleGroup* expand_state_spec;
     extern ExampleGroup* read_block_spec;
     extern ExampleGroup* read_block_error_spec;
+    extern ExampleGroup* image_decompress_spec;
 }
 
 int main() {
@@ -39,6 +40,8 @@ int main() {
         simple::spec_10x10_red_blue_white,
         simple::read_block_spec,
         simple::read_block_error_spec,
+
+        simple::image_decompress_spec,
     };
 
     DocumentationFormatter formatter(cout);
