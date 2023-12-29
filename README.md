@@ -64,6 +64,7 @@ Handy commands:
 - step over: ``n``
 - stack trace: ``thread backtrace``
 - local variables: ``frame variable``
+- global variable: ``target var expand``
 - array: ``parray 100 pixels``
 
 > Hex dump of gif file. Use vi with command ``:%!xxd``
