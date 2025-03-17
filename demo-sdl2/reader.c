@@ -2,7 +2,13 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <unistd.h>
+// #include <unistd.h>
+#include "windows.h"
+
+// windows
+#include "io.h"
+#pragma warning(disable : 4996)
+#define open _open
 
 #include <SDL.h>
 

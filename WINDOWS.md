@@ -25,6 +25,22 @@ You should see the test report as a tree of the test specs.
 
 > TODO Should rename start to test.
 
+## Build and run demo-sdl2
+This will run a SDL2 window that decodes and displays a gif file.
+- cd ``demo-sdl2\build``
+- run ``cmake -G "NMake Makefiles2" ..``
+- cd ..
+- run ``build\demo-sdl2.exe``
+
+Setup the SDL2 toolchain as follows:
+- go to https://github.com/libsdl-org/SDL/releases
+- navigate to version 2.2.8
+- download SDL2-devel-2.2.8-VC.zip
+- unzip
+- move it to a particular folder, such as ``\Libraries``
+- before running cmake, set that folder
+- before running demo-sdl2, add the folder plus ``\lib\x86`` to the path
+
 ## Install toolchain
 Download and install "Visual Studio Installer".
 

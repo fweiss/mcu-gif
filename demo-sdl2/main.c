@@ -15,6 +15,9 @@ void draw(SDL_Renderer *renderer) {
 //	drawFile(renderer);
 }
 
+// kill main that might have been defined in SDL_main
+#undef main
+
 int main(int argc, char *argv[])
 {
     printf("getting\n");
