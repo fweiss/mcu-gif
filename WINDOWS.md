@@ -34,12 +34,11 @@ This will run a SDL2 window that decodes and displays a gif file.
 
 Setup the SDL2 toolchain as follows:
 - go to https://github.com/libsdl-org/SDL/releases
-- navigate to version 2.2.8
-- download SDL2-devel-2.2.8-VC.zip
+- navigate to version 2.32.2
+- download SDL2-devel-2.32.2-VC.zip
 - unzip
 - move it to a particular folder, such as ``\Libraries``
 - before running cmake, set that folder
-- before running demo-sdl2, add the folder plus ``\lib\x86`` to the path
 
 ## Install toolchain
 Download and install "Visual Studio Installer".
