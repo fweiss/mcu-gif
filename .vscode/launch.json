@@ -5,10 +5,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "(Windows) Launch",
+            "name": "demo-sdl2 debug",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/test/test.exe",
+            "program": "${workspaceFolder}/demo-sdl2/build/demo-sdl2.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
