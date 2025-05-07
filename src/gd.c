@@ -21,9 +21,9 @@ void gd_code_size(gd_image_block_t *block, uint8_t codeSize) {
  */
 void gd_string_table_init(gd_string_table_t *table, uint8_t minCodeSize) {
     // fixme let client supply these
-    const size_t entriesCapacity = 564 * 16;
+    #define entriesCapacity ((size_t)(564 * 16))
     static gd_string_table_entry_t entries[entriesCapacity];
-    const size_t stringsCapacity = 512 * 1000;
+    #define stringsCapacity ((size_t)(512 * 1000))
     static gd_index_t strings[stringsCapacity];
 
     const uint16_t initializedSize = (1 << minCodeSize);
@@ -253,7 +253,7 @@ gd_block_type_t gd_next_block_type(gd_main_t * main) {
 
 // API
 void gd_read_header(gd_main_t *main) {
-    const size_t header_length = 6;
+    #define header_length ((size_t)(6))
     uint8_t buf[header_length];
     GD_READ(buf, sizeof(buf));
     main->next_block_type = GD_BLOCK_LOGICAL_SCREEN_DESCRIPTOR;
