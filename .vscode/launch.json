@@ -5,40 +5,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "spec debug",
-            "type": "lldb",
-            "request": "launch",
-            "program": "${workspaceFolder}/build/spec/start",
-            "args": [],
-        },  
-        {
-            "name": "demo debug",
-            "type": "lldb",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/demo-sdl2",
-            "program": "${workspaceFolder}/demo-sdl2/main",
-            "args": [],
-            "initCommands": [
-                "command source ${workspaceFolder}/.vscode/.lldbinit"
-             ],
-        },  
-        {
-            "name": "(lldb) Launch",
-            "type": "lldb-vscode",
-            "request": "launch",
-            "program": "${workspaceFolder}/build/bin/start",
-            "args": [],
-            "stopAtEntry": false,
-            "cwd": "${fileDirname}",
-            "environment": [],
-            "externalConsole": false,
-            "MIMode": "lldb"
-        },
-        {
-            "name": "(Windows) Launch",
+            "name": "demo-sdl2 debug",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/test/test.exe",
+            "program": "${workspaceFolder}/demo-sdl2/build/demo-sdl2.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
