@@ -30,7 +30,7 @@ void dumpPixel(frame_info_t *frame_info, uint16_t p);
 
 void drawGif(SDL_Renderer *renderer) {
     // const char* filename = "samples/sample_1.gif";
-    const char* filename = "samples/128px-Dancing.gif";
+    const char* filename = "samples/128px-green.gif";
     sketch(filename,renderer);
 }
 
