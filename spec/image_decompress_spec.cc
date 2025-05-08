@@ -62,7 +62,7 @@ describe("image decompress", [] {
             gd_image_code_expand(&expand, 4);
             gd_image_code_expand(&expand, firstcode);
         });
-        describe("found", [] {
+        describe("found expanding [4,1,2]", [] {
             before("each", [] {
                 const gd_code_t secondcode = 2;
                 gd_image_code_expand(&expand, secondcode);
@@ -98,7 +98,7 @@ describe("image decompress", [] {
                 });
             describe("previous code", [] {});
         });
-        describe("not found", [] {
+        describe("not found expanding [4,1,6]", [] {
             before("each", [] {
                 const gd_code_t secondcode = 6;
                 gd_image_code_expand(&expand, secondcode);
@@ -146,7 +146,7 @@ describe("image decompress", [] {
                     expect(expand.prior_string.length).to(eq(1));
                 });
                 it("code[0]", [] {
-                    expect(expand.prior_string.value[0]).to(eq(6));
+                    expect((int)expand.prior_string.value[0]).to(eq(6));
                 });
             });
         });
