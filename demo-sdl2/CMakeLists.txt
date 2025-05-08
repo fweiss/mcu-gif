@@ -1,20 +1,19 @@
 cmake_minimum_required(VERSION 3.17)
 
 project(demo-sdl2)
+set(CMAKE_C_STANDARD 99)
 
-add_subdirectory("../src" "gd")
+# todo get this from environment variable
+set(SDL2 "e:/Libraries/SDL2-2.32.2")
+set(SDL2_INC ${SDL2}/include)
+set(SDL2_LIB ${SDL2}/lib/x86/SDL2.lib)
+set(SDL2_DLL ${SDL2}/lib/x86/SDL2.dll)
 
-add_executable(demo-sdl2 main.c reader.c)
+file(GLOB SRC main.c reader.c)
 
-target_include_directories(demo-sdl2 PRIVATE /Library/Frameworks/SDL2.framework/Headers)
-target_include_directories(demo-sdl2 PRIVATE ../src)
+add_executable(demo-sdl2 ${SRC})
+include_directories(${SDL2_INC} ../src)
+target_link_libraries(demo-sdl2 ${SDL2_LIB} ../../build/src/main)
 
-add_library(sdl2 STATIC IMPORTED)
-set_target_properties(sdl2 PROPERTIES IMPORTED_LOCATION /Library/Frameworks/SDL2.framework/SDL2)
-target_link_libraries(demo-sdl2 PRIVATE sdl2)
-
-add_library(gd SHARED IMPORTED)
-# set_target_properties(gd PROPERTIES IMPORTED_LOCATION ../build/src)
-target_link_libraries(demo-sdl2 PUBLIC gd)
-
-install(TARGETS demo-sdl2)
+# this could be done with PATH, but copying is more explicit
+file(COPY ${SDL2_DLL} DESTINATION ${CMAKE_BINARY_DIR})

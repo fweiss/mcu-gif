@@ -2,7 +2,13 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <unistd.h>
+// #include <unistd.h>
+#include "windows.h"
+
+// windows
+#include "io.h"
+#pragma warning(disable : 4996)
+#define open _open
 
 #include <SDL.h>
 
@@ -24,7 +30,7 @@ void dumpPixel(frame_info_t *frame_info, uint16_t p);
 
 void drawGif(SDL_Renderer *renderer) {
     // const char* filename = "samples/sample_1.gif";
-    const char* filename = "samples/128px-Dancing.gif";
+    const char* filename = "samples/128px-green.gif";
     sketch(filename,renderer);
 }
 
@@ -180,7 +186,7 @@ void sketch(const char* filename, SDL_Renderer *renderer) {
 }
 
 const char * const rgbstr(gd_color_t color) {
-    const int digits = 3; // max "255"
+    #define digits ((int)(3))
     static char buffer[(digits+1)*3];
     snprintf(buffer, sizeof(buffer), "%d,%d,%d", color.r, color.g, color.b);
     return buffer; // OK static
