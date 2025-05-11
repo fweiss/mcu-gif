@@ -333,6 +333,20 @@ void gd_read_image_descriptor(gd_main_t *main, gd_image_descriptor_t* imd) {
     imd->image_width = gd_unpack_word(&buf[1+4]);
     imd->image_height = gd_unpack_word(&buf[1+6]);
     imd->image_size = imd->image_width * imd->image_height;
+    uint8_t flags = buf[9];
+    main->next_block_type = (flags & 0x80)
+        ? GD_BLOCK_LOCAL_COLOR_TABLE
+        : GD_BLOCK_IMAGE_DATA;
+}
+
+// see gd_read_global_color_table
+void gd_read_local_color_table(gd_main_t *main, gd_color_t *color_table, size_t count) {
+    size_t want = count * sizeof(gd_color_t);
+    size_t got = GD_READ((uint8_t*)color_table, want);
+    if (got != want) {
+        main->err = GD_ERR_EOF;
+        return;
+    }
     main->next_block_type = GD_BLOCK_IMAGE_DATA;
 }
 

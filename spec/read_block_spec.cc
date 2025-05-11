@@ -54,7 +54,14 @@ static const vector<uint8_t> image_descriptor({
     0x0A, 0x00, // height
     0x00,       // flags
 });
+static const uint8_t flags_local_color_table = 0x80;
 // from the 10x10
+static const vector<uint8_t> local_color_table({
+    0x00, 0x00, 0x00,
+    0xff, 0xff, 0xff,
+    0xff, 0x00, 0x00,
+    0x00, 0x00, 0xff,
+});
 static const vector<uint8_t> image_data({
     0x02, 0x16, 0x8C, 0x2D, 0x99, 0x87, 0x2A, 0x1C, 0xDC, 0x33, 0xA0, 0x02, 0x75, 0xEC, 0x95, 0xFA, 0xA8, 0xDE, 0x60, 0x8C, 0x04, 0x91, 0x4C, 0x01, 0x00,
 });
@@ -317,13 +324,28 @@ describe("read block", [] {
         });
         describe("after image descriptor", [&] {
             gd_image_descriptor_t imd;
-            // local color table (based on flag)
+            static std::vector<uint8_t> image_descriptor_block = image_descriptor;
+            it("local color table", [&] {
+                image_descriptor_block[9] |= flags_local_color_table;
+                FFILEV(image_descriptor_block + image_data);
+                gd_read_image_descriptor(&main, &imd);
+                expect((int)gd_next_block_type(&main)).to(eq((int)GD_BLOCK_LOCAL_COLOR_TABLE));
+            });
             it("image data", [&] {
                 FFILEV(image_descriptor + image_data);
                 gd_read_image_descriptor(&main, &imd);
                 expect((int)gd_next_block_type(&main)).to(eq((int)GD_BLOCK_IMAGE_DATA));
             });
         });
+        // describe("after local color table", [&] {
+        //     static gd_color_t lct[14];
+        //     it("image data", [&] {
+        //         // FFILEV(local_color_table + image_data);
+        //         // gd_read_local_color_table(&main, lct, 4);
+        //         // expect((int)gd_next_block_type(&main)).to(eq((int)GD_BLOCK_IMAGE_DATA));
+        //         expect(1).to(be == 1);
+        //     });
+        // });
         describe("after image data", [&] {
             // trailer 3B
             // see also logical screen desciptor, global color table

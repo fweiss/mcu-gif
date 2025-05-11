@@ -53,12 +53,13 @@ typedef enum {
     GD_BLOCK_GLOBAL_COLOR_TABLE = 3,
     GD_BLOCK_GRAPHIC_CONTROL_EXTENSION = 4,
     GD_BLOCK_IMAGE_DESCRIPTOR = 5,
-    GD_BLOCK_IMAGE_DATA = 6,
-    GD_BLOCK_TRAILER = 7,
-    GD_BLOCK_COMMENT_EXTENSION = 8,
-    GD_BLOCK_PLAIN_TEXT_EXTENSION = 9,
-    GD_BLOCK_APPLICATION_EXTENSION = 10,
-    GD_BLOCK_LOGICAL_EOF = 11,
+    GD_BLOCK_LOCAL_COLOR_TABLE = 6,
+    GD_BLOCK_IMAGE_DATA = 7,
+    GD_BLOCK_TRAILER = 8,
+    GD_BLOCK_COMMENT_EXTENSION = 9,
+    GD_BLOCK_PLAIN_TEXT_EXTENSION = 10,
+    GD_BLOCK_APPLICATION_EXTENSION = 11,
+    GD_BLOCK_LOGICAL_EOF = 12,
 } gd_block_type_t;
 
 typedef enum {
@@ -87,6 +88,7 @@ void gd_read_logical_screen_descriptor(gd_main_t *main, gd_info_t *info);
 void gd_read_global_color_table(gd_main_t *main, gd_color_t *color_table, size_t count);
 void gd_read_graphic_control_extension(gd_main_t *main, gd_graphic_control_extension_t *gce);
 void gd_read_image_descriptor(gd_main_t *main, gd_image_descriptor_t* imd);
+void gd_read_local_color_table(gd_main_t *main, gd_color_t *color_table, size_t count);
 void gd_read_image_data(gd_main_t *main, gd_index_t *output, size_t capacity);
 void gd_read_trailer(gd_main_t *main);
 
