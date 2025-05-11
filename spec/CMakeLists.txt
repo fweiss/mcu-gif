@@ -8,9 +8,6 @@ if(APPLE)
   # set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 endif()
 
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
-
 # magic to link with ccspec.lib
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
