@@ -30,7 +30,6 @@ describe("image subblock with", [] {
 
     static gd_image_block_t block;
     static gd_expand_codes_t &expand_codes = block.expand_codes;
-    static uint16_t outputLength;
     static Pack p;
 
     before("each", [] {

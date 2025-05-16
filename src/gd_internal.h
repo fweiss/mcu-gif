@@ -72,7 +72,7 @@ typedef struct {
     uint8_t codeBits;               // the current number of bits in the code
     uint16_t codeMask;              // mask for the bits in the code, derived from codeBits
     gd_index_t *output;             // the indexes expanded form th4 codes
-    uint16_t outputLength;
+    size_t outputLength;
     uint8_t compressStatus;
     gd_expand_codes_t expand_codes; // ?? narrowed for the 
 } gd_image_block_t;
@@ -81,6 +81,6 @@ void gd_string_table_init(gd_string_table_t *string_table, uint8_t minCodeSize);
 gd_string_t gd_string_table_at(gd_string_table_t *string_table, uint16_t);
 uint16_t gd_string_table_add(gd_string_table_t *string_table, gd_string_t *string);
 void gd_image_code_expand(gd_expand_codes_t *expand, uint16_t code);
-void gd_image_subblock_unpack(gd_image_block_t *block, uint8_t *subblock, uint8_t count);
+void gd_image_subblock_unpack(gd_image_block_t *block, uint8_t *subblock, size_t count);
 void gd_image_block_read(gd_main_t *main, gd_image_block_t *block);
 void gd_code_size(gd_image_block_t *block, uint8_t codeSize);

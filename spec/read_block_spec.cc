@@ -115,7 +115,6 @@ describe("read block", [] {
     });
     describe("logical screen descriptor", [&] {
         describe("nominal", [&] {
-            static gd_info_t info;
             before("all", [&] {
                 FFILEV(logical_screen_descriptor + trailer);
                 gd_read_logical_screen_descriptor(&main, &info);
@@ -137,7 +136,6 @@ describe("read block", [] {
             });
         });
         describe("maximal", [&] {
-            static gd_info_t info;
             before("all", [&] {
                 const vector<uint8_t> file({
                     0xFF, 0xFF, // width
@@ -270,7 +268,6 @@ describe("read block", [] {
             });
         });
         describe("after logical screen descriptor", [&] {
-            static gd_info_t info;
             it("global color table", [&] {
                 FFILEV(logical_screen_descriptor + global_color_table);
                 gd_read_logical_screen_descriptor(&main, &info);

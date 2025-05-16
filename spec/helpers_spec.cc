@@ -49,7 +49,7 @@ describe("helpers", [] {
             });
 
             it("size 1", [] {
-                expect(packed.size()).to(eq(1));
+                expect(packed.size()).to(eq(static_cast<size_t>(1)));
             });
 
             it("[0]", [] {
@@ -65,7 +65,7 @@ describe("helpers", [] {
             });
 
             it("size 2", [] {
-                expect(packed.size()).to(eq(2));
+                expect(packed.size()).to(eq(static_cast<size_t>(2)));
             });
 
             it("output", [&] {
@@ -75,7 +75,7 @@ describe("helpers", [] {
 
         describe("4 + 0 + 1 + 5", [&] {
             before("each", [&] { packed = p + 4 + 0 + 1 + 5; });
-            it ("length 2", [&] { expect(packed.size()).to(eq(2)); });
+            it ("length 2", [&] { expect(packed.size()).to(eq(2u)); });
             it ("output", [&] { expect(dump(packed)).to(eq("44,0A,")); });
         });
 
@@ -87,7 +87,7 @@ describe("helpers", [] {
             });
 
             it("length 2", [&] {
-                expect(packed.size()).to(eq(2));
+                expect(packed.size()).to(eq(2u));
             });
 
             it("output", [&] {
@@ -157,7 +157,7 @@ describe("helpers", [] {
             v = p + 4 + 1 + 6 + 6 + Shift(4) + 2 + 9 + 9 + 7 + 5;
         });
         it("packed size", [&] {
-            expect(v.size()).to(eq(4));
+            expect(v.size()).to(eq(4u));
         });
         it("packed bytes", [&] {
             expect(dump(v)).to(eq("8C,2D,99,57,"));

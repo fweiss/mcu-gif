@@ -23,7 +23,8 @@ void gd_string_table_init(gd_string_table_t *table, uint8_t minCodeSize) {
     // fixme let client supply these
     #define entriesCapacity ((size_t)(564 * 16))
     static gd_string_table_entry_t entries[entriesCapacity];
-    #define stringsCapacity ((size_t)(512 * 1000))
+    // this should be 4096 instead of 512000
+    #define stringsCapacity ((size_t)(4096))
     static gd_index_t strings[stringsCapacity];
 
     const uint16_t initializedSize = (1 << minCodeSize);
@@ -33,14 +34,16 @@ void gd_string_table_init(gd_string_table_t *table, uint8_t minCodeSize) {
     table->capacity = sizeof(entries) / sizeof(entries[0]); // elements, not bytes
     table->strings = strings;
     table->strings_length = initializedSize;
-    table->strings_capacity = sizeof(strings);
+    table->strings_capacity = stringsCapacity;
     table->status = GD_X_OK;
 
-    for (int i=0; i<initializedSize; i++) {
+    // note forced narrowing to gd_index_t, initializedSize is know to be <= 256
+    for (uint16_t i=0; i<initializedSize; i++) {
         gd_string_table_entry_t *entry = &table->entries[i];
         entry->length = 1;
         entry->offset = i;
-        table->strings[i] = i;
+        // the index is uint16_t but the element id gd_index_t
+        table->strings[i] = (gd_index_t)(i);
     }
 }
 
@@ -157,7 +160,7 @@ void gd_image_code_expand(gd_expand_codes_t *expand, uint16_t extract) {
 // this can occur 0 or more times in an image block
 // it can init the code table, 
 // but the minumumCodeSize is determined by the parent image block
-void gd_image_subblock_unpack(gd_image_block_t *block, uint8_t *subblock, uint8_t count) {
+void gd_image_subblock_unpack(gd_image_block_t *block, uint8_t *subblock, size_t count) {
 
     gd_expand_codes_t * const expand = &block->expand_codes;
 
@@ -202,7 +205,8 @@ static void gd_expand_codes_init(gd_expand_codes_t *expand_codes, gd_index_t *ou
 void gd_image_block_read(gd_main_t *main, gd_image_block_t *image_block) {
     gd_expand_codes_init(&image_block->expand_codes, image_block->output);
 
-    long count = GD_READ(&image_block->minumumCodeSize, 1);
+    // fixme check length, error abort
+    (void)GD_READ(&image_block->minumumCodeSize, 1);
     // todo test limits
     image_block->codeBits = image_block->minumumCodeSize + 1;
     image_block->codeMask = (1 << image_block->codeBits) - 1;
@@ -226,7 +230,8 @@ void gd_image_block_read(gd_main_t *main, gd_image_block_t *image_block) {
             return;
         }
         static uint8_t subblock[255]; // MAX_SUB_BLOCK_SIZE
-        count = GD_READ(subblock, subblockSize);
+        // fixme check count
+        (void)GD_READ(subblock, subblockSize);
 
         gd_image_subblock_unpack(image_block, subblock, subblockSize);
 
@@ -314,6 +319,7 @@ void gd_read_global_color_table(gd_main_t *main, gd_color_t *color_table, size_t
 
 // API
 void gd_read_graphic_control_extension(gd_main_t *main, gd_graphic_control_extension_t *gce) {
+    (void)gce;
     uint8_t buf[8];
     GD_READ(buf, sizeof(buf));
     if (buf[0] != 0x21 || buf[1] != 0xF9) {

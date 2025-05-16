@@ -32,7 +32,6 @@ describe("expand image indexes", [] {
     static gd_index_t output[outputSize];
 
     static gd_expand_codes_t expand;
-    static uint16_t outputLength;
 
     // clever use of lambda instead of define
     auto expand_codes_stream = [&] (std::vector<uint16_t> codes) {
