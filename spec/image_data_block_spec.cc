@@ -136,14 +136,18 @@ describe("image data block", [] {
             // block.insert(block.end(), zinger.begin(), zinger.end());
             // block.emplace_back(0); // block end
 
+            // note block size is 0x01-0xff, but vector size is sixe_t
+            // consequently static_cast<uint8_t> is needed
             vector<uint8_t> block;
-            block.emplace_back(2);
-            block.emplace_back(split0.size());
-            block.insert(block.end(), split0.begin(), split0.end());
-            block.emplace_back(split1.size());
-            block.insert(block.end(), split1.begin(), split1.end());
-            block.emplace_back(0); // block end
+            block.emplace_back(2); // lzw minumum code size
 
+            block.emplace_back(static_cast<uint8_t>(split0.size())); // first subblock length
+            block.insert(block.end(), split0.begin(), split0.end());
+
+            block.emplace_back(static_cast<uint8_t>(split1.size())); // second subblock length
+            block.insert(block.end(), split1.begin(), split1.end());
+
+            block.emplace_back(0); // block end
 
             FFILEV(block);
 
