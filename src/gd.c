@@ -160,11 +160,12 @@ void gd_image_code_expand(gd_expand_codes_t *expand, uint16_t extract) {
 // this can occur 0 or more times in an image block
 // it can init the code table, 
 // but the minumumCodeSize is determined by the parent image block
-void gd_image_subblock_unpack(gd_image_block_t *block, uint8_t *subblock, size_t count) {
+void gd_image_subblock_unpack(gd_image_block_t *block, uint8_t *subblock, uint8_t count) {
 
     gd_expand_codes_t * const expand = &block->expand_codes;
 
-    for (int i=0; ; ) {
+    // fixme check for count 0
+    for (uint8_t i=0; ; ) {
         // shift out of on deck
         while (expand->onDeckBits >= block->codeBits) {
             expand->extract = expand->onDeck & block->codeMask;
