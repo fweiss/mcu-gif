@@ -28,6 +28,7 @@ class Pack {
 public:
     Pack();
     operator std::vector<uint8_t> ();
+    operator PackedSubBlock();
     void reset();
     Pack &operator+(uint16_t packed); // normal code values
     Pack &operator+(Shift bits); // shift change number of bits

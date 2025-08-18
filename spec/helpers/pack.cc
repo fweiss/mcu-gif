@@ -36,6 +36,7 @@ Pack& Pack::operator+(uint16_t element) {
     return *this;
 }
 
+//fixme dead code?
 Pack::operator std::vector<uint8_t> () {
     if (onDeckBits > 0) {
         packed.push_back(onDeck);
@@ -43,6 +44,12 @@ Pack::operator std::vector<uint8_t> () {
     return packed;
 }
 
+Pack::operator PackedSubBlock() {
+    if (onDeckBits > 0) {
+        packed.push_back(onDeck);
+    }
+    return packed;  
+}
 
 Pack& Pack::operator+(Shift bits) {
     if (debug) printf("<< %d\n", bits.value);
