@@ -34,6 +34,9 @@ static std::string dump(std::vector<uint8_t> p) {
 
 const size_t outputSize = 1024;  // fixme max output size for a sub block?
 
+const uint8_t lzwMinimumCodeSize = 2;
+const uint8_t blockEnd = 0;
+
 typedef std::vector<uint8_t> code_stream_t;
 
 auto image_data_block_spec =
@@ -58,7 +61,7 @@ describe("image data block", [] {
             gd_image_block_read(&main, &image_block);
         });
         it("output length", [&] {
-            expect(image_block.outputLength).to(eq(0));
+            expect(image_block.outputLength).to(eq(0u));
         });
     });
 
@@ -93,10 +96,10 @@ describe("image data block", [] {
                 gd_image_block_read(&main, &image_block);
             });
             it("output length", [&] {
-                expect(image_block.outputLength).to(eq(1));
+                expect(image_block.outputLength).to(eq(1u));
             });
             it("has one index", [&] {
-                expect((int)image_block.output[0]).to(eq(1));
+                expect((int)image_block.output[0]).to(eq((gd_index_t)1));
             });
         });
 
@@ -109,7 +112,7 @@ describe("image data block", [] {
                 gd_image_block_read(&main, &image_block);
             });
             it("output length", [&] {
-                expect(image_block.outputLength).to(eq(1));
+                expect(image_block.outputLength).to(eq(1u));
             });
             it("index[0]", [&] {
                 expect((uint16_t)image_block.output[0]).to(eq(3));
@@ -139,7 +142,7 @@ describe("image data block", [] {
             // note block size is 0x01-0xff, but vector size is sixe_t
             // consequently static_cast<uint8_t> is needed
             vector<uint8_t> block;
-            block.emplace_back(2); // lzw minumum code size
+            block.emplace_back(lzwMinimumCodeSize); // lzw minumum code size
 
             block.emplace_back(static_cast<uint8_t>(split0.size())); // first subblock length
             block.insert(block.end(), split0.begin(), split0.end());
@@ -147,15 +150,15 @@ describe("image data block", [] {
             block.emplace_back(static_cast<uint8_t>(split1.size())); // second subblock length
             block.insert(block.end(), split1.begin(), split1.end());
 
-            block.emplace_back(0); // block end
+            block.emplace_back(blockEnd); // block end
 
             FFILEV(block);
 
             gd_image_block_read(&main, &image_block);
         });
         it("outputs", [&] {
-            vector<uint8_t> output(image_block.output, image_block.output + image_block.outputLength);
-            expect(dump(output)).to(eq("01,01,01,01,01,02,02,02,02,02,01,01,01,"));
+            vector<uint8_t> outputIndexes(image_block.output, image_block.output + image_block.outputLength);
+            expect(dump(outputIndexes)).to(eq("01,01,01,01,01,02,02,02,02,02,01,01,01,"));
         });
     });
     describe("two subblocks", [&] {
@@ -179,21 +182,21 @@ describe("image data block", [] {
             subblocks[1] = p + 6 + Shift(4) + 2 + 9 + 9 + 7 + 5;
 
             vector<uint8_t> block;
-            block.emplace_back(2); // minimum block size
-            block.emplace_back(2); // subblock length
+            block.emplace_back(lzwMinimumCodeSize); // minimum block size
+            block.emplace_back((uint8_t)2); // subblock length
             block.insert(block.end(), subblocks[0].begin(), subblocks[0].end());
-            block.emplace_back(3);
+            block.emplace_back((uint8_t)3);
             block.insert(block.end(), subblocks[1].begin(), subblocks[1].end());
-            block.emplace_back(0x00); // block end
+            block.emplace_back(blockEnd); // block end
 
             // alternate with just one block
             p.reset();
             vector<uint8_t> block2;
-            block2.emplace_back(2);
-            block2.emplace_back(9);
+            block2.emplace_back(lzwMinimumCodeSize);
+            block2.emplace_back((uint8_t)9);
             vector<uint8_t> zinger = p + 4 + 1 + 6 + 6 + Shift(4) + 2 + 9 + 9 + 7 + 5;
             block2.insert(block2.end(), zinger.begin(), zinger.end());
-            block2.emplace_back(0); // block end
+            block2.emplace_back(blockEnd); // block end
 
             FFILEV(block2);
 
@@ -203,16 +206,16 @@ describe("image data block", [] {
         });
         it("output length", [&] {
             // not verified
-            expect(image_block.outputLength).to(eq(13));
+            expect(image_block.outputLength).to(eq(13u));
         });
         it("has one index", [&] {
-            expect((int)image_block.output[0]).to(eq(1));
+            expect((int)image_block.output[0]).to(eq((gd_index_t)1));
         });
         it("output", [&] {
-            vector<uint8_t> output(image_block.output, image_block.output + image_block.outputLength);
+            vector<uint8_t> outputIndexes(image_block.output, image_block.output + image_block.outputLength);
             // not verified
             // but equivalent to p + 4 + 1 + 6 + 6 + 2 + 5
-            expect(dump(output)).to(eq("01,01,01,01,01,02,02,02,02,02,01,01,01,"));
+            expect(dump(outputIndexes)).to(eq("01,01,01,01,01,02,02,02,02,02,01,01,01,"));
         });
     });
 });

@@ -58,7 +58,7 @@ describe("image subblock with", [] {
     describe("codes 4 + 5", [&] {
 
         before("each", [&] {
-            code_stream_t packed = p + 4 + 5;
+            PackedSubBlock packed = p + 4 + 5;
             gd_image_subblock_unpack(&block, packed.data(), packed.size());
         });
 
@@ -68,7 +68,7 @@ describe("image subblock with", [] {
     describe("codes 4 + 0 + 5", [&] {
 
         before("each", [&] {
-            code_stream_t packed = p + 4 + 0 + 5;
+            PackedSubBlock packed = p + 4 + 0 + 5;
             gd_image_subblock_unpack(&block, packed.data(), packed.size());
         });
 
@@ -80,7 +80,7 @@ describe("image subblock with", [] {
     describe("codes 4 + 1 + 5", [&] {
 
         before("each", [&] {
-            code_stream_t packed = p + 4 + 1 + 5;
+            PackedSubBlock packed = p + 4 + 1 + 5;
             gd_image_subblock_unpack(&block, packed.data(), packed.size());
         });
 
@@ -92,7 +92,7 @@ describe("image subblock with", [] {
     describe("codes 4 + 0 + 1 + 5", [&] {
 
         before("each", [&] {
-            code_stream_t packed = p + 4 + 0 + 1 + 5;
+            PackedSubBlock packed = p + 4 + 0 + 1 + 5;
             gd_image_subblock_unpack(&block, packed.data(), packed.size());
         });
         it("output length", [&] { expect(expand_codes.outputLength).to(eq(2)); });
@@ -103,7 +103,7 @@ describe("image subblock with", [] {
         it("to 4 bits", [&] {
             // based on a priori knowledge that first #2 will enlarge code table
             // to require 4 bit codes
-            code_stream_t packed = p + 4 + 1 + 6 + 6 + Shift(4) + 2 + 5;
+            PackedSubBlock packed = p + 4 + 1 + 6 + 6 + Shift(4) + 2 + 5;
             block.outputLength = 0;
             gd_image_subblock_unpack(&block, packed.data(), packed.size());
             expect(expand_codes.codeSize).to(eq(4));
