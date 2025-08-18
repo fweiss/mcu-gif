@@ -29,8 +29,8 @@ void dumpGlobalColorTable(gd_color_t* table, size_t size);
 void dumpPixel(frame_info_t *frame_info, uint16_t p);
 
 void drawGif(SDL_Renderer *renderer) {
-    // const char* filename = "samples/sample_1.gif";
-    const char* filename = "samples/128px-green.gif";
+    // const char* filename = "../samples/sample_1.gif";
+    const char* filename = "../samples/128px-green.gif";
     sketch(filename,renderer);
 }
 
@@ -163,6 +163,10 @@ void sketch(const char* filename, SDL_Renderer *renderer) {
             case GD_BLOCK_LOGICAL_EOF:
                 // ignored
                 break;
+            default:
+                // MSVC C does not detect missing enums in switch
+                printf("error: unhandled block type: %d\n", nextBlockType);
+                exit(1);
         }
         if (main.err != GD_X_OK) {
             printf("aborted: err: %d\n", main.err);
