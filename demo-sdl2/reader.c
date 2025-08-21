@@ -30,7 +30,8 @@ void dumpPixel(frame_info_t *frame_info, uint16_t p);
 
 void drawGif(SDL_Renderer *renderer) {
     // const char* filename = "../samples/sample_1.gif";
-    const char* filename = "../samples/128px-green.gif";
+    // const char* filename = "../samples/128px-green.gif";
+    const char* filename = "../samples/128px-dancing.gif";
     sketch(filename,renderer);
 }
 
@@ -108,6 +109,12 @@ void sketch(const char* filename, SDL_Renderer *renderer) {
                 gd_read_image_descriptor(&main, &imd);
                 printf("image descriptor %d %d\n", imd.image_width, imd.image_height);
                 break;
+            // case GD_BLOCK_LOCAL_COLOR_TABLE:
+            //     // fixme don't overwrite gct
+            //     gct = (gd_color_t*)calloc(imd.local_color_table_size, sizeof(gd_color_t));
+            //     gd_read_global_color_table(&main, gct, imd.local_color_table_size);
+            //     // check status
+            //     break;
             case GD_BLOCK_IMAGE_DATA:
                 printf("pixels: %zu\n", imd.image_size);
                 // fixme memory leak
@@ -163,13 +170,18 @@ void sketch(const char* filename, SDL_Renderer *renderer) {
             case GD_BLOCK_LOGICAL_EOF:
                 // ignored
                 break;
+#if defined(_MSC_VER)
+            // MSVC C does not detect missing enums in switch
+            // fallback to a runtime check
+            // but don't defeat the check for non-MSVC
             default:
-                // MSVC C does not detect missing enums in switch
                 printf("error: unhandled block type: %d\n", nextBlockType);
                 exit(1);
+#endif
         }
         if (main.err != GD_X_OK) {
-            printf("aborted: err: %d\n", main.err);
+            // fixme clean up
+            printf("aborted: gd err: %d\n", main.err);
             break;
         }
     }

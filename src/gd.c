@@ -24,7 +24,7 @@ void gd_string_table_init(gd_string_table_t *table, uint8_t minCodeSize) {
     #define entriesCapacity ((size_t)(564 * 16))
     static gd_string_table_entry_t entries[entriesCapacity];
     // this should be 4096 instead of 512000
-    #define stringsCapacity ((size_t)(4096))
+    #define stringsCapacity ((size_t)(8000))
     static gd_index_t strings[stringsCapacity];
 
     const uint16_t initializedSize = (1 << minCodeSize);

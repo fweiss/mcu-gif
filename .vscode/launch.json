@@ -11,7 +11,7 @@
             "program": "${workspaceFolder}/demo-sdl2/build/demo-sdl2.exe",
             "args": [],
             "stopAtEntry": false,
-            "cwd": "${fileDirname}",
+            "cwd": "${workspaceFolder}/demo-sdl2/build",
             "environment": [],
             "console": "externalTerminal"
         },
