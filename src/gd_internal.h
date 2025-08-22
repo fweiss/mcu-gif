@@ -67,12 +67,12 @@ typedef struct {
 // see gd_image_subblock_unpack() hmm
 // one challenge of the nested structs is an attempt
 // to limit the data a function can access
-typedef struct {
+typedef struct gd_image_block_t {
     uint8_t minumumCodeSize;        // comes directly from the image block
     uint8_t codeBits;               // the current number of bits in the code
     uint16_t codeMask;              // mask for the bits in the code, derived from codeBits
     gd_index_t *output;             // the indexes expanded form th4 codes
-    uint16_t outputLength;
+    size_t outputLength;
     uint8_t compressStatus;
     gd_expand_codes_t expand_codes; // ?? narrowed for the 
 } gd_image_block_t;

@@ -10,10 +10,25 @@ public:
     }
 };
 
+// partial proxy a std::vector with uint8_t size
+class PackedSubBlock {
+public:
+    PackedSubBlock();
+    PackedSubBlock(const std::vector<uint8_t> &data) { vector = data; }
+    // void operator=(std::vector<uint8_t> input) { vector = input; };
+
+    uint8_t *data() { return vector.data(); }
+    // todo guarantee that size <256
+    uint8_t size() { return static_cast<uint8_t>(vector.size()); }
+private:
+    std::vector<uint8_t> vector;
+};
+
 class Pack {
 public:
     Pack();
     operator std::vector<uint8_t> ();
+    operator PackedSubBlock();
     void reset();
     Pack &operator+(uint16_t packed); // normal code values
     Pack &operator+(Shift bits); // shift change number of bits

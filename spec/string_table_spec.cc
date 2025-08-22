@@ -74,16 +74,31 @@ describe("string table", [] {
                 string.value = raw_string;
             });
             describe("out of space", [&] {
-                it("entries", [&] {
-                    string_table.capacity = 6;
-                    uint16_t code = gd_string_table_add(&string_table, &string);
-        //            expect(code).to(eq(0xFFFF));
-                    expect((uint16_t)string_table.status).to(eq((uint16_t)GD_ERR_ENTRIES_NO_SPACE));
+                describe("entries", [] {
+                    before("each", [] {
+                        string_table.capacity = 6;
+                    });
+                    it("returns error", [] {
+                        uint16_t code = gd_string_table_add(&string_table, &string);
+                        expect(code).to(eq(0xFFFF));
+                    });
+                    it("status entries error", [] {
+                        (void)gd_string_table_add(&string_table, &string);
+                        expect((uint16_t)string_table.status).to(eq((uint16_t)GD_ERR_ENTRIES_NO_SPACE));
+                    });
                 });
-                it("strings", [&] {
-                    string_table.strings_capacity = 2;
-                    uint16_t code = gd_string_table_add(&string_table, &string);
-                    expect((uint16_t)string_table.status).to(eq((uint16_t)GD_ERR_STRINGS_NO_SPACE));
+                describe("strings", [] {
+                    before("each", [] {
+                        string_table.strings_capacity = 2;
+                    });
+                    it("returns error", [] {
+                        uint16_t code = gd_string_table_add(&string_table, &string);
+                        expect(code).to(eq(0xFFFF));
+                    });
+                    it("status strings error", [] {
+                        (void)gd_string_table_add(&string_table, &string);
+                        expect((uint16_t)string_table.status).to(eq((uint16_t)GD_ERR_STRINGS_NO_SPACE));
+                    });
                 });
             });
             it("return new code", [&] {
@@ -94,11 +109,10 @@ describe("string table", [] {
         });
         describe("lookup", [&] {
             static gd_index_t raw_string[] = { 1, 6, 7, 30 };
-            static gd_string_t string;
             before("each", [&] {
                 string.length = sizeof(raw_string) / sizeof(raw_string[0]);
                 string.value = raw_string;
-                uint16_t code = gd_string_table_add(&string_table, &string);
+                (void)gd_string_table_add(&string_table, &string);
                 string = gd_string_table_at(&string_table, 6);
             });
             it("returns length", [&] {
