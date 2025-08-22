@@ -111,12 +111,12 @@ void sketch(const char* filename, SDL_Renderer *renderer) {
                 gd_read_image_descriptor(&main, &imd);
                 printf("image descriptor %d %d\n", imd.image_width, imd.image_height);
                 break;
-            // case GD_BLOCK_LOCAL_COLOR_TABLE:
-            //     // fixme don't overwrite gct
-            //     gct = (gd_color_t*)calloc(imd.local_color_table_size, sizeof(gd_color_t));
-            //     gd_read_global_color_table(&main, gct, imd.local_color_table_size);
-            //     // check status
-            //     break;
+            case GD_BLOCK_LOCAL_COLOR_TABLE:
+                // fixme don't overwrite gct
+                gct = (gd_color_t*)calloc(imd.local_color_table_size, sizeof(gd_color_t));
+                gd_read_global_color_table(&main, gct, imd.local_color_table_size);
+                // check status
+                break;
             case GD_BLOCK_IMAGE_DATA:
                 printf("pixels: %zu\n", imd.image_size);
                 // fixme memory leak
@@ -172,6 +172,7 @@ void sketch(const char* filename, SDL_Renderer *renderer) {
             case GD_BLOCK_LOGICAL_EOF:
                 // ignored
                 break;
+
 #if defined(_MSC_VER)
             // MSVC C does not detect missing enums in switch
             // fallback to a runtime check
@@ -180,6 +181,7 @@ void sketch(const char* filename, SDL_Renderer *renderer) {
                 printf("error: unhandled block type: %d\n", nextBlockType);
                 exit(1);
 #endif
+
         }
         if (main.err != GD_X_OK) {
             // fixme clean up
@@ -188,7 +190,7 @@ void sketch(const char* filename, SDL_Renderer *renderer) {
         }
     }
 
-    printf("bytes read from file: %d\n", ftell(fp));
+    printf("bytes read from file: %ld\n", ftell(fp));
     
     if (blockLimit == 0) {
         printf("block limit expired");
