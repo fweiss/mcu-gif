@@ -5,6 +5,18 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "(lldb) Launch",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/demo-sdl2/build/demo-sdl2",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/demo-sdl2/build",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "lldb"
+        },
+        {
             "name": "demo-sdl2 debug",
             "type": "cppvsdbg",
             "request": "launch",
