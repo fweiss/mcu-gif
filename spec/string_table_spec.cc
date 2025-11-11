@@ -10,16 +10,35 @@ using ccspec::expect;
 using ccspec::matchers::eq;
 using ccspec::matchers::be;
 
+#include "helpers/allocateMemory.h"
+
 extern "C" {
 	#include "gd_internal.h"
 }
 
 namespace simple {
 
+static gd_string_table_t string_table;
+static gd_string_t string;
+
 auto string_table_spec =
 describe("string table", [] {
-    static gd_string_table_t string_table;
-    static gd_string_t string;
+    // static gd_string_table_t string_table;
+    // static gd_string_t string;
+    // gd_memory_t &memory = string_table.memory;
+
+    // const size_t entriesSizeBytes = 8000;
+    // string_table.memory.entries.sizeBytes = entriesSizeBytes;
+    // char entryBytes[entriesSizeBytes];
+    // string_table.memory.entries.memoryBytes = entryBytes;
+
+    // memory.strings.sizeBytes = 1024;
+
+    before("each", [&] () {
+        // allocate a full buffer
+        // for testing, adjust the size
+        string_table.memory = allocate();
+    });
 
     // deprecated, shout not be internal static allocation
     // fixme remove magic constants
@@ -28,7 +47,7 @@ describe("string table", [] {
             gd_string_table_init(&string_table, 2);
         });
         it("entries", [&] {
-            expect(string_table.capacity).to(be > 564);
+            expect(string_table.entries_capacity).to(be > 564);
         });
         it("strings", [&] {
             expect(string_table.strings_capacity).to(be > 512);
@@ -56,7 +75,7 @@ describe("string table", [] {
                 expect(string.value[0]).to(eq(0x0003));
             });
             it("has length 6", [&] {
-                expect(string_table.length).to(eq(6));
+                expect(string_table.entries_length).to(eq(6));
             });
             it("does not have [6]", [&] {
                 string = gd_string_table_at(&string_table, 6);
@@ -76,7 +95,7 @@ describe("string table", [] {
             describe("out of space", [&] {
                 describe("entries", [] {
                     before("each", [] {
-                        string_table.capacity = 6;
+                        string_table.entries_capacity = 6;
                     });
                     it("returns error", [] {
                         uint16_t code = gd_string_table_add(&string_table, &string);
@@ -129,11 +148,11 @@ describe("string table", [] {
             gd_string_table_init(&string_table, minimumCodeSize);
         });
         it("has size 256+2", [&] {
-            expect(string_table.length).to(eq(258));
+            expect(string_table.entries_length).to(eq(258));
         });
         describe("entries", [&] {
             it("allocated 256+2 entries", [&] {
-                expect((int)string_table.length).to(eq(256+2));
+                expect((int)string_table.entries_length).to(eq(256+2));
             });
         });
         describe("string", [&] {
@@ -143,7 +162,7 @@ describe("string table", [] {
         });
 
         it("adds code beyond", [&] {
-            expect(string_table.length).to(eq(256+2));
+            expect(string_table.entries_length).to(eq(256+2));
         });
         describe("string table entry[255]", [&] {
             it("has length 1", [&] {

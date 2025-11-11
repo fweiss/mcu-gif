@@ -15,6 +15,7 @@ using ccspec::matchers::be_truthy;
 extern "C" {
 	#include "gd.h"
 }
+#include "helpers/allocateMemory.h"
 
 static uint8_t header_logical_screen_descriptor[13] =
 {
@@ -74,6 +75,7 @@ describe("for 10x10 red-blue-white", [] {
         before("each", [] {
             FFILE(sample1);
             gd_main_t main;
+            main.memory = allocate();
             main.fread = ff_read;
             gd_info_t info;
             gd_color_t gct[4];

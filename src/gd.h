@@ -72,12 +72,24 @@ typedef enum {
 } gd_err_t;
 
 typedef struct {
+    struct {
+        size_t sizeBytes;
+        char *memoryBytes;
+    } entries;
+    struct {
+        size_t sizeBytes;
+        char * memoryBytes;
+    } strings;
+} gd_memory_t;
+
+typedef struct {
     void* fp; // actually opaque FILE
     ssize_t (*fread)(void* ptr, size_t size, size_t count, void* stream);
     gd_info_t info;
     size_t pixelOutputProgress;
     gd_err_t err;
     gd_block_type_t next_block_type;
+    gd_memory_t memory;
 } gd_main_t;
 
 gd_block_type_t gd_next_block_type(gd_main_t *main);

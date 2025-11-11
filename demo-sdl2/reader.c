@@ -124,6 +124,14 @@ void sketch(const char* filename, SDL_Renderer *renderer) {
                 const gd_index_t fill = 0x45;
                 memset(pixels, fill, imd.image_size);
 
+                const size_t entriesSizeBytes = 16000;
+                main.memory.entries.sizeBytes = entriesSizeBytes;
+                main.memory.entries.memoryBytes = (char*)malloc(entriesSizeBytes);
+
+                const size_t stringSizeBytes = 8000;
+                main.memory.strings.sizeBytes = stringSizeBytes;
+                main.memory.strings.memoryBytes = (char*)malloc(entriesSizeBytes);
+
                 // at this point we'd like to be able to re/allocate space for:
                 // - global color table
                 // - code buffer - optional, current stack allocation is ok

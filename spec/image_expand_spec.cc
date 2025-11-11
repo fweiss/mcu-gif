@@ -11,6 +11,7 @@ using ccspec::matchers::eq;
 
 #include "helpers/fake_file.h"
 #include "helpers/pack.h"
+#include "helpers/allocateMemory.h"
 
 extern "C" {
 	#include "gd.h"
@@ -32,6 +33,7 @@ describe("expand image indexes", [] {
     static gd_index_t output[outputSize];
 
     static gd_expand_codes_t expand;
+    expand.string_table.memory = allocate();
 
     // clever use of lambda instead of define
     auto expand_codes_stream = [&] (std::vector<uint16_t> codes) {

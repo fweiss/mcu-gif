@@ -22,13 +22,14 @@ typedef enum {
 typedef struct {
     // gd_status_t status;
     gd_err_t status; // fixme s/b err
+    gd_memory_t memory;
 
     // deprecated move to gd_expand_codes_t
     // gd_code_t clearCode;
     // gd_code_t endCode;
 
-    uint16_t capacity;
-    uint16_t length;
+    uint16_t entries_capacity;
+    uint16_t entries_length;
     gd_string_table_entry_t *entries;
     uint16_t strings_capacity;
     uint16_t strings_length;

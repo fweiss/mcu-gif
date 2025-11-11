@@ -19,6 +19,7 @@ extern "C" {
 
 #include "helpers/fake_file.h"
 #include "helpers/pack.h"
+#include "helpers/allocateMemory.h"
 
 static const vector<uint8_t> header({ 'G', 'I', 'F', '8', '9', 'a' });
 static const vector<uint8_t> logical_screen_descriptor({
@@ -91,6 +92,7 @@ describe("read block error", [] {
         memset(&main, 0xee, sizeof(main));
         memset(&info, 0, sizeof(info));
         main.fread = ff_read;
+        main.memory = allocate();
     });
     it("initial block", [] {
         gd_init(&main);
@@ -125,12 +127,41 @@ describe("read block error", [] {
             expect((int)main.err).to(be == (int)GD_ERR_BLOCK_PREFIX);
         });
     });
-    describe("string table error", [&] {
+    describe("code table error", [&] {
         // FIXME hangs if file not initialized
         // gd_string_table_add
         // would be nice to set string_table.strings_capacity
         // but that's currently hard wired
-        it("entries has space", [&] {
+        describe("entries", [&] {
+            it("no space", [&] {
+                FFILEV(image_data);
+                main.memory.entries.sizeBytes = 10;
+                static char entryBytes[10];
+                main.memory.entries.memoryBytes = entryBytes;
+                static gd_index_t pixels[10];
+                gd_read_image_data(&main, pixels, sizeof(pixels));
+                expect((int)main.err).to(eq((int)GD_ERR_ENTRIES_NO_SPACE));
+            });
+        });
+        describe("strings", [&] {
+            before("all", [&] {
+                main.memory.entries.sizeBytes = 8000;
+                static char entryBytes[8000];
+                main.memory.entries.memoryBytes = entryBytes;
+
+                const size_t stringsSize = 10;
+                static char stringsBytes[stringsSize];
+                main.memory.strings.sizeBytes = stringsSize;
+                main.memory.strings.memoryBytes = stringsBytes;
+
+                static gd_index_t pixels[10];
+
+                FFILEV(image_data);
+                gd_read_image_data(&main, pixels, sizeof(pixels));
+            });
+            it("no space", [&] {
+                expect((int)main.err).to(eq((int)GD_ERR_STRINGS_NO_SPACE));
+            });
         });
         #if 0
         it("strings has space", [&] {

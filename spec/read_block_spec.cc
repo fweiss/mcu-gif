@@ -18,6 +18,7 @@ extern "C" {
 }
 
 #include "helpers/fake_file.h"
+#include "helpers/allocateMemory.h"
 
 static const vector<uint8_t> header({ 'G', 'I', 'F', '8', '9', 'a' });
 static const vector<uint8_t> logical_screen_descriptor({
@@ -97,6 +98,7 @@ describe("read block", [] {
     before("all", [] {
         memset(&main, 0, sizeof(main));
         memset(&info, 0, sizeof(info));
+        main.memory = allocate();
         main.fread = ff_read;
     });
     it("initial block", [] {

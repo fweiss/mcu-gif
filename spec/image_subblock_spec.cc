@@ -11,6 +11,7 @@ using ccspec::matchers::eq;
 
 #include "helpers/fake_file.h"
 #include "helpers/pack.h"
+#include "helpers/allocateMemory.h"
 
 extern "C" {
 	#include "gd.h"
@@ -31,6 +32,8 @@ describe("image subblock with", [] {
     static gd_image_block_t block;
     static gd_expand_codes_t &expand_codes = block.expand_codes;
     static Pack p;
+
+    block.expand_codes.string_table.memory = allocate();
 
     before("each", [] {
         // N.B. 'output' must be the array, not a pointer

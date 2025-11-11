@@ -20,21 +20,16 @@ void gd_code_size(gd_image_block_t *block, uint8_t codeSize) {
  * special control codes
  */
 void gd_string_table_init(gd_string_table_t *table, uint8_t minCodeSize) {
-    // fixme let client supply these
-    #define entriesCapacity ((size_t)(564 * 16))
-    static gd_string_table_entry_t entries[entriesCapacity];
-    // this should be 4096 instead of 512000
-    #define stringsCapacity ((size_t)(8000))
-    static gd_index_t strings[stringsCapacity];
-
     const uint16_t initializedSize = (1 << minCodeSize);
 
-    table->entries = entries;
-    table->length = initializedSize + 2;
-    table->capacity = sizeof(entries) / sizeof(entries[0]); // elements, not bytes
-    table->strings = strings;
+    table->entries = (gd_string_table_entry_t*)table->memory.entries.memoryBytes;
+    table->entries_length = initializedSize + 2;
+    table->entries_capacity = table->memory.entries.sizeBytes / sizeof(gd_string_table_entry_t);
+
+    table->strings = (gd_index_t*)table->memory.strings.memoryBytes;
     table->strings_length = initializedSize;
-    table->strings_capacity = stringsCapacity;
+    table->strings_capacity = table->memory.strings.sizeBytes / sizeof(*table->strings);
+
     table->status = GD_X_OK;
 
     // note forced narrowing to gd_index_t, initializedSize is know to be <= 256
@@ -56,7 +51,7 @@ void gd_string_table_init(gd_string_table_t *table, uint8_t minCodeSize) {
  */
 gd_string_t gd_string_table_at(gd_string_table_t *table, uint16_t code) {
     static gd_string_t string;
-    if (code < table->length) {
+    if (code < table->entries_length) {
         gd_string_table_entry_t entry = table->entries[code];
         string.length = entry.length;
         string.value = &table->strings[entry.offset];
@@ -73,11 +68,11 @@ gd_string_t gd_string_table_at(gd_string_table_t *table, uint16_t code) {
  * @error if the string table is full
  */
 uint16_t gd_string_table_add(gd_string_table_t *table, gd_string_t *string) {
-    const bool entries_has_space= table->length < table->capacity;
+    const bool entries_has_space= table->entries_length < table->entries_capacity;
     const bool strings_has_space = table->strings_length + string->length < table->strings_capacity;
     if (entries_has_space && strings_has_space) {
-        uint16_t code = table->length;
-        gd_string_table_entry_t *entry = &table->entries[table->length++];
+        uint16_t code = table->entries_length;
+        gd_string_table_entry_t *entry = &table->entries[table->entries_length++];
         entry->length = string->length;
         entry->offset = table->strings_length;
         memcpy((void*)&table->strings[table->strings_length], (void*)string->value, string->length * sizeof(gd_index_t));
@@ -150,7 +145,7 @@ void gd_image_code_expand(gd_expand_codes_t *expand, uint16_t extract) {
     expand->outputLength += expand->prior_string.length;
 
     // does code not fit in code size bits?
-    if (expand->string_table.length >> expand->codeSize) {
+    if (expand->string_table.entries_length >> expand->codeSize) {
         expand->codeSize++;
     }
 }
@@ -362,7 +357,11 @@ void gd_read_image_data(gd_main_t *main, gd_index_t *output, size_t capacity) {
     gd_image_block_t image_block;
     image_block.output = output;
     image_block.outputLength = capacity;
+    image_block.expand_codes.string_table.memory = main->memory;
+
+    image_block.expand_codes.string_table.entries_capacity = 9;
     image_block.expand_codes.string_table.status = GD_ERR_NO_INIT;
+
     gd_image_block_read(main, &image_block);
     // to do peek
     main->next_block_type = GD_BLOCK_TRAILER;

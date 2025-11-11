@@ -12,6 +12,8 @@ extern "C" {
 	#include "gd_internal.h"
 }
 
+#include "helpers/allocateMemory.h"
+
 namespace simple {
 
 // testing at the level of gd_image_code_expand()
@@ -30,6 +32,7 @@ describe("image decompress", [] {
         static gd_index_t output[512];
         expand.output = output;
         expand.outputLength = 0;
+        expand.string_table.memory = allocate();
 
         // need to init expand
         expand.clearCode = 4;
@@ -40,14 +43,14 @@ describe("image decompress", [] {
         before("each", [] {
             // bogus values
             expand.prior_string.length = 1;
-            expand.string_table.length = 44;
+            expand.string_table.entries_length = 44;
             gd_image_code_expand(&expand, expand.clearCode);
         });
         it("resets prior string length", [] {
             expect(expand.prior_string.length).to(eq(0));
         });
         it("string table size + 2", [] {
-            expect(expand.string_table.length).to(eq(6));
+            expect(expand.string_table.entries_length).to(eq(6));
         });
         it("string table entry matches index", [] {
             gd_string_table_entry_t &entry = expand.string_table.entries[2];
@@ -100,7 +103,7 @@ describe("image decompress", [] {
             });
             describe("add to code table", [] {
                 it("length", [] {
-                    expect(expand.string_table.length).to(eq(7));
+                    expect(expand.string_table.entries_length).to(eq(7));
                 });
                 describe("entry", [] {
                     // gd_string_table_entry_t entry = expand.string_table.entries[7];
@@ -148,7 +151,7 @@ describe("image decompress", [] {
         });
         describe("code table", [] {
             it("length", [] {
-                expect(expand.string_table.length).to(eq(7));
+                expect(expand.string_table.entries_length).to(eq(7));
             });
             describe("entry [6]", [] {
                 it("length = 2", [] {

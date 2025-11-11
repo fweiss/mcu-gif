@@ -10,6 +10,7 @@ using ccspec::expect;
 using ccspec::matchers::eq;
 
 #include <string>
+#include "helpers/allocateMemory.h"
 
 extern "C" {
 	#include "gd_internal.h"
@@ -25,6 +26,8 @@ describe("expand state", [] {
     static gd_expand_codes_t expand;
     static gd_index_t output[outputSize];
 
+    expand.string_table.memory = allocate();
+
     before("each", [] {
         memset(output, 0, sizeof(output));
         expand.codeSize = 3;
@@ -37,9 +40,9 @@ describe("expand state", [] {
     describe("initial", [&] {
 
         it("code 4 clears", [&] {
-            expand.string_table.length = 10;
+            expand.string_table.entries_length = 10;
             gd_image_code_expand(&expand, 4);
-            expect(expand.string_table.length).to(eq(6));
+            expect(expand.string_table.entries_length).to(eq(6));
         });
     });
     describe("scenario", [] {
