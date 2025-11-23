@@ -82,10 +82,12 @@ static const vector<uint8_t> trailer({
 
 namespace simple {
 
+// this needs to be globally visible for setup and debugging
+gd_main_t main;
+
 auto read_block_error_spec =
 describe("read block error", [] {
 
-    static gd_main_t main;
     static gd_info_t info;
 
     before("all", [] {
@@ -127,67 +129,35 @@ describe("read block error", [] {
             expect((int)main.err).to(be == (int)GD_ERR_BLOCK_PREFIX);
         });
     });
-    describe("code table error", [&] {
-        // FIXME hangs if file not initialized
-        // gd_string_table_add
-        // would be nice to set string_table.strings_capacity
-        // but that's currently hard wired
-        describe("entries", [&] {
-            it("no space", [&] {
-                FFILEV(image_data);
-                main.memory.entries.sizeBytes = 10;
-                static char entryBytes[10];
-                main.memory.entries.memoryBytes = entryBytes;
-                static gd_index_t pixels[10];
-                gd_read_image_data(&main, pixels, sizeof(pixels));
-                expect((int)main.err).to(eq((int)GD_ERR_ENTRIES_NO_SPACE));
-            });
+
+    describe("code table errors", [&] {
+        before("each", [&] {
+            main.err = GD_X_OK;
+            main.memory = allocate();
         });
         describe("strings", [&] {
-            before("all", [&] {
-                main.memory.entries.sizeBytes = 8000;
-                static char entryBytes[8000];
-                main.memory.entries.memoryBytes = entryBytes;
-
-                const size_t stringsSize = 10;
-                static char stringsBytes[stringsSize];
-                main.memory.strings.sizeBytes = stringsSize;
-                main.memory.strings.memoryBytes = stringsBytes;
-
-                static gd_index_t pixels[10];
-
+            before("each", [&] {
+                main.memory.strings.sizeBytes = 7;
                 FFILEV(image_data);
+                static gd_index_t pixels[10];
                 gd_read_image_data(&main, pixels, sizeof(pixels));
             });
             it("no space", [&] {
                 expect((int)main.err).to(eq((int)GD_ERR_STRINGS_NO_SPACE));
             });
         });
-        #if 0
-        it("strings has space", [&] {
-        
-            Pack pk;
-            pk.reset();
-            vector<uint8_t> prefix({ 0x02, 200 });
-            Pack packed = pk + 4 + 1;
-            // for (int i=0; i<4; i++) { // works < 5
-            //     packed + 0xff;
-            // }
-            packed + 0x05;
-
-            FFILEV(prefix + packed);
-
-            static gd_index_t pixels[10];
-            // gd_read_image_data - main.err
-            // gd_read_image_data - main.err
-            // gd_image_block_read - image_block.expand_codes.string_table
-            // gd_image_subblock_unpack
-            // gd_image_code_expand - expand.string-table
-            // gd_string_table_add - string_table.err
-            gd_read_image_data(&main, pixels, sizeof(pixels));
-            expect((int)main.err).to(eq(GD_ERR_STRINGS_NO_SPACE));
+        describe("entries", [&] {
+            before("each", [&] {
+                main.memory.entries.sizeBytes = 10;
+                FFILEV(image_data);
+                static gd_index_t pixels[10];
+                // FIXME bytes or gd_index_t?
+                gd_read_image_data(&main, pixels, sizeof(pixels));
+            });
+            it("no space", [&] {
+                expect((int)main.err).to(eq((int)GD_ERR_ENTRIES_NO_SPACE));
+            });
         });
-        #endif
     });
 
 });

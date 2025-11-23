@@ -34,6 +34,7 @@ void drawGif(SDL_Renderer *renderer) {
     // const char* filename = "../samples/sample_1.gif";
     // const char* filename = "../samples/128px-green.gif";
     const char* filename = "../samples/128px-dancing.gif";
+    // const char* filename = "../samples/DentalDescriptiveCopperbutterfly-size_restricted.gif";
     sketch(filename,renderer);
 }
 
@@ -124,11 +125,11 @@ void sketch(const char* filename, SDL_Renderer *renderer) {
                 const gd_index_t fill = 0x45;
                 memset(pixels, fill, imd.image_size);
 
-                const size_t entriesSizeBytes = 16000;
+                const size_t entriesSizeBytes = 26000;
                 main.memory.entries.sizeBytes = entriesSizeBytes;
                 main.memory.entries.memoryBytes = (char*)malloc(entriesSizeBytes);
 
-                const size_t stringSizeBytes = 8000;
+                const size_t stringSizeBytes = 18000;
                 main.memory.strings.sizeBytes = stringSizeBytes;
                 main.memory.strings.memoryBytes = (char*)malloc(entriesSizeBytes);
 
@@ -154,7 +155,7 @@ void sketch(const char* filename, SDL_Renderer *renderer) {
                 if (main.err != GD_X_OK) {
                     printf("read image data failed: err: %d\n", (int)main.err);
                     // todo clean up?
-                    return;
+                    exit(main.err);
                 }
                 
                 frame_info.width = imd.image_width;

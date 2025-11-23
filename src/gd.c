@@ -168,6 +168,9 @@ void gd_image_subblock_unpack(gd_image_block_t *block, uint8_t *subblock, uint8_
             expand->onDeckBits -= block->codeBits;
 
             gd_image_code_expand(&block->expand_codes, expand->extract);
+            if (block->expand_codes.string_table.status != GD_OK) {
+                return; // abort on error
+            }
             if (block->expand_codes.codeSize != block->codeBits) {
                 gd_code_size(block, block->expand_codes.codeSize);
             }
