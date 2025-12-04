@@ -3,15 +3,10 @@
 
 #include <stdbool.h>
 #include <string.h>
+#include <stdio.h>
 
 static inline uint16_t gd_unpack_word(uint8_t bytes[2]) {
     return bytes[0] + (bytes[1] << 8);
-}
-
-void gd_code_size(gd_image_block_t *block, uint8_t codeSize) {
-    block->codeBits = codeSize;
-    const uint16_t one = 1;
-    block->codeMask = (one << codeSize) - 1;
 }
 
 /**
@@ -20,7 +15,7 @@ void gd_code_size(gd_image_block_t *block, uint8_t codeSize) {
  * special control codes
  */
 void gd_string_table_init(gd_string_table_t *table, uint8_t minCodeSize) {
-    const uint16_t initializedSize = (1 << minCodeSize);
+    const uint16_t initializedSize = 1 << minCodeSize;
 
     table->entries = (gd_string_table_entry_t*)table->memory.entries.memoryBytes;
     table->entries_length = initializedSize + 2;
@@ -30,7 +25,7 @@ void gd_string_table_init(gd_string_table_t *table, uint8_t minCodeSize) {
     table->strings_length = initializedSize;
     table->strings_capacity = table->memory.strings.sizeBytes / sizeof(*table->strings);
 
-    table->status = GD_X_OK;
+    table->err = GD_OK;
 
     // note forced narrowing to gd_index_t, initializedSize is know to be <= 256
     for (uint16_t i=0; i<initializedSize; i++) {
@@ -78,12 +73,12 @@ uint16_t gd_string_table_add(gd_string_table_t *table, gd_string_t *string) {
         memcpy((void*)&table->strings[table->strings_length], (void*)string->value, string->length * sizeof(gd_index_t));
         table->strings_length += string->length;
 
-        table->status = GD_X_OK;
+        table->err = GD_OK;
         return code;
     } else {
         // fixme s/staus/err/
         // unlikely both?
-        table->status = entries_has_space ? GD_ERR_STRINGS_NO_SPACE : GD_ERR_ENTRIES_NO_SPACE;
+        table->err = entries_has_space ? GD_ERR_STRINGS_NO_SPACE : GD_ERR_ENTRIES_NO_SPACE;
         return 0xFFFF;
     }
 }
@@ -101,19 +96,19 @@ uint16_t gd_string_table_add(gd_string_table_t *table, gd_string_t *string) {
  * Not found:
  *   Output: P+P[0], add P+P[0], Next prior: P+P[0]
  */
-void gd_image_code_expand(gd_expand_codes_t *expand, uint16_t extract) {
+gd_err_t gd_image_code_expand(gd_expand_codes_t *expand, uint16_t extract) {
     if (extract == expand->clearCode) {
         expand->compressStatus = 1;
         // table init same as clearcode, but codebits is 2 x
-        gd_string_table_init(&expand->string_table, expand->codeSize -1 );
+        gd_string_table_init(&expand->string_table, expand->minumumCodeSize );
         expand->prior_string.length = 0;
-        return;
+        return GD_OK;
     } else if (extract == expand->endCode) {
         expand->compressStatus = 0;
-        return;
+        return GD_OK;
     }
     if (expand->compressStatus == 0) {
-        return;
+        return GD_OK;
     }
 
     static gd_index_t raw_string[64];
@@ -132,8 +127,8 @@ void gd_image_code_expand(gd_expand_codes_t *expand, uint16_t extract) {
     // skip insert on initial code
     if (expand->prior_string.length > 0) {
         gd_string_table_add(&expand->string_table, &new_string);
-        if (expand->string_table.status != GD_OK) {
-            return;
+        if (expand->string_table.err != GD_OK) {
+            return expand->string_table.err;
         }
     }
 
@@ -141,6 +136,9 @@ void gd_image_code_expand(gd_expand_codes_t *expand, uint16_t extract) {
     expand->prior_string = found ? found_string : new_string;
 
     // output to index stream
+    if (expand->outputLength + expand->prior_string.length * sizeof(gd_index_t) > expand->outputCapacity) {
+        return GD_ERR_OUTPUT_NO_SPACE;
+    }
     memcpy(&expand->output[expand->outputLength], expand->prior_string.value, expand->prior_string.length * sizeof(gd_index_t));
     expand->outputLength += expand->prior_string.length;
 
@@ -148,6 +146,8 @@ void gd_image_code_expand(gd_expand_codes_t *expand, uint16_t extract) {
     if (expand->string_table.entries_length >> expand->codeSize) {
         expand->codeSize++;
     }
+
+    return GD_OK; // maybe code for increase code size?
 }
 
 // given an "image data subblock", unpack its "byte stream" to a "code stream"
@@ -155,42 +155,55 @@ void gd_image_code_expand(gd_expand_codes_t *expand, uint16_t extract) {
 // this can occur 0 or more times in an image block
 // it can init the code table, 
 // but the minumumCodeSize is determined by the parent image block
-void gd_image_subblock_unpack(gd_image_block_t *block, uint8_t *subblock, uint8_t count) {
-
-    gd_expand_codes_t * const expand = &block->expand_codes;
+gd_err_t gd_image_subblock_unpack(gd_unpack_t *unpack, uint8_t *subblock, uint8_t count) {
 
     // fixme check for count 0
     for (uint8_t i=0; ; ) {
         // shift out of on deck
-        while (expand->onDeckBits >= block->codeBits) {
-            expand->extract = expand->onDeck & block->codeMask;
-            expand->onDeck >>= block->codeBits;
-            expand->onDeckBits -= block->codeBits;
+        while (unpack->onDeckBits >= unpack->codeBits) {
+            unpack->extract = unpack->onDeck & unpack->codeMask;
+            unpack->onDeck >>= unpack->codeBits;
+            unpack->onDeckBits -= unpack->codeBits;
 
-            gd_image_code_expand(&block->expand_codes, expand->extract);
-            if (block->expand_codes.string_table.status != GD_OK) {
-                return; // abort on error
+            gd_err_t err = gd_image_code_expand(&unpack->expandCodes, unpack->extract);
+            if (unpack->expandCodes.string_table.err != GD_OK) {
+                return unpack->expandCodes.string_table.err; // abort on error
             }
-            if (block->expand_codes.codeSize != block->codeBits) {
-                gd_code_size(block, block->expand_codes.codeSize);
+            if (err != GD_OK) {
+                return err;
             }
+
+            // increase code size (max is 12)
+            // fixme: codeMask should be + 0
+            if (unpack->expandCodes.string_table.entries_length == (unpack->codeMask + 1)) {
+                unpack->codeBits += 1;
+                unpack->codeMask = (1 << unpack->codeBits) - 1;
+            }
+
+            // printf("codeBits,extract,entries,out,block: %d %d %d %d %d\n", unpack->codeBits, unpack->extract, unpack->expandCodes.string_table.entries_length, unpack->expandCodes.outputLength, i);
+
         }
         // shift into on deck
-        if (expand->topBits > 0) {
-            uint8_t shiftBits = (expand->topBits > 16 - expand->onDeckBits) ? (16 - expand->onDeckBits) : expand->topBits;
-            expand->onDeck |= expand->top << expand->onDeckBits;
-            expand->onDeckBits += shiftBits;
-            expand->topBits -= shiftBits;
+        if (unpack->topBits > 0) {
+            uint8_t onDeckVacant = 16 - unpack->onDeckBits;
+            bool topBitsExcess = unpack->topBits > onDeckVacant;
+            uint8_t shiftBits = topBitsExcess ? onDeckVacant : unpack->topBits;
+            // uint8_t shiftBits = (unpack->topBits > 16 - unpack->onDeckBits) ? (16 - unpack->onDeckBits) : unpack->topBits;
+            unpack->onDeck |= unpack->top << unpack->onDeckBits;
+            unpack->onDeckBits += shiftBits;
+            unpack->top >>= shiftBits;
+            unpack->topBits -= shiftBits;
         }
         // shift into top
-        if (expand->topBits == 0 && expand->onDeckBits < block->codeBits) { // lazy fetch
+        if (unpack->topBits == 0 && unpack->onDeckBits < unpack->codeBits) { // lazy fetch
             if (i == count) {
                 break;
             }
-            expand->top = subblock[i++];
-            expand->topBits = 8;
+            unpack->top = subblock[i++];
+            unpack->topBits = 8;
         }
     }
+    return GD_OK;
 }
 
 static void gd_expand_codes_init(gd_expand_codes_t *expand_codes, gd_index_t *output) {
@@ -202,25 +215,28 @@ static void gd_expand_codes_init(gd_expand_codes_t *expand_codes, gd_index_t *ou
 
 // internal
 void gd_image_block_read(gd_main_t *main, gd_image_block_t *image_block) {
-    gd_expand_codes_init(&image_block->expand_codes, image_block->output);
+    gd_expand_codes_init(&image_block->unpack.expandCodes, image_block->output);
 
     // fixme check length, error abort
-    (void)GD_READ(&image_block->minumumCodeSize, 1);
+    (void)GD_READ(&image_block->unpack.expandCodes.minumumCodeSize, 1);
     // todo test limits
-    image_block->codeBits = image_block->minumumCodeSize + 1;
-    image_block->codeMask = (1 << image_block->codeBits) - 1;
-
-    image_block->expand_codes.codeSize = image_block->codeBits;
-    image_block->expand_codes.clearCode = (1 << image_block->minumumCodeSize);
-    image_block->expand_codes.endCode = image_block->expand_codes.clearCode + 1;
+    // following may be moved to code table init
+    uint8_t codeBits = image_block->unpack.expandCodes.minumumCodeSize + 1;
 
     image_block->outputLength = 0;
+    image_block->unpack.expandCodes.outputLength = 0;
 
+    image_block->unpack.codeBits = codeBits;
+    image_block->unpack.codeMask = (1 << codeBits) - 1;
     // initialize unpack
-    image_block->expand_codes.onDeck = 0;        // holds the bits coming from the byte stream
-    image_block->expand_codes.onDeckBits = 0;
-    image_block->expand_codes.extract = 0;       // the fully assmbled code
-    image_block->expand_codes.topBits = 0;
+    image_block->unpack.onDeck = 0;        // holds the bits coming from the byte stream
+    image_block->unpack.onDeckBits = 0;
+    image_block->unpack.extract = 0;       // the fully assmbled code
+    image_block->unpack.topBits = 0;
+    image_block->unpack.expandCodes.codeSize = codeBits;
+    image_block->unpack.expandCodes.clearCode = (1 << image_block->unpack.expandCodes.minumumCodeSize);
+    image_block->unpack.expandCodes.endCode = image_block->unpack.expandCodes.clearCode + 1;
+    image_block->unpack.expandCodes.compressStatus = 0;
 
     for (int wdt=0; wdt<5000; wdt++) {
         uint8_t subblockSize;
@@ -232,11 +248,14 @@ void gd_image_block_read(gd_main_t *main, gd_image_block_t *image_block) {
         // fixme check count
         (void)GD_READ(subblock, subblockSize);
 
-        gd_image_subblock_unpack(image_block, subblock, subblockSize);
-
-        image_block->outputLength = image_block->expand_codes.outputLength;
-        main->pixelOutputProgress= image_block->outputLength;
-        main->err = image_block->expand_codes.string_table.status;
+        gd_err_t err = gd_image_subblock_unpack(&image_block->unpack, subblock, subblockSize);
+        if (err != GD_OK) {
+            main->err = err;
+            return;
+        }
+        image_block->outputLength = image_block->unpack.expandCodes.outputLength;
+        main->pixelOutputProgress= image_block->unpack.expandCodes.outputLength;
+        main->err = image_block->unpack.expandCodes.string_table.err;
     }
 }
 
@@ -246,7 +265,7 @@ void gd_image_block_read(gd_main_t *main, gd_image_block_t *image_block) {
 
 // API
 void gd_init(gd_main_t *main) {
-    main->err = GD_X_OK;
+    main->err = GD_OK;
     main->next_block_type = GD_BLOCK_HEADER;
 }
 
@@ -359,13 +378,15 @@ void gd_read_local_color_table(gd_main_t *main, gd_color_t *color_table, size_t 
 void gd_read_image_data(gd_main_t *main, gd_index_t *output, size_t capacity) {
     gd_image_block_t image_block;
     image_block.output = output;
-    image_block.outputLength = capacity;
-    image_block.expand_codes.string_table.memory = main->memory;
+    image_block.outputLength = 0;
 
-    image_block.expand_codes.string_table.entries_capacity = 9;
-    image_block.expand_codes.string_table.status = GD_ERR_NO_INIT;
+    image_block.unpack.expandCodes.output = output;
+    image_block.unpack.expandCodes.outputLength = 0;
+    image_block.unpack.expandCodes.outputCapacity = capacity;
+    image_block.unpack.expandCodes.string_table.memory = main->memory;
 
     gd_image_block_read(main, &image_block);
+    // main->err = image_block.unpack.expandCodes.string_table.err;
     // to do peek
     main->next_block_type = GD_BLOCK_TRAILER;
 }

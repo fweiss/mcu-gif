@@ -40,3 +40,5 @@ private:
     uint8_t onDeckBits;
     uint8_t onDeck;
 };
+
+std::string dump(std::vector<uint8_t> p);

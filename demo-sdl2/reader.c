@@ -103,7 +103,7 @@ void sketch(const char* filename, SDL_Renderer *renderer) {
             case GD_BLOCK_GLOBAL_COLOR_TABLE:
                 gct = (gd_color_t*)calloc(info.globalColorTableSize, sizeof(gd_color_t));
                 gd_read_global_color_table(&main, gct, info.globalColorTableSize);
-                // check status
+                // check err
                 break;
             case GD_BLOCK_GRAPHIC_CONTROL_EXTENSION:
                 gd_read_graphic_control_extension(&main, &gce);
@@ -116,9 +116,11 @@ void sketch(const char* filename, SDL_Renderer *renderer) {
                 // fixme don't overwrite gct
                 gct = (gd_color_t*)calloc(imd.local_color_table_size, sizeof(gd_color_t));
                 gd_read_global_color_table(&main, gct, imd.local_color_table_size);
-                // check status
+                // check err
                 break;
             case GD_BLOCK_IMAGE_DATA:
+                // debugging
+                imd.image_size = 120000;
                 printf("pixels: %zu\n", imd.image_size);
                 // fixme memory leak
                 pixels = (gd_index_t*)calloc(imd.image_size, sizeof(gd_index_t));
@@ -129,7 +131,7 @@ void sketch(const char* filename, SDL_Renderer *renderer) {
                 main.memory.entries.sizeBytes = entriesSizeBytes;
                 main.memory.entries.memoryBytes = (char*)malloc(entriesSizeBytes);
 
-                const size_t stringSizeBytes = 18000;
+                const size_t stringSizeBytes = 180000;
                 main.memory.strings.sizeBytes = stringSizeBytes;
                 main.memory.strings.memoryBytes = (char*)malloc(entriesSizeBytes);
 
@@ -152,7 +154,7 @@ void sketch(const char* filename, SDL_Renderer *renderer) {
 
                 gd_read_image_data(&main, pixels, imd.image_size);
                 printf("pixels output: %zu\n", main.pixelOutputProgress);
-                if (main.err != GD_X_OK) {
+                if (main.err != GD_OK) {
                     printf("read image data failed: err: %d\n", (int)main.err);
                     // todo clean up?
                     exit(main.err);
@@ -192,7 +194,7 @@ void sketch(const char* filename, SDL_Renderer *renderer) {
 #endif
 
         }
-        if (main.err != GD_X_OK) {
+        if (main.err != GD_OK) {
             // fixme clean up
             printf("aborted: gd err: %d\n", main.err);
             break;

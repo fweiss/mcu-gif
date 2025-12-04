@@ -17,18 +17,6 @@ using ccspec::matchers::be_truthy;
 #include <vector>
 using std::vector;
 
-// for comparing vectors, until ccspec has a diff reporter
-static std::string dump(std::vector<uint8_t> p) {
-    std::string o;
-    for (auto b : p) {
-        char buf[3];
-        snprintf(buf, sizeof(buf), "%02X", b);
-        o += buf;
-        o += ",";
-    }
-    return o.c_str();
-}
-
 namespace simple {
 
 auto helpers_spec =

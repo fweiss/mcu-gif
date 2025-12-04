@@ -27,12 +27,13 @@ const size_t outputSize = 1024;  // fixme max output size for a sub block?
 
 typedef std::vector<uint8_t> code_stream_t;
 
+static gd_expand_codes_t expand;
+
 auto image_expand_spec =
 describe("expand image indexes", [] {
 
     static gd_index_t output[outputSize];
 
-    static gd_expand_codes_t expand;
     expand.string_table.memory = allocate();
 
     // clever use of lambda instead of define
@@ -41,6 +42,10 @@ describe("expand image indexes", [] {
             gd_image_code_expand(&expand, code);
         }
     };
+
+    before("all", [] {
+        expand.minumumCodeSize = 2;
+    });
 
     before("each", [] {
         // N.B. 'output' must be the array, not a pointer
@@ -52,6 +57,7 @@ describe("expand image indexes", [] {
         expand.endCode = 5;
         expand.output = output;
         expand.outputLength = 0;
+        expand.outputCapacity = sizeof(output) * sizeof(output[0]);
     });
 
     // 1's will output index one-for-one
@@ -105,12 +111,10 @@ describe("expand image indexes", [] {
     });
     describe("code size changed", [&] {
         it("to 4", [&] {
-//            expand_codes_stream({ 4, 1, 6, 6, 2, 5 });
             uint16_t codes[] = { 4, 1, 6, 6, 2, 5};
             for (auto code : codes) {
                 gd_image_code_expand(&expand, code);
             }
-//            expect(expand.string_table.length).to(eq(6));
             expect((uint16_t)expand.codeSize).to(eq(4));
         });
     });
@@ -123,7 +127,6 @@ describe("expand image indexes", [] {
 
     describe("full example", [&] {
         before("each", [&] {
-//            expand_codes_stream({ 4, 1, 6, 6, 2, 9, 9, 7, 8, 10, 2, 12, 1, 14, 15, 6, 0, 21, 0, 10, 7, 22, 23, 18, 26, 7, 10, 29, 13, 24, 12, 18, 16, 36, 12, 5});
             uint16_t codes[] = { 4, 1, 6, 6, 2, 9, 9, 7, 8, 10, 2, 12, 1, 14, 15, 6, 0, 21, 0, 10, 7, 22, 23, 18, 26, 7, 10, 29, 13, 24, 12, 18, 16, 36, 12, 5};
             for (auto code : codes) {
                 gd_image_code_expand(&expand, code);
@@ -160,6 +163,8 @@ describe("expand image indexes", [] {
             expand.clearCode = 256; // need to find where this should get initialized
             expand.endCode = 257;
             expand.codeSize = 9;
+            // reinitialized
+            expand.minumumCodeSize = 8;
             
             // 2 -> 64 1 -> 0, 128 -> 128, 511 -> 1
             uint16_t codes[] = { 256, 255, 257};
@@ -174,6 +179,23 @@ describe("expand image indexes", [] {
         it("output value", [&] {
             gd_expand_codes_t &xx = expand;
             expect((int)xx.output[0]).to(eq(255));
+        });
+    });
+    describe("output capacity", [] {
+        static gd_err_t expandError;
+        before("all", [] {
+            expand.outputCapacity = 1;
+            expand.compressStatus = 1;
+            uint16_t codes[] = { 4, 1, 6, 6, 2, 9, 9, 7, 8, 10, 2, 12, 1, 14, 15, 6, 0, 21, 0, 10, 7, 22, 23, 18, 26, 7, 10, 29, 13, 24, 12, 18, 16, 36, 12, 5};
+            for (auto code : codes) {
+                expandError = gd_image_code_expand(&expand, code);
+                if (expandError != GD_OK) {
+                    break;
+                }
+            }
+        });
+        it("no space", [] {
+            expect((int)expandError).to(eq((int)GD_ERR_OUTPUT_NO_SPACE));
         });
     });
 

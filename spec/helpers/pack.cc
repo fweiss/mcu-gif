@@ -57,3 +57,16 @@ Pack& Pack::operator+(Shift bits) {
     this->codeMask = (1 << codeBits) - 1;
     return *this;
 }
+
+// for comparing vectors, until ccspec has a diff reporter
+std::string dump(std::vector<uint8_t> p) {
+    std::string o;
+    for (auto b : p) {
+        char buf[3];
+        snprintf(buf, sizeof(buf), "%02X", b);
+        o += buf;
+        o += ",";
+    }
+    return o.c_str();
+}
+

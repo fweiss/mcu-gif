@@ -174,7 +174,7 @@ describe("read block", [] {
             gd_read_global_color_table(&main, gct, 4);
         });
         it("no err", [&] {
-            expect(main.err).to(be == GD_X_OK);
+            expect(main.err).to(be == GD_OK);
         });
         it("bytes", [&] {
             expect((int)ff_read_get_pos()).to(eq((int)12));

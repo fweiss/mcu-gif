@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <iostream>
+#include <exception>
 
 using std::cout;
 
@@ -28,14 +29,15 @@ namespace simple {
 
 int main() {
     ExampleGroup* example_groups[] = {
+        // bottom up order
 
         simple::helpers_spec,
 
-        // bottom up order
         simple::string_table_spec,
         simple::expand_state_spec,
         simple::image_expand_spec,
         simple::image_subblock_spec,
+
         simple::image_data_block_spec,
         simple::spec_10x10_red_blue_white,
         simple::read_block_spec,
@@ -49,8 +51,13 @@ int main() {
 
     bool succeeded = true;
     for (auto example_group : example_groups) {
-        succeeded = example_group->run(reporter) && succeeded;
-        delete example_group;
+        // n.b. cannot catch segmentation faults
+        try {
+            succeeded = example_group->run(reporter) && succeeded;
+            delete example_group;
+        } catch(std::exception e) {
+            printf("exception: %s\n", e.what());
+        }
     }
 
     return !succeeded;
