@@ -23,16 +23,6 @@ static gd_string_t string;
 
 auto string_table_spec =
 describe("string table", [] {
-    // static gd_string_table_t string_table;
-    // static gd_string_t string;
-    // gd_memory_t &memory = string_table.memory;
-
-    // const size_t entriesSizeBytes = 8000;
-    // string_table.memory.entries.sizeBytes = entriesSizeBytes;
-    // char entryBytes[entriesSizeBytes];
-    // string_table.memory.entries.memoryBytes = entryBytes;
-
-    // memory.strings.sizeBytes = 1024;
 
     before("each", [&] () {
         // allocate a full buffer
@@ -53,13 +43,13 @@ describe("string table", [] {
             expect(string_table.strings_capacity).to(be > 512);
         });
         it("init err", [&] {
-            expect(string_table.status).to(eq(GD_X_OK));
+            expect(string_table.err).to(eq(GD_OK));
         });
     });
 
     describe("smallest", [&] {
         before("each", [&] {
-            string_table.status = GD_ERR_NO_INIT;
+            string_table.err = GD_ERR_NO_INIT;
             gd_string_table_init(&string_table, 2);
         });
 
@@ -82,7 +72,7 @@ describe("string table", [] {
                 expect(string.length).to(eq(0));
             });
             it("err ok", [&] {
-                expect((int)string_table.status).to(eq(GD_X_OK));
+                expect((int)string_table.err).to(eq(GD_OK));
             });
         });
 
@@ -101,9 +91,9 @@ describe("string table", [] {
                         uint16_t code = gd_string_table_add(&string_table, &string);
                         expect(code).to(eq(0xFFFF));
                     });
-                    it("status entries error", [] {
+                    it("err entries error", [] {
                         (void)gd_string_table_add(&string_table, &string);
-                        expect((uint16_t)string_table.status).to(eq((uint16_t)GD_ERR_ENTRIES_NO_SPACE));
+                        expect((uint16_t)string_table.err).to(eq((uint16_t)GD_ERR_ENTRIES_NO_SPACE));
                     });
                 });
                 describe("strings", [] {
@@ -114,15 +104,15 @@ describe("string table", [] {
                         uint16_t code = gd_string_table_add(&string_table, &string);
                         expect(code).to(eq(0xFFFF));
                     });
-                    it("status strings error", [] {
+                    it("err strings error", [] {
                         (void)gd_string_table_add(&string_table, &string);
-                        expect((uint16_t)string_table.status).to(eq((uint16_t)GD_ERR_STRINGS_NO_SPACE));
+                        expect((uint16_t)string_table.err).to(eq((uint16_t)GD_ERR_STRINGS_NO_SPACE));
                     });
                 });
             });
             it("return new code", [&] {
                 uint16_t code = gd_string_table_add(&string_table, &string);
-                expect((uint16_t)string_table.status).to(eq((uint16_t)GD_OK));
+                expect((uint16_t)string_table.err).to(eq((uint16_t)GD_OK));
                 expect(code).to(eq(6));
             });
         });

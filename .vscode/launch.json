@@ -6,7 +6,7 @@
     "configurations": [
         {
             "name": "(lldb) spec",
-            "type": "cppdbg",
+            "type": "lldb",
             "request": "launch",
             "program": "${workspaceFolder}/build/spec/start",
             "args": [],

@@ -29,12 +29,13 @@ static uint8_t header_logical_screen_descriptor[13] =
 
 namespace simple {
 
+static gd_main_t main;
+static gd_info_t info;
+
 auto spec_10x10_red_blue_white =
 describe("for 10x10 red-blue-white", [] {
 
     describe("info", [] {
-        static gd_main_t main;
-        static gd_info_t info;
 
         before("each", [&] {
             FFILE(header_logical_screen_descriptor);
@@ -74,7 +75,7 @@ describe("for 10x10 red-blue-white", [] {
         static gd_index_t output[100];
         before("each", [] {
             FFILE(sample1);
-            gd_main_t main;
+            // gd_main_t main;
             main.memory = allocate();
             main.fread = ff_read;
             gd_info_t info;
@@ -83,6 +84,7 @@ describe("for 10x10 red-blue-white", [] {
             gd_image_descriptor_t imd;
 
             // we know the order of calls needed here
+            // fixme fail on error
             gd_init(&main);
             gd_read_header(&main);
             gd_read_logical_screen_descriptor(&main, &info);

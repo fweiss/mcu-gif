@@ -32,7 +32,9 @@ describe("image decompress", [] {
         static gd_index_t output[512];
         expand.output = output;
         expand.outputLength = 0;
+        expand.outputCapacity = sizeof(output);
         expand.string_table.memory = allocate();
+        expand.minumumCodeSize = 2;
 
         // need to init expand
         expand.clearCode = 4;

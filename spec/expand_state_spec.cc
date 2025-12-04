@@ -34,6 +34,7 @@ describe("expand state", [] {
         expand.clearCode = 4;
         expand.output = output;
         expand.outputLength = 0;
+        expand.minumumCodeSize = 2;
 
     });
 

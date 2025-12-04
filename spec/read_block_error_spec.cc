@@ -98,7 +98,7 @@ describe("read block error", [] {
     });
     it("initial block", [] {
         gd_init(&main);
-        expect((int)main.err).to(eq((int)GD_X_OK));
+        expect((int)main.err).to(eq((int)GD_OK));
     });
     describe("header", [&] {
         before("all", [&] {
@@ -132,7 +132,7 @@ describe("read block error", [] {
 
     describe("code table errors", [&] {
         before("each", [&] {
-            main.err = GD_X_OK;
+            main.err = GD_OK;
             main.memory = allocate();
         });
         describe("strings", [&] {
@@ -151,12 +151,22 @@ describe("read block error", [] {
                 main.memory.entries.sizeBytes = 10;
                 FFILEV(image_data);
                 static gd_index_t pixels[10];
-                // FIXME bytes or gd_index_t?
                 gd_read_image_data(&main, pixels, sizeof(pixels));
             });
             it("no space", [&] {
                 expect((int)main.err).to(eq((int)GD_ERR_ENTRIES_NO_SPACE));
             });
+        });
+    });
+    describe("output capacity error", [] {
+        before("all", [] {
+            main.memory = allocate();
+            FFILEV(image_data);
+            static gd_index_t pixels[1];
+            gd_read_image_data(&main, pixels, 1);
+        });
+        it("no space error", [] {
+            expect((int)main.err).to(eq((int)GD_ERR_OUTPUT_NO_SPACE));
         });
     });
 
