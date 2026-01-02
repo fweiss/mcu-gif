@@ -3,11 +3,12 @@
 
 #include <stdbool.h>
 #include <string.h>
-#include <stdio.h>
 
 static inline uint16_t gd_unpack_word(uint8_t bytes[2]) {
     return bytes[0] + (bytes[1] << 8);
 }
+
+#define min(x,y) ((x)>(y)?(y):(x))
 
 /**
  * Initialize the string table with 0..2^n-1
@@ -146,7 +147,6 @@ gd_err_t gd_image_code_expand(gd_expand_codes_t *expand, uint16_t extract) {
     if (expand->string_table.entries_length >> expand->codeSize) {
         expand->codeSize++;
     }
-
     return GD_OK; // maybe code for increase code size?
 }
 
@@ -173,6 +173,11 @@ gd_err_t gd_image_subblock_unpack(gd_unpack_t *unpack, uint8_t *subblock, uint8_
                 return err;
             }
 
+            if (unpack->extract == unpack->expandCodes.clearCode) {
+                unpack->codeBits = unpack->expandCodes.minumumCodeSize + 1;
+                unpack->codeMask = (1 << unpack->codeBits) -1;
+            }
+
             // increase code size (max is 12)
             // fixme: codeMask should be + 0
             if (unpack->expandCodes.string_table.entries_length == (unpack->codeMask + 1)) {
@@ -186,9 +191,7 @@ gd_err_t gd_image_subblock_unpack(gd_unpack_t *unpack, uint8_t *subblock, uint8_
         // shift into on deck
         if (unpack->topBits > 0) {
             uint8_t onDeckVacant = 16 - unpack->onDeckBits;
-            bool topBitsExcess = unpack->topBits > onDeckVacant;
-            uint8_t shiftBits = topBitsExcess ? onDeckVacant : unpack->topBits;
-            // uint8_t shiftBits = (unpack->topBits > 16 - unpack->onDeckBits) ? (16 - unpack->onDeckBits) : unpack->topBits;
+            uint8_t shiftBits = min(onDeckVacant, unpack->topBits);
             unpack->onDeck |= unpack->top << unpack->onDeckBits;
             unpack->onDeckBits += shiftBits;
             unpack->top >>= shiftBits;

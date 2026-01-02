@@ -28,6 +28,7 @@ static Pack p;
 static void unpackInit(gd_unpack_t *unpack) {
     unpack->expandCodes.outputLength = 0;
     unpack->onDeckBits = 0;
+    unpack->onDeck = 0;
     unpack->codeBits = 3;
     unpack->codeMask = 0x07;
     unpack->expandCodes.string_table.strings_length = 0;
@@ -166,8 +167,8 @@ describe("image subblock with", [] {
             unpack.onDeckBits = 9;
             unpack.top = 0b01111111;
             unpack.topBits = 7;
-            const uint8_t packed[] = { }; 
-            gd_image_subblock_unpack(&unpack, (uint8_t *)&packed, sizeof(packed));
+            // const uint8_t packed[0]; // nothing is read
+            gd_image_subblock_unpack(&unpack, (uint8_t *)NULL, 0);
         });
         it("verify onDeck", [] {
             expect(unpack.onDeck).to(eq(0b1111111111111111));
@@ -177,22 +178,19 @@ describe("image subblock with", [] {
         });
     });
     describe("code size increase", [] {
-        describe("to 10 bits", [] {
+        describe("from 9 bits", [] {
             before("all", [] {
                 unpackInit(&unpack);
                 unpack.codeBits = 9;
                 unpack.codeMask = 0x1ff;
                 // one less that what would trigger a resize
-                unpack.expandCodes.string_table.entries_length = 0x1fe;
-
-                // PackedSubBlock packed = p + Shift(9) + 0x1ff + 5;
-                // gd_image_subblock_unpack(&unpack, packed.data(), packed.size());
-
-                // uint8_t p[] = { 0b11111111, 0b00001011, 0b00000000, }; // 1ff, 5
-                uint8_t p[] = { 0b00000000, 0b11111110, 0b00010111, }; // 0 1ff 5/skip first
+                unpack.expandCodes.string_table.entries_length = 0x1ff;
+                unpack.expandCodes.endCode = 0x101;
+                unpack.expandCodes.compressStatus = 1;
+                uint8_t p[] = { 0b00000010, 0b00000011, 0b00000010, }; // 0x102, 0x101/end
                 gd_image_subblock_unpack(&unpack, p, sizeof(p));
             });
-            it("code bits", [] {
+            it("to 10 bits", [] {
                 expect(unpack.codeBits).to(eq(10));
             });
             // it("string table length", [] {
