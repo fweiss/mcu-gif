@@ -1,210 +1,210 @@
-#include "ccspec/core.h"
+// #include "ccspec/core.h"
 
-#include "ccspec/expectation.h"
-#include "ccspec/matchers.h"
+// #include "ccspec/expectation.h"
+// #include "ccspec/matchers.h"
 
-using ccspec::core::describe;
-using ccspec::core::before;
-using ccspec::core::it;
-using ccspec::expect;
-using ccspec::matchers::eq;
+// using ccspec::core::describe;
+// using ccspec::core::before;
+// using ccspec::core::it;
+// using ccspec::expect;
+// using ccspec::matchers::eq;
 
-#include "helpers/fake_file.h"
-#include "helpers/pack.h"
-#include "helpers/allocateMemory.h"
+// #include "helpers/fake_file.h"
+// #include "helpers/pack.h"
+// #include "helpers/allocateMemory.h"
 
-extern "C" {
-	#include "gd.h"
-	#include "gd_internal.h"
-}
+// extern "C" {
+// 	#include "gd.h"
+// 	#include "gd_internal.h"
+// }
 
-namespace simple {
+// namespace simple {
 
-// fixme share
-// for comparing vectors, until ccspec has a diff reporter
-static std::string dump(std::vector<uint8_t> p) {
-    std::string o;
-    for (auto b : p) {
-        char buf[3];
-        snprintf(buf, sizeof(buf), "%02X", b);
-        o += buf;
-        o += ",";
-    }
-    return o.c_str();
-}
+// // fixme share
+// // for comparing vectors, until ccspec has a diff reporter
+// static std::string dump(std::vector<uint8_t> p) {
+//     std::string o;
+//     for (auto b : p) {
+//         char buf[3];
+//         snprintf(buf, sizeof(buf), "%02X", b);
+//         o += buf;
+//         o += ",";
+//     }
+//     return o.c_str();
+// }
 
-const size_t outputSize = 1024;  // fixme max output size for a sub block?
+// const size_t outputSize = 1024;  // fixme max output size for a sub block?
 
-const uint8_t lzwMinimumCodeSize = 2;
-const uint8_t blockEnd = 0;
+// const uint8_t lzwMinimumCodeSize = 2;
+// const uint8_t blockEnd = 0;
 
-typedef std::vector<uint8_t> code_stream_t;
+// typedef std::vector<uint8_t> code_stream_t;
 
-auto image_data_block_spec =
-describe("image data block", [] {
+// auto image_data_block_spec =
+// describe("image data block", [] {
 
-    static gd_index_t output[outputSize];
+//     static gd_index_t output[outputSize];
 
-    static gd_main_t main;
-    main.fread = ff_read;
-    static gd_image_block_t image_block;
-    image_block.output = output;
-    image_block.expand_codes.string_table.memory = allocate();
+//     static gd_main_t main;
+//     main.fread = ff_read;
+//     static gd_image_block_t image_block;
+//     image_block.output = output;
+//     image_block.expand_codes.string_table.memory = allocate();
 
-    before("each", [] {
-        // N.B. 'output' must be the array, not a pointer
-        memset(output, 0, sizeof(output));
-    });
+//     before("each", [] {
+//         // N.B. 'output' must be the array, not a pointer
+//         memset(output, 0, sizeof(output));
+//     });
 
-    describe("empty", [&] {
-        before("each", [&] {
-            static uint8_t input[] = { 0x02, 0x00 };
-            FFILE(input);
-            gd_image_block_read(&main, &image_block);
-        });
-        it("output length", [&] {
-            expect(image_block.outputLength).to(eq(0u));
-        });
-    });
+//     describe("empty", [&] {
+//         before("each", [&] {
+//             static uint8_t input[] = { 0x02, 0x00 };
+//             FFILE(input);
+//             gd_image_block_read(&main, &image_block);
+//         });
+//         it("output length", [&] {
+//             expect(image_block.outputLength).to(eq(0u));
+//         });
+//     });
 
-    describe("minimum code size 2", [&] {
-        before("each", [&] {
-            static uint8_t input[] = { 0x02, 0x00 };
-            FFILE(input);
-            gd_image_block_read(&main, &image_block);
-        });
-        it("value", [&] {
-            expect(image_block.minumumCodeSize).to(eq(2));
-        });
-    });
+//     describe("minimum code size 2", [&] {
+//         before("each", [&] {
+//             static uint8_t input[] = { 0x02, 0x00 };
+//             FFILE(input);
+//             gd_image_block_read(&main, &image_block);
+//         });
+//         it("value", [&] {
+//             expect(image_block.minumumCodeSize).to(eq(2));
+//         });
+//     });
 
-    describe("minimum code size 8", [&] {
-        before("each", [&] {
-            static uint8_t input[] = { 0x08, 0x00 };
-            FFILE(input);
-            gd_image_block_read(&main, &image_block);
-        });
-        it("value", [&] {
-            expect(image_block.minumumCodeSize).to(eq(8));
-        });
-    });
+//     describe("minimum code size 8", [&] {
+//         before("each", [&] {
+//             static uint8_t input[] = { 0x08, 0x00 };
+//             FFILE(input);
+//             gd_image_block_read(&main, &image_block);
+//         });
+//         it("value", [&] {
+//             expect(image_block.minumumCodeSize).to(eq(8));
+//         });
+//     });
 
-    describe("one sub block", [&] {
+//     describe("one sub block", [&] {
 
-        describe("basic", [&] {
-            before("each", [&] {
-                static uint8_t input[] = { 0x02, 0x02, 0x4C, 0x01, 0x00 };
-                FFILE(input);
-                gd_image_block_read(&main, &image_block);
-            });
-            it("output length", [&] {
-                expect(image_block.outputLength).to(eq(1u));
-            });
-            it("has one index", [&] {
-                expect((int)image_block.output[0]).to(eq((gd_index_t)1));
-            });
-        });
+//         describe("basic", [&] {
+//             before("each", [&] {
+//                 static uint8_t input[] = { 0x02, 0x02, 0x4C, 0x01, 0x00 };
+//                 FFILE(input);
+//                 gd_image_block_read(&main, &image_block);
+//             });
+//             it("output length", [&] {
+//                 expect(image_block.outputLength).to(eq(1u));
+//             });
+//             it("has one index", [&] {
+//                 expect((int)image_block.output[0]).to(eq((gd_index_t)1));
+//             });
+//         });
 
-        // failing because string min Code size isn't recognized
-        describe("largest min code size 8", [&] {
-            before("each", [&] {
-                static uint8_t input[] = { 0x08, 0x04, 0x00, 0x07, 0x04, 0x04, 0x00 };
-                FFILE(input);
-                gd_image_block_read(&main, &image_block);
-            });
-            it("output length", [&] {
-                expect(image_block.outputLength).to(eq(1u));
-            });
-            it("index[0]", [&] {
-                expect((uint16_t)image_block.output[0]).to(eq(3));
-            });
-        });
-    });
-    describe("10x10 reference block", [&] {
-        static Pack p;
+//         // failing because string min Code size isn't recognized
+//         describe("largest min code size 8", [&] {
+//             before("each", [&] {
+//                 static uint8_t input[] = { 0x08, 0x04, 0x00, 0x07, 0x04, 0x04, 0x00 };
+//                 FFILE(input);
+//                 gd_image_block_read(&main, &image_block);
+//             });
+//             it("output length", [&] {
+//                 expect(image_block.outputLength).to(eq(1u));
+//             });
+//             it("index[0]", [&] {
+//                 expect((uint16_t)image_block.output[0]).to(eq(3));
+//             });
+//         });
+//     });
+//     describe("10x10 reference block", [&] {
+//         static Pack p;
 
-        before("each", [&] {
-            p.reset();
-            // this works as one block of length 4
-            vector<uint8_t> zinger = p + 4 + 1 + 6 + 6 + Shift(4) + 2 + 9 + 9 + 7 + 5;
+//         before("each", [&] {
+//             p.reset();
+//             // this works as one block of length 4
+//             vector<uint8_t> zinger = p + 4 + 1 + 6 + 6 + Shift(4) + 2 + 9 + 9 + 7 + 5;
 
-            // and spilt in blocks
-            const size_t split = 2;
-            vector<uint8_t> split0(zinger.begin(), zinger.begin() + split);
-            vector<uint8_t> split1(zinger.begin() + split, zinger.end());
+//             // and spilt in blocks
+//             const size_t split = 2;
+//             vector<uint8_t> split0(zinger.begin(), zinger.begin() + split);
+//             vector<uint8_t> split1(zinger.begin() + split, zinger.end());
 
-            // note block size is 0x01-0xff, but vector size is sixe_t
-            // consequently static_cast<uint8_t> is needed
-            vector<uint8_t> block;
-            block.emplace_back(lzwMinimumCodeSize); // lzw minumum code size
+//             // note block size is 0x01-0xff, but vector size is sixe_t
+//             // consequently static_cast<uint8_t> is needed
+//             vector<uint8_t> block;
+//             block.emplace_back(lzwMinimumCodeSize); // lzw minumum code size
 
-            block.emplace_back(static_cast<uint8_t>(split0.size())); // first subblock length
-            block.insert(block.end(), split0.begin(), split0.end());
+//             block.emplace_back(static_cast<uint8_t>(split0.size())); // first subblock length
+//             block.insert(block.end(), split0.begin(), split0.end());
 
-            block.emplace_back(static_cast<uint8_t>(split1.size())); // second subblock length
-            block.insert(block.end(), split1.begin(), split1.end());
+//             block.emplace_back(static_cast<uint8_t>(split1.size())); // second subblock length
+//             block.insert(block.end(), split1.begin(), split1.end());
 
-            block.emplace_back(blockEnd); // block end
+//             block.emplace_back(blockEnd); // block end
 
-            FFILEV(block);
+//             FFILEV(block);
 
-            gd_image_block_read(&main, &image_block);
-        });
-        it("outputs", [&] {
-            vector<uint8_t> outputIndexes(image_block.output, image_block.output + image_block.outputLength);
-            expect(dump(outputIndexes)).to(eq("01,01,01,01,01,02,02,02,02,02,01,01,01,"));
-        });
-    });
-    describe("two subblocks", [&] {
-        static Pack p;
-        static std::vector<uint8_t> packed;
+//             gd_image_block_read(&main, &image_block);
+//         });
+//         it("outputs", [&] {
+//             vector<uint8_t> outputIndexes(image_block.output, image_block.output + image_block.outputLength);
+//             expect(dump(outputIndexes)).to(eq("01,01,01,01,01,02,02,02,02,02,01,01,01,"));
+//         });
+//     });
+//     describe("two subblocks", [&] {
+//         static Pack p;
+//         static std::vector<uint8_t> packed;
 
-        before("each", [&] {
-            p.reset();
-        });
+//         before("each", [&] {
+//             p.reset();
+//         });
 
-        before("each", [&] {
-            vector<uint8_t> subblocks[2];
-            p.reset();
-            subblocks[0] = p + 4 + 1 + 6;
-            p.reset();
-            subblocks[1] = p + 6 + Shift(4) + 2 + 9 + 9 + 7 + 5;
+//         before("each", [&] {
+//             vector<uint8_t> subblocks[2];
+//             p.reset();
+//             subblocks[0] = p + 4 + 1 + 6;
+//             p.reset();
+//             subblocks[1] = p + 6 + Shift(4) + 2 + 9 + 9 + 7 + 5;
 
-            vector<uint8_t> block;
-            block.emplace_back(lzwMinimumCodeSize); // minimum block size
-            block.emplace_back((uint8_t)2); // subblock length
-            block.insert(block.end(), subblocks[0].begin(), subblocks[0].end());
-            block.emplace_back((uint8_t)3);
-            block.insert(block.end(), subblocks[1].begin(), subblocks[1].end());
-            block.emplace_back(blockEnd); // block end
+//             vector<uint8_t> block;
+//             block.emplace_back(lzwMinimumCodeSize); // minimum block size
+//             block.emplace_back((uint8_t)2); // subblock length
+//             block.insert(block.end(), subblocks[0].begin(), subblocks[0].end());
+//             block.emplace_back((uint8_t)3);
+//             block.insert(block.end(), subblocks[1].begin(), subblocks[1].end());
+//             block.emplace_back(blockEnd); // block end
 
-            // alternate with just one block
-            p.reset();
-            vector<uint8_t> block2;
-            block2.emplace_back(lzwMinimumCodeSize);
-            block2.emplace_back((uint8_t)9);
-            vector<uint8_t> zinger = p + 4 + 1 + 6 + 6 + Shift(4) + 2 + 9 + 9 + 7 + 5;
-            block2.insert(block2.end(), zinger.begin(), zinger.end());
-            block2.emplace_back(blockEnd); // block end
+//             // alternate with just one block
+//             p.reset();
+//             vector<uint8_t> block2;
+//             block2.emplace_back(lzwMinimumCodeSize);
+//             block2.emplace_back((uint8_t)9);
+//             vector<uint8_t> zinger = p + 4 + 1 + 6 + 6 + Shift(4) + 2 + 9 + 9 + 7 + 5;
+//             block2.insert(block2.end(), zinger.begin(), zinger.end());
+//             block2.emplace_back(blockEnd); // block end
 
-            FFILEV(block2);
+//             FFILEV(block2);
 
-            // this should be packed 8C,AD,02,
+//             // this should be packed 8C,AD,02,
 
-            gd_image_block_read(&main, &image_block);
-        });
-        it("output length", [&] {
-            // not verified
-            expect(image_block.outputLength).to(eq(13u));
-        });
-        it("has one index", [&] {
-            expect((int)image_block.output[0]).to(eq((gd_index_t)1));
-        });
-        it("output", [&] {
-            vector<uint8_t> outputIndexes(image_block.output, image_block.output + image_block.outputLength);
-            expect(dump(outputIndexes)).to(eq("01,01,01,01,01,02,02,02,02,02,01,01,01,"));
-        });
-    });
-});
+//             gd_image_block_read(&main, &image_block);
+//         });
+//         it("output length", [&] {
+//             // not verified
+//             expect(image_block.outputLength).to(eq(13u));
+//         });
+//         it("has one index", [&] {
+//             expect((int)image_block.output[0]).to(eq((gd_index_t)1));
+//         });
+//         it("output", [&] {
+//             vector<uint8_t> outputIndexes(image_block.output, image_block.output + image_block.outputLength);
+//             expect(dump(outputIndexes)).to(eq("01,01,01,01,01,02,02,02,02,02,01,01,01,"));
+//         });
+//     });
+// });
 
-} // namespace simple
+// } // namespace simple
