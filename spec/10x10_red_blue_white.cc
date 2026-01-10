@@ -73,7 +73,7 @@ describe("for 10x10 red-blue-white", [] {
                 0x3B
         };
         static gd_index_t output[100];
-        before("each", [] {
+        before("all", [] {
             FFILE(sample1);
             // gd_main_t main;
             main.memory = allocate();

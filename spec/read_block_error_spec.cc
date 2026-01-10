@@ -83,7 +83,7 @@ static const vector<uint8_t> trailer({
 namespace simple {
 
 // this needs to be globally visible for setup and debugging
-gd_main_t main;
+static gd_main_t main;
 
 auto read_block_error_spec =
 describe("read block error", [] {
@@ -110,7 +110,7 @@ describe("read block error", [] {
         });
     });
     describe("global color table", [&] {
-        gd_color_t gct[100];
+        static gd_color_t gct[100];
         it("eof", [&] {
             vector<uint8_t> short_global_color_table({ 0x00, 0x00 });
             FFILEV(logical_screen_descriptor + short_global_color_table);
@@ -120,7 +120,7 @@ describe("read block error", [] {
         });
     });
     describe("graphic control extension", [] {
-        gd_graphic_control_extension_t gce;
+        static gd_graphic_control_extension_t gce;
         it("block prefix", [&] {
             // correct would be 21F9
             vector<uint8_t> file({ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 });

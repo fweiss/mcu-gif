@@ -46,7 +46,7 @@
             "program": "${workspaceFolder}/build/spec/start.exe",
             "args": [],
             "stopAtEntry": false,
-            "cwd": "${fileDirname}",
+            "cwd": ${workspaceFolder}/build",
             "environment": [],
             "console": "externalTerminal"
         }

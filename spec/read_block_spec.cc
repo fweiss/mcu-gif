@@ -190,7 +190,7 @@ describe("read block", [] {
         });
     });
     describe("graphic control extension", [&] {
-        gd_graphic_control_extension_t gce;
+        static gd_graphic_control_extension_t gce;
         before("all", [&] {
             FFILEV(graphic_control_extension + trailer);
 
@@ -322,7 +322,7 @@ describe("read block", [] {
             });
         });
         describe("after image descriptor", [&] {
-            gd_image_descriptor_t imd;
+            static gd_image_descriptor_t imd;
             static std::vector<uint8_t> image_descriptor_block = image_descriptor;
             it("local color table", [&] {
                 image_descriptor_block[9] |= flags_local_color_table;
