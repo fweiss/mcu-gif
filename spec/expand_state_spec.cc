@@ -30,7 +30,6 @@ describe("expand state", [] {
 
     before("each", [] {
         memset(output, 0, sizeof(output));
-        expand.codeSize = 3;
         expand.clearCode = 4;
         expand.output = output;
         expand.outputLength = 0;

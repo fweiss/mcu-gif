@@ -143,10 +143,6 @@ gd_err_t gd_image_code_expand(gd_expand_codes_t *expand, uint16_t extract) {
     memcpy(&expand->output[expand->outputLength], expand->prior_string.value, expand->prior_string.length * sizeof(gd_index_t));
     expand->outputLength += expand->prior_string.length;
 
-    // does code not fit in code size bits?
-    if (expand->string_table.entries_length >> expand->codeSize) {
-        expand->codeSize++;
-    }
     return GD_OK; // maybe code for increase code size?
 }
 
@@ -210,7 +206,6 @@ gd_err_t gd_image_subblock_unpack(gd_unpack_t *unpack, uint8_t *subblock, uint8_
 }
 
 static void gd_expand_codes_init(gd_expand_codes_t *expand_codes, gd_index_t *output) {
-    expand_codes->codeSize = 3;
     expand_codes->output = output;
     expand_codes->outputLength =0;
     expand_codes->compressStatus = 0;
@@ -218,15 +213,12 @@ static void gd_expand_codes_init(gd_expand_codes_t *expand_codes, gd_index_t *ou
 
 // internal
 void gd_image_block_read(gd_main_t *main, gd_image_block_t *image_block) {
-    gd_expand_codes_init(&image_block->unpack.expandCodes, image_block->output);
-
     // fixme check length, error abort
     (void)GD_READ(&image_block->unpack.expandCodes.minumumCodeSize, 1);
     // todo test limits
     // following may be moved to code table init
     uint8_t codeBits = image_block->unpack.expandCodes.minumumCodeSize + 1;
 
-    image_block->outputLength = 0;
     image_block->unpack.expandCodes.outputLength = 0;
 
     image_block->unpack.codeBits = codeBits;
@@ -236,7 +228,6 @@ void gd_image_block_read(gd_main_t *main, gd_image_block_t *image_block) {
     image_block->unpack.onDeckBits = 0;
     image_block->unpack.extract = 0;       // the fully assmbled code
     image_block->unpack.topBits = 0;
-    image_block->unpack.expandCodes.codeSize = codeBits;
     image_block->unpack.expandCodes.clearCode = (1 << image_block->unpack.expandCodes.minumumCodeSize);
     image_block->unpack.expandCodes.endCode = image_block->unpack.expandCodes.clearCode + 1;
     image_block->unpack.expandCodes.compressStatus = 0;
@@ -256,7 +247,6 @@ void gd_image_block_read(gd_main_t *main, gd_image_block_t *image_block) {
             main->err = err;
             return;
         }
-        image_block->outputLength = image_block->unpack.expandCodes.outputLength;
         main->pixelOutputProgress= image_block->unpack.expandCodes.outputLength;
         main->err = image_block->unpack.expandCodes.string_table.err;
     }
@@ -380,8 +370,8 @@ void gd_read_local_color_table(gd_main_t *main, gd_color_t *color_table, size_t 
 // API
 void gd_read_image_data(gd_main_t *main, gd_index_t *output, size_t capacity) {
     gd_image_block_t image_block;
-    image_block.output = output;
-    image_block.outputLength = 0;
+    // image_block.output = output;
+    // image_block.outputLength = 0;
 
     image_block.unpack.expandCodes.output = output;
     image_block.unpack.expandCodes.outputLength = 0;

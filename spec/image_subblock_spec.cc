@@ -46,19 +46,12 @@ auto image_subblock_spec =
 describe("image subblock with", [] {
 
     static gd_index_t output[outputSize];
-
-    static gd_image_block_t block;
-
     static gd_expand_codes_t expand;
-
-    // block.expand_codes.string_table.memory = allocate();
 
     before("all", [&] {
         // N.B. 'output' must be the array, not a pointer
         memset(output, 0, sizeof(output));
         p.reset();
-        block.output = output;
-        block.outputLength = 0;
 
         unpack.codeBits = 3;
         unpack.codeMask = 0x07;
@@ -70,7 +63,6 @@ describe("image subblock with", [] {
 
         unpack.expandCodes.output = output;
         unpack.expandCodes.outputCapacity = sizeof(output);
-        unpack.expandCodes.codeSize = 3;
         unpack.expandCodes.clearCode = 4;
         unpack.expandCodes.endCode = 5;
         unpack.expandCodes.string_table.memory = allocate();
@@ -146,12 +138,11 @@ describe("image subblock with", [] {
             // based on a priori knowledge that first #2 will enlarge code table
             // to require 4 bit codes
             PackedSubBlock packed = p + 4 + 1 + 6 + 6 + Shift(4) + 2 + 5;
-            block.outputLength = 0;
 
             gd_image_subblock_unpack(&unpack, packed.data(), packed.size());
         });
         it("to 4 bits", [&] {
-            expect(unpack.expandCodes.codeSize).to(eq(4));
+            expect(unpack.codeBits).to(eq(4));
         });
     });
     // to ensure that extract is not propagated:
@@ -167,7 +158,7 @@ describe("image subblock with", [] {
             unpack.onDeckBits = 9;
             unpack.top = 0b01111111;
             unpack.topBits = 7;
-            // const uint8_t packed[0]; // nothing is read
+            // nothing is read
             gd_image_subblock_unpack(&unpack, (uint8_t *)NULL, 0);
         });
         it("verify onDeck", [] {
@@ -203,12 +194,10 @@ describe("image subblock with", [] {
             const uint16_t clearCode = unpack.expandCodes.clearCode;
             p.reset();
             unpack.expandCodes.string_table.entries_length = 0;
-            block.outputLength = 0;
 
             unpackInit(&unpack);
             const uint16_t endCode = 5;
             PackedSubBlock packed = p + 4 + 1 + 6 + 6 + Shift(4) + 2 + clearCode + endCode;
-            unpack.expandCodes.codeSize = 2;
             unpack.expandCodes.minumumCodeSize = 2;
             gd_image_subblock_unpack(&unpack, packed.data(), packed.size());
         });
