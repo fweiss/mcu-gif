@@ -41,6 +41,7 @@ void drawGif(SDL_Renderer *renderer) {
     sketch(filenames[4], renderer);
 }
 const size_t stringSizeBytes = 1800000;
+const size_t entriesSizeBytes = 260000;
 
 void renderPixels(SDL_Renderer *renderer, frame_info_t* frame_info) {
     SDL_Rect rect;
@@ -50,8 +51,8 @@ void renderPixels(SDL_Renderer *renderer, frame_info_t* frame_info) {
     rect.h = frame_info->zoom;
 
     SDL_RenderClear(renderer);
-    for (uint8_t y=0; y<frame_info->height; y++) {
-        for (uint8_t x=0; x<frame_info->width; x++) {
+    for (uint16_t y=0; y<frame_info->height; y++) {
+        for (uint16_t x=0; x<frame_info->width; x++) {
             rect.x = x * frame_info->zoom + 80;
             rect.y = y * frame_info->zoom + 80;
             uint16_t i = y * frame_info->width + x;
@@ -129,7 +130,6 @@ void sketch(const char* filename, SDL_Renderer *renderer) {
                 const gd_index_t fill = 0x45;
                 memset(pixels, fill, imd.image_size);
 
-                const size_t entriesSizeBytes = 26000;
                 main.memory.entries.sizeBytes = entriesSizeBytes;
                 main.memory.entries.memoryBytes = (char*)malloc(entriesSizeBytes);
 

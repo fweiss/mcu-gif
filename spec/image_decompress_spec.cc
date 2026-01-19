@@ -7,6 +7,7 @@ using ccspec::core::before;
 using ccspec::core::it;
 using ccspec::expect;
 using ccspec::matchers::eq;
+using ccspec::matchers::be;
 
 extern "C" {
 	#include "gd_internal.h"
@@ -25,23 +26,36 @@ namespace simple {
 
 gd_expand_codes_t expand;
 
+void initialize_expand() {
+    static gd_index_t output[512];
+    expand.output = output;
+    expand.outputLength = 0;
+    expand.outputCapacity = sizeof(output);
+    expand.string_table.memory = allocate();
+    expand.minumumCodeSize = 2;
+
+    // need to init expand
+    expand.clearCode = 4;
+}
+
 auto image_decompress_spec =
 describe("image decompress", [] {
 
-    before("each", [] {
-        static gd_index_t output[512];
-        expand.output = output;
-        expand.outputLength = 0;
-        expand.outputCapacity = sizeof(output);
-        expand.string_table.memory = allocate();
-        expand.minumumCodeSize = 2;
+    before("all", [] {
+        // static gd_index_t output[512];
+        // expand.output = output;
+        // expand.outputLength = 0;
+        // expand.outputCapacity = sizeof(output);
+        // expand.string_table.memory = allocate();
+        // expand.minumumCodeSize = 2;
 
-        // need to init expand
-        expand.clearCode = 4;
+        // // need to init expand
+        // expand.clearCode = 4;
 
     });
     describe("clear code", [] {
-        before("each", [] {
+        before("all", [] {
+            initialize_expand();
             // bogus values
             expand.prior_string.length = 1;
             expand.string_table.entries_length = 44;
@@ -84,6 +98,9 @@ describe("image decompress", [] {
         });
     });
     describe("second code", [] {
+        before("all", [] {
+            initialize_expand();
+        });
         before("each", [] {
             const gd_code_t firstcode = 1;
             gd_image_code_expand(&expand, expand.clearCode);
@@ -135,6 +152,9 @@ describe("image decompress", [] {
         });
     });
     describe("code stream [4, 1, 6]", [] {
+        before("all", [] {
+            initialize_expand();
+        });
         before("each", [] {
             gd_image_code_expand(&expand, 4);
             gd_image_code_expand(&expand, 1);
@@ -184,6 +204,26 @@ describe("image decompress", [] {
         });
     });
     describe("nth code", [] {});
+    describe("large output", [] {
+        static const size_t largeOutputLength = (1 << 16) - 1;
+        // maybe malloc
+        static gd_index_t largeOutput[largeOutputLength + 2];
+        before("all", [] {
+            expand.endCode = 5;
+            expand.output = largeOutput;
+            expand.outputLength = largeOutputLength;
+            expand.outputCapacity = largeOutputLength + 2;
+
+            gd_image_code_expand(&expand, 4);
+            gd_image_code_expand(&expand, 0);
+            gd_image_code_expand(&expand, 0);
+        });
+        describe("output", [] {
+            it("verify length", [] {
+                expect(expand.outputLength).to(be > largeOutputLength);
+            });
+        });
+    });
 });
 
 } // namespace simple
