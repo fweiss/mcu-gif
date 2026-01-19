@@ -18,10 +18,10 @@ typedef struct {
     gd_err_t err;
     gd_memory_t memory;
 
-    uint16_t entries_capacity;
+    size_t entries_capacity;
     uint16_t entries_length;
     gd_string_table_entry_t *entries;
-    uint16_t strings_capacity;
+    size_t strings_capacity;
     uint16_t strings_length;
     gd_index_t *strings;
 } gd_string_table_t;

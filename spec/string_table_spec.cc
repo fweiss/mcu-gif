@@ -33,17 +33,39 @@ describe("string table", [] {
     // deprecated, shout not be internal static allocation
     // fixme remove magic constants
     describe("capacity", [&] {
-        before("each", [&] {
-            gd_string_table_init(&string_table, 2);
+        describe("nominal", [] {
+            before("each", [&] {
+                gd_string_table_init(&string_table, 2);
+            });
+            it("entries", [&] {
+                expect(string_table.entries_capacity).to(be > 564);
+            });
+            it("strings", [&] {
+                expect(string_table.strings_capacity).to(be > 512);
+            });
+            it("init err", [&] {
+                expect(string_table.err).to(eq(GD_OK));
+            });
         });
-        it("entries", [&] {
-            expect(string_table.entries_capacity).to(be > 564);
-        });
-        it("strings", [&] {
-            expect(string_table.strings_capacity).to(be > 512);
-        });
-        it("init err", [&] {
-            expect(string_table.err).to(eq(GD_OK));
+        describe("large (1<<20)+1", [] {
+            static const size_t scale = 1 << 20;
+            const size_t telltale = 5;
+            const size_t entriesCapacity = scale * sizeof(gd_string_table_entry_t) + telltale;
+            const size_t stringsCapacity = scale * sizeof(gd_string_t) + telltale;
+            before("all", [] {
+                string_table.memory.entries.sizeBytes = entriesCapacity;
+                string_table.memory.strings.sizeBytes = stringsCapacity;
+                gd_string_table_init(&string_table, 2);
+            });
+            it("verify entries", [&] {
+                expect(string_table.entries_capacity).to(be > scale);
+            });
+            it("verify strings", [&] {
+                expect(string_table.strings_capacity).to(be > scale);
+            });
+            it("init err", [&] {
+                expect(string_table.err).to(eq(GD_OK));
+            });
         });
     });
 

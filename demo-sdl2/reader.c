@@ -31,12 +31,16 @@ void dumpGlobalColorTable(gd_color_t* table, size_t size);
 void dumpPixel(frame_info_t *frame_info, uint16_t p);
 
 void drawGif(SDL_Renderer *renderer) {
-    // const char* filename = "../samples/sample_1.gif";
-    // const char* filename = "../samples/128px-green.gif";
-    const char* filename = "../samples/128px-dancing.gif";
-    // const char* filename = "../samples/DentalDescriptiveCopperbutterfly-size_restricted.gif";
-    sketch(filename,renderer);
+    const char* filenames[] = {
+        "../samples/sample_1.gif",
+        "../samples/128px-green.gif",
+        "../samples/128px-dancing.gif",
+        "../samples/DentalDescriptiveCopperbutterfly-size_restricted.gif",
+        "../samples/funding schema.gif"
+    };
+    sketch(filenames[4], renderer);
 }
+const size_t stringSizeBytes = 1800000;
 
 void renderPixels(SDL_Renderer *renderer, frame_info_t* frame_info) {
     SDL_Rect rect;
@@ -119,8 +123,6 @@ void sketch(const char* filename, SDL_Renderer *renderer) {
                 // check err
                 break;
             case GD_BLOCK_IMAGE_DATA:
-                // debugging
-                imd.image_size = 120000;
                 printf("pixels: %zu\n", imd.image_size);
                 // fixme memory leak
                 pixels = (gd_index_t*)calloc(imd.image_size, sizeof(gd_index_t));
@@ -131,7 +133,6 @@ void sketch(const char* filename, SDL_Renderer *renderer) {
                 main.memory.entries.sizeBytes = entriesSizeBytes;
                 main.memory.entries.memoryBytes = (char*)malloc(entriesSizeBytes);
 
-                const size_t stringSizeBytes = 180000;
                 main.memory.strings.sizeBytes = stringSizeBytes;
                 main.memory.strings.memoryBytes = (char*)malloc(entriesSizeBytes);
 
