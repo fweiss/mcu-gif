@@ -82,7 +82,7 @@ describe("image decompress", [] {
         });
         describe("output", [] {
             it("length = 1", [] {
-                expect(expand.outputLength).to(eq(1));
+                expect(expand.outputLength).to(eq(1UL));
             });
             it("value = 2", [] {
                 expect(expand.output[0]).to(eq(2));
@@ -113,7 +113,7 @@ describe("image decompress", [] {
             });
             describe("output", [] {
                 it("length", [] {
-                    expect(expand.outputLength).to(eq(2));
+                    expect(expand.outputLength).to(eq(2UL));
                 });
                 it("value", [] {
                     expect(expand.output[1]).to(eq(2));
@@ -162,7 +162,7 @@ describe("image decompress", [] {
         });
         describe("output", [] {
             it("length = 3", [] {
-                expect(expand.outputLength).to(eq(3));
+                expect(expand.outputLength).to(eq(3UL));
             });
             it("indexes [1, 1, 1]", [] {
                 expect(expand.output[0]).to(eq(1));

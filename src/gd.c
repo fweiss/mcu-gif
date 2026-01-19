@@ -205,12 +205,6 @@ gd_err_t gd_image_subblock_unpack(gd_unpack_t *unpack, uint8_t *subblock, uint8_
     return GD_OK;
 }
 
-static void gd_expand_codes_init(gd_expand_codes_t *expand_codes, gd_index_t *output) {
-    expand_codes->output = output;
-    expand_codes->outputLength =0;
-    expand_codes->compressStatus = 0;
-}
-
 // internal
 void gd_image_block_read(gd_main_t *main, gd_image_block_t *image_block) {
     // fixme check length, error abort

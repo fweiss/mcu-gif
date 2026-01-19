@@ -77,7 +77,7 @@ describe("image subblock with", [] {
         });
 
         it("output length", [&] {
-            expect(expand.outputLength).to(eq(0));
+            expect(expand.outputLength).to(eq(0UL));
         });
         it("4 entries", [] {
             expect(unpack.expandCodes.string_table.entries_length).to(eq(4 + 2));
@@ -95,7 +95,7 @@ describe("image subblock with", [] {
         });
 
         it("output length", [&] {
-            expect(unpack.expandCodes.outputLength).to(eq(1));
+            expect(unpack.expandCodes.outputLength).to(eq(1UL));
         });
 
         it("[0]", [&] {
@@ -110,7 +110,7 @@ describe("image subblock with", [] {
             gd_image_subblock_unpack(&unpack, packed.data(), packed.size());
         });
         it("output length", [] {
-            expect(unpack.expandCodes.outputLength).to(eq(1));
+            expect(unpack.expandCodes.outputLength).to(eq(1UL));
         });
         it("[0]", [] {
             expect(unpack.expandCodes.output[0]).to(eq(0x0001));
@@ -125,7 +125,7 @@ describe("image subblock with", [] {
             gd_image_subblock_unpack(&unpack, packed.data(), packed.size());
         });
         it("output length", [&] { 
-            expect(unpack.expandCodes.outputLength).to(eq(2));
+            expect(unpack.expandCodes.outputLength).to(eq(2UL));
         });
         it("[0]", [&] {
             expect(unpack.expandCodes.output[1]).to(eq(0x01));
