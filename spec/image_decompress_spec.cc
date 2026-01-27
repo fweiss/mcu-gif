@@ -224,6 +224,40 @@ describe("image decompress", [] {
             });
         });
     });
+    describe("large internal string buffer", [] {
+        static gd_err_t err = GD_OK;
+        static char entriesMemory[100 * 4096];
+        static char stringsMemory[4000 * 4096];
+        before("all", [] {
+            initialize_expand();
+            static gd_index_t output[10000000];
+            expand.output = output;
+            expand.outputLength = 0;
+            expand.outputCapacity = sizeof(output);
+            expand.string_table.memory.entries.memoryBytes = entriesMemory;
+            expand.string_table.memory.entries.sizeBytes = sizeof(entriesMemory);
+            expand.string_table.memory.strings.memoryBytes = stringsMemory;
+            expand.string_table.memory.strings.sizeBytes = sizeof(stringsMemory);
+
+            gd_code_t code;
+            gd_image_code_expand(&expand, expand.clearCode);
+            for (code=6; code < 4096 && err == GD_OK; code++) {
+                err =gd_image_code_expand(&expand, code);
+                if (err != GD_OK) {
+                    break;
+                }
+            }
+            if (err != GD_OK) {
+                gd_image_code_expand(&expand, expand.endCode);
+            }
+        });
+        it("doesn't crash", [] {
+            expect((int)err).to(eq((int)GD_OK));
+        });
+        it("prior string length", [] {
+            expect(expand.prior_string.length).to(eq(4096 - 6));
+        });
+    });
 });
 
 } // namespace simple
