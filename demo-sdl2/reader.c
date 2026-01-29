@@ -40,7 +40,7 @@ void drawGif(SDL_Renderer *renderer) {
     };
     sketch(filenames[4], renderer);
 }
-const size_t stringSizeBytes = 1800000;
+const size_t stringSizeBytes = 2800000;
 const size_t entriesSizeBytes = 260000;
 
 void renderPixels(SDL_Renderer *renderer, frame_info_t* frame_info) {
@@ -55,7 +55,7 @@ void renderPixels(SDL_Renderer *renderer, frame_info_t* frame_info) {
         for (uint16_t x=0; x<frame_info->width; x++) {
             rect.x = x * frame_info->zoom + 80;
             rect.y = y * frame_info->zoom + 80;
-            uint16_t i = y * frame_info->width + x;
+            size_t i = y * frame_info->width + x;
             gd_color_t c = frame_info->colors[frame_info->pixels[i]];
             uint8_t r = c.r;
             uint8_t g = c.g;
