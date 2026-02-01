@@ -10,8 +10,8 @@ typedef struct {
 } gd_string_t;
 
 typedef struct {
+    size_t offset;
     uint16_t length;
-    uint16_t offset;
 } gd_string_table_entry_t;
 
 typedef struct {
