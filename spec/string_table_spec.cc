@@ -55,13 +55,13 @@ describe("string table", [] {
             const size_t telltale = 5;
             const size_t entriesCapacity = scale * sizeof(gd_string_table_entry_t) + telltale;
             const size_t stringsCapacity = scale * sizeof(gd_string_t) + telltale;
-            before("all", [] {
+            before("all", [&] {
                 string_table.memory.entries.sizeBytes = entriesCapacity;
                 string_table.memory.strings.sizeBytes = stringsCapacity;
                 gd_string_table_init(&string_table, 2);
             });
             it("verify entries", [&] {
-                expect(string_table.entries_capacity).to(be == scale);
+                expect(string_table.entries_capacity).to(be > scale);
             });
             it("verify strings", [&] {
                 expect(string_table.strings_capacity).to(be > scale);

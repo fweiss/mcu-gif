@@ -112,7 +112,7 @@ gd_err_t gd_image_code_expand(gd_expand_codes_t *expand, uint16_t extract) {
         return GD_OK;
     }
 
-    static const size_t maxStringSize = 4096;
+    #define maxStringSize (4096)
     static gd_index_t raw_string[maxStringSize];
     gd_string_t new_string;
     new_string.value = raw_string;
