@@ -104,13 +104,13 @@ cross reference between specs and code
 
 | spec | api | unpack | expand | table | output | helpers
 | --- | --- | --- | --- | --- | --- | --- 
-| 10x10_red_blue_spec | C | E | E | E | V | X
-| image_data_block_spec | C2 MF|E|E V|X|E V|X|
-| read_block_spec |C F V |X|X|X|X|X
-| read_block_error_spec | C V F|E3|E3|EV|X|X
+| 10x10_red_blue_spec | F C | E | E | E | V | X
+| image_data_block_spec | F C2 M|E|E V|X|E V|X|
+| read_block_spec |F C V |X|X|X|X|X
+| read_block_error_spec | F C V|E3|E3|EV|X|X
 | image_subblock_spec |X|M C V|M E V|E V|V|X
 | expand_state_spec | X | X | C V | C E V | X | X
 | image_decompress_spec |X|X|M C V| V|V|X
-| image_expand_spec | X|X|C E V|E|V|E
+| image_expand_spec | X|X|C E V|E|V|X
 | string_table_spec | X | X | X |C V | X  |X
 | helpers_spec | X|X |X |X | X| C V
