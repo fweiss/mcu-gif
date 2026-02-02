@@ -12,6 +12,8 @@ using ccspec::matchers::be;
 
 #include "helpers/allocateMemory.h"
 
+#include <limits>
+
 extern "C" {
 	#include "gd_internal.h"
 }
@@ -24,7 +26,7 @@ static gd_string_t string;
 auto string_table_spec =
 describe("string table", [] {
 
-    before("each", [&] () {
+    before("all", [&] () {
         // allocate a full buffer
         // for testing, adjust the size
         string_table.memory = allocate();
@@ -33,17 +35,40 @@ describe("string table", [] {
     // deprecated, shout not be internal static allocation
     // fixme remove magic constants
     describe("capacity", [&] {
-        before("each", [&] {
-            gd_string_table_init(&string_table, 2);
+        describe("nominal", [] {
+            before("each", [&] {
+                gd_string_table_init(&string_table, 2);
+            });
+            it("entries", [&] {
+                size_t size = string_table.entries_capacity;
+                expect(string_table.entries_capacity).to(eq(size));
+            });
+            it("strings", [&] {
+                expect(string_table.strings_capacity).to(be > 512);
+            });
+            it("init err", [&] {
+                expect(string_table.err).to(eq(GD_OK));
+            });
         });
-        it("entries", [&] {
-            expect(string_table.entries_capacity).to(be > 564);
-        });
-        it("strings", [&] {
-            expect(string_table.strings_capacity).to(be > 512);
-        });
-        it("init err", [&] {
-            expect(string_table.err).to(eq(GD_OK));
+        describe("large (1<<20)+1", [] {
+            static const size_t scale = 1 << 20;
+            const size_t telltale = 5;
+            const size_t entriesCapacity = scale * sizeof(gd_string_table_entry_t) + telltale;
+            const size_t stringsCapacity = scale * sizeof(gd_string_t) + telltale;
+            before("all", [] {
+                string_table.memory.entries.sizeBytes = entriesCapacity;
+                string_table.memory.strings.sizeBytes = stringsCapacity;
+                gd_string_table_init(&string_table, 2);
+            });
+            it("verify entries", [&] {
+                expect(string_table.entries_capacity).to(be == scale);
+            });
+            it("verify strings", [&] {
+                expect(string_table.strings_capacity).to(be > scale);
+            });
+            it("init err", [&] {
+                expect(string_table.err).to(eq(GD_OK));
+            });
         });
     });
 
@@ -177,6 +202,34 @@ describe("string table", [] {
         // it("end of info code", [&] {
         //     expect(string_table.endCode).to(eq(257));
         // });
+    });
+    // string table entry offset must be larger than uint16_t
+    describe("string table entry offset", [] {
+        static const size_t max_uint16 = std::numeric_limits<uint16_t>::max();
+        static gd_code_t code;
+        static char strings[1000000];
+        before("all", [] {
+            string_table.memory.strings.memoryBytes = strings;
+            string_table.memory.strings.sizeBytes = sizeof(strings) * sizeof(strings[0]);
+            gd_string_table_init(&string_table, 2);
+        });
+        before("all", [] {
+            string_table.strings_length = max_uint16;
+            gd_index_t stringValue[]{ 0x02, 0x03};
+            gd_string_t added{sizeof(stringValue) / sizeof(stringValue[0]), stringValue};
+            code = gd_string_table_add(&string_table, &added);
+            // one more to possibly overflow
+            code = gd_string_table_add(&string_table, &added);
+
+        });
+        it("no error", [] {
+            expect((uint16_t)string_table.err).to(eq((uint16_t)GD_OK));
+        });
+        it("does not overflow length", [] {
+            gd_string_table_entry_t entry = string_table.entries[code];
+            // value was 2 bytes
+            expect(entry.offset).to(eq(max_uint16 + 2));
+        });
     });
 
 

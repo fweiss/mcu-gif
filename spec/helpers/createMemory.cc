@@ -4,7 +4,7 @@
 gd_memory_t allocate() {
     gd_memory_t memory;
 
-    const size_t entriesSizeBytes = 8000;
+    const size_t entriesSizeBytes = 17000; // enough for 9 bit code
     static char entryBytes[entriesSizeBytes];
     memory.entries.sizeBytes = entriesSizeBytes;
     memory.entries.memoryBytes = entryBytes;

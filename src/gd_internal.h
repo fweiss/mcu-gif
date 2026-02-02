@@ -10,19 +10,19 @@ typedef struct {
 } gd_string_t;
 
 typedef struct {
+    size_t offset;
     uint16_t length;
-    uint16_t offset;
 } gd_string_table_entry_t;
 
 typedef struct {
     gd_err_t err;
     gd_memory_t memory;
 
-    uint16_t entries_capacity;
+    size_t entries_capacity;
     uint16_t entries_length;
     gd_string_table_entry_t *entries;
-    uint16_t strings_capacity;
-    uint16_t strings_length;
+    size_t strings_capacity;
+    size_t strings_length;
     gd_index_t *strings;
 } gd_string_table_t;
 
@@ -40,8 +40,8 @@ typedef struct {
     gd_string_table_t string_table;
     gd_string_t prior_string;
     gd_index_t *output;
-    uint16_t outputCapacity;
-    uint16_t outputLength;
+    size_t outputCapacity;
+    size_t outputLength;
 } gd_expand_codes_t;
 
 // unpack state variables, needed for subblocks

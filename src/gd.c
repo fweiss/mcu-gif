@@ -112,7 +112,8 @@ gd_err_t gd_image_code_expand(gd_expand_codes_t *expand, uint16_t extract) {
         return GD_OK;
     }
 
-    static gd_index_t raw_string[64];
+    static const size_t maxStringSize = 4096;
+    static gd_index_t raw_string[maxStringSize];
     gd_string_t new_string;
     new_string.value = raw_string;
 
@@ -203,12 +204,6 @@ gd_err_t gd_image_subblock_unpack(gd_unpack_t *unpack, uint8_t *subblock, uint8_
         }
     }
     return GD_OK;
-}
-
-static void gd_expand_codes_init(gd_expand_codes_t *expand_codes, gd_index_t *output) {
-    expand_codes->output = output;
-    expand_codes->outputLength =0;
-    expand_codes->compressStatus = 0;
 }
 
 // internal

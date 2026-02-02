@@ -66,7 +66,7 @@ describe("expand image indexes", [] {
                 expand_codes_stream({ 4, 1, 1, 1, 1, 1, 1, 1, 1, 5});
             });
             it("output count", [&] {
-                expect(expand.outputLength).to(eq(8));
+                expect(expand.outputLength).to(eq(8UL));
             });
             it("output [1]", [&] {
                 expect(expand.output[1]).to(eq(1));
@@ -103,7 +103,7 @@ describe("expand image indexes", [] {
     describe("simple", [&] {
         it("works", [&] {
             expand_codes_stream({ 4, 0, 5 });
-            expect(expand.outputLength).to(eq(1));
+            expect(expand.outputLength).to(eq(1UL));
             expect(expand.output[0]).to(eq(0));
         });
     });
@@ -131,7 +131,7 @@ describe("expand image indexes", [] {
             }
         });
         it("output count 100", [&] {
-            expect(expand.outputLength).to(eq(100));
+            expect(expand.outputLength).to(eq(100UL));
         });
         it("output [4] 1", [&] {
             expect(expand.output[4]).to(eq(1));
@@ -171,7 +171,7 @@ describe("expand image indexes", [] {
             }
         });
         it("output length", [&] {
-            expect(expand.outputLength).to(eq(1));
+            expect(expand.outputLength).to(eq(1UL));
         });
         it("output value", [&] {
             gd_expand_codes_t &xx = expand;

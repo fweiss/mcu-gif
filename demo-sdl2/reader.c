@@ -31,12 +31,17 @@ void dumpGlobalColorTable(gd_color_t* table, size_t size);
 void dumpPixel(frame_info_t *frame_info, uint16_t p);
 
 void drawGif(SDL_Renderer *renderer) {
-    // const char* filename = "../samples/sample_1.gif";
-    // const char* filename = "../samples/128px-green.gif";
-    const char* filename = "../samples/128px-dancing.gif";
-    // const char* filename = "../samples/DentalDescriptiveCopperbutterfly-size_restricted.gif";
-    sketch(filename,renderer);
+    const char* filenames[] = {
+        "../samples/sample_1.gif",
+        "../samples/128px-green.gif",
+        "../samples/128px-dancing.gif",
+        "../samples/DentalDescriptiveCopperbutterfly-size_restricted.gif",
+        "../samples/funding schema.gif"
+    };
+    sketch(filenames[4], renderer);
 }
+const size_t stringSizeBytes = 2800000;
+const size_t entriesSizeBytes = 260000;
 
 void renderPixels(SDL_Renderer *renderer, frame_info_t* frame_info) {
     SDL_Rect rect;
@@ -46,11 +51,11 @@ void renderPixels(SDL_Renderer *renderer, frame_info_t* frame_info) {
     rect.h = frame_info->zoom;
 
     SDL_RenderClear(renderer);
-    for (uint8_t y=0; y<frame_info->height; y++) {
-        for (uint8_t x=0; x<frame_info->width; x++) {
+    for (uint16_t y=0; y<frame_info->height; y++) {
+        for (uint16_t x=0; x<frame_info->width; x++) {
             rect.x = x * frame_info->zoom + 80;
             rect.y = y * frame_info->zoom + 80;
-            uint16_t i = y * frame_info->width + x;
+            size_t i = y * frame_info->width + x;
             gd_color_t c = frame_info->colors[frame_info->pixels[i]];
             uint8_t r = c.r;
             uint8_t g = c.g;
@@ -119,19 +124,15 @@ void sketch(const char* filename, SDL_Renderer *renderer) {
                 // check err
                 break;
             case GD_BLOCK_IMAGE_DATA:
-                // debugging
-                imd.image_size = 120000;
                 printf("pixels: %zu\n", imd.image_size);
                 // fixme memory leak
                 pixels = (gd_index_t*)calloc(imd.image_size, sizeof(gd_index_t));
                 const gd_index_t fill = 0x45;
                 memset(pixels, fill, imd.image_size);
 
-                const size_t entriesSizeBytes = 26000;
                 main.memory.entries.sizeBytes = entriesSizeBytes;
                 main.memory.entries.memoryBytes = (char*)malloc(entriesSizeBytes);
 
-                const size_t stringSizeBytes = 180000;
                 main.memory.strings.sizeBytes = stringSizeBytes;
                 main.memory.strings.memoryBytes = (char*)malloc(entriesSizeBytes);
 
@@ -164,7 +165,7 @@ void sketch(const char* filename, SDL_Renderer *renderer) {
                 frame_info.height = imd.image_height;
                 frame_info.colors = gct;
                 frame_info.pixels = pixels;
-                frame_info.zoom = 4;
+                frame_info.zoom = 1;
                 renderPixels(renderer, &frame_info);
                 break;
             case GD_BLOCK_TRAILER:
