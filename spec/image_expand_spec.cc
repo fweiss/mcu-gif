@@ -52,7 +52,6 @@ describe("expand image indexes", [] {
         memset(output, 0, sizeof(output));
 
         // todo extract function
-        expand.codeSize = 3;
         expand.clearCode = 4;
         expand.endCode = 5;
         expand.output = output;
@@ -75,16 +74,16 @@ describe("expand image indexes", [] {
             it("output [7]", [&] {
                 expect(expand.output[7]).to(eq(1));
             });
-            it("code size", [&] {
-                expect((uint16_t)expand.codeSize).to(eq(4));
+            it("has 7 new entries requiring 4 code bits", [] {
+                expect(expand.string_table.entries_length).to(eq(4+2+7));
             });
         });
         describe("code sequence 12 1's", [&] {
             before("each", [&] {
                 expand_codes_stream({ 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5});
             });
-            it("code size", [&] {
-                expect((uint16_t)expand.codeSize).to(eq(5));
+            it("has 11 new entries", [&] {
+                expect((uint16_t)expand.string_table.entries_length).to(eq(4+2+11));
             });
         });
         describe("code sequence 28 1's", [&] {
@@ -95,8 +94,8 @@ describe("expand image indexes", [] {
                 }
                 gd_image_code_expand(&expand, 5);
             });
-            it("code size", [&] {
-                expect((uint16_t)expand.codeSize).to(eq(6));
+            it("has 27 new entries requiring 5 code bits", [&] {
+                expect((uint16_t)expand.string_table.entries_length).to(eq(4+2+27));
             });
         });
     });
@@ -106,7 +105,6 @@ describe("expand image indexes", [] {
             expand_codes_stream({ 4, 0, 5 });
             expect(expand.outputLength).to(eq(1));
             expect(expand.output[0]).to(eq(0));
-            expect((short)expand.codeSize).to(eq(3));
         });
     });
     describe("code size changed", [&] {
@@ -115,7 +113,7 @@ describe("expand image indexes", [] {
             for (auto code : codes) {
                 gd_image_code_expand(&expand, code);
             }
-            expect((uint16_t)expand.codeSize).to(eq(4));
+            expect((uint16_t)expand.string_table.entries_length).to(eq(4+2+3));
         });
     });
 
@@ -162,7 +160,6 @@ describe("expand image indexes", [] {
         before("each", [&] {
             expand.clearCode = 256; // need to find where this should get initialized
             expand.endCode = 257;
-            expand.codeSize = 9;
             // reinitialized
             expand.minumumCodeSize = 8;
             

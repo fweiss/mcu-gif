@@ -75,7 +75,6 @@ describe("for 10x10 red-blue-white", [] {
         static gd_index_t output[100];
         before("all", [] {
             FFILE(sample1);
-            // gd_main_t main;
             main.memory = allocate();
             main.fread = ff_read;
             gd_info_t info;

@@ -38,7 +38,6 @@ describe("image decompress", [] {
 
         // need to init expand
         expand.clearCode = 4;
-        expand.codeSize = 3;
 
     });
     describe("clear code", [] {
