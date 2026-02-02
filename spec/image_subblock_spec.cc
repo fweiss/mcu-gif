@@ -77,7 +77,7 @@ describe("image subblock with", [] {
         });
 
         it("output length", [&] {
-            expect(expand.outputLength).to(eq(0));
+            expect(expand.outputLength).to(eq(0UL));
         });
         it("4 entries", [] {
             expect(unpack.expandCodes.string_table.entries_length).to(eq(4 + 2));
@@ -95,7 +95,7 @@ describe("image subblock with", [] {
         });
 
         it("output length", [&] {
-            expect(unpack.expandCodes.outputLength).to(eq(1));
+            expect(unpack.expandCodes.outputLength).to(eq(1UL));
         });
 
         it("[0]", [&] {
@@ -110,7 +110,7 @@ describe("image subblock with", [] {
             gd_image_subblock_unpack(&unpack, packed.data(), packed.size());
         });
         it("output length", [] {
-            expect(unpack.expandCodes.outputLength).to(eq(1));
+            expect(unpack.expandCodes.outputLength).to(eq(1UL));
         });
         it("[0]", [] {
             expect(unpack.expandCodes.output[0]).to(eq(0x0001));
@@ -125,7 +125,7 @@ describe("image subblock with", [] {
             gd_image_subblock_unpack(&unpack, packed.data(), packed.size());
         });
         it("output length", [&] { 
-            expect(unpack.expandCodes.outputLength).to(eq(2));
+            expect(unpack.expandCodes.outputLength).to(eq(2UL));
         });
         it("[0]", [&] {
             expect(unpack.expandCodes.output[1]).to(eq(0x01));
@@ -169,17 +169,23 @@ describe("image subblock with", [] {
         });
     });
     describe("code size increase", [] {
+        static gd_err_t err;
         describe("from 9 bits", [] {
             before("all", [] {
                 unpackInit(&unpack);
                 unpack.codeBits = 9;
                 unpack.codeMask = 0x1ff;
                 // one less that what would trigger a resize
+                // unpack.expandCodes.string_table.entries_length = 256 + 2;
                 unpack.expandCodes.string_table.entries_length = 0x1ff;
                 unpack.expandCodes.endCode = 0x101;
                 unpack.expandCodes.compressStatus = 1;
-                uint8_t p[] = { 0b00000010, 0b00000011, 0b00000010, }; // 0x102, 0x101/end
-                gd_image_subblock_unpack(&unpack, p, sizeof(p));
+                // uint8_t p[] = { 0b00000010, 0b00000011, 0b00000010, }; // 0x102, 0x101/end
+                uint8_t p[] = { 0b11111111, 0b00000011, 0b00000010, }; // 0x1ff, 0x101/end
+                err = gd_image_subblock_unpack(&unpack, p, sizeof(p));
+            });
+            it("has no error", [] {
+                expect((int)err).to(eq((int)GD_OK));
             });
             it("to 10 bits", [] {
                 expect(unpack.codeBits).to(eq(10));

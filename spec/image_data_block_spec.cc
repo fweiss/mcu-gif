@@ -46,7 +46,7 @@ describe("image data block", [] {
                 gd_image_block_read(&main, &image_block);
             });
             it("no ouput", []{
-                expect(image_block.unpack.expandCodes.outputLength).to(eq(0));
+                expect(image_block.unpack.expandCodes.outputLength).to(eq(0UL));
             });
             it("minimum code size", [] {
                 expect(image_block.unpack.expandCodes.minumumCodeSize).to(eq(2));
